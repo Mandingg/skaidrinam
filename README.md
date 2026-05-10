@@ -110,3 +110,5 @@ Logging:
 Sistemoje turi būti saugomi naudotojų veikla.
 
 Sistemoje administratoriams turi būti suteiktos priemonės žurnalams peržiūrėti
+
+
