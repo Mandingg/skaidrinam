@@ -15,3 +15,10 @@
 2. **SVARBU:** Įdiekite visas bibliotekas:
    ```bash
    npm install
+
+
+### Svarbi pastaba dėl paketų valdymo
+Jei savo darbe naudojate naujas Python bibliotekas (pvz., papildomus įrankius duomenų analizei ar naujas FastAPI dalis):
+1. Įdiekite paketą savo virtualioje aplinkoje: `pip install <paketo_pavadinimas>`.
+2. **BŪTINAI** atnaujinkite `requirements.txt` failą: `pip freeze > requirements.txt`.
+3. Įkelkite (commit/push) atnaujintą `requirements.txt` į saugyklą, kad kiti komandos nariai galėtų sinchronizuoti savo aplinkas.
