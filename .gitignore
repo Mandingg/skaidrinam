@@ -15,7 +15,7 @@ __pycache__/
 venv/
 env/
 .venv/
-.env/
+.env
 .env.*
 
 # Python cache
@@ -52,7 +52,6 @@ docker-compose.override.yml
 # ============================================
 # DATABASE / MYSQL
 # ============================================
-*.sql
 *.db
 *.sqlite
 *.sqlite3
