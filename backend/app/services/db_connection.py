@@ -1,6 +1,7 @@
 from mysql import connector
 from dotenv import load_dotenv
 import os
+import time
 
 
 load_dotenv()
@@ -16,18 +17,25 @@ class DatabaseManager:
         --> only methods from these classes should be used in the routes, never directly from DatabaseManager.
     """
 
+    CONNECTION_TRIES = 3  # Number of times to retry connection before giving up
+
     def __init__(self):
         self.host = os.getenv("MYSQL_HOST")
         self.user = os.getenv("MYSQL_USER")
         self.password = os.getenv("MYSQL_PASSWORD")
         self.database = os.getenv("MYSQL_DATABASE")
         self.port = int(os.getenv("MYSQL_PORT", 3306))
-        try:
-            self.connection = connector.connect(
-                host=self.host, user=self.user, password=self.password, database=self.database, port=self.port
-            )
-        except connector.Error as err:
-            print(f"Error while connecting to MySQL: {err}")
+        for i in range(self.CONNECTION_TRIES):
+            try:
+                self.connection = connector.connect(
+                    host=self.host, user=self.user, password=self.password, database=self.database, port=self.port
+                )
+                if self.connection.is_connected():
+                    break
+                else:
+                    time.sleep(0.5)
+            except connector.Error as err:
+                print(f"Error while connecting to MySQL: {err}")
 
     def close_connection(self):
         if self.connection:
