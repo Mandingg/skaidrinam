@@ -33,7 +33,6 @@ class DatabaseManager:
         if self.connection:
             self.connection.close()
 
-
     def fetch_all(self, query, params=None):
         """Executes a SELECT query and returns all results as a list of dictionaries.
         If there are no results or an error occurs, it returns an empty list."""
@@ -59,7 +58,6 @@ class DatabaseManager:
             return None
         finally:
             cursor.close()
-        
 
     def insert(self, query, params=None):
         """Executes an INSERT query and returns the ID of the newly inserted row."""
@@ -72,8 +70,7 @@ class DatabaseManager:
             return None
         finally:
             cursor.close()
-        
-        
+
     def update(self, query, params=None):
         """Executes an UPDATE query and returns the number of rows affected."""
         cursor = self.connection.cursor()
@@ -85,7 +82,7 @@ class DatabaseManager:
             return None
         finally:
             cursor.close()
-    
+
     def delete(self, query, params=None):
         """Executes a DELETE query and returns the number of rows affected."""
         cursor = self.connection.cursor()
@@ -97,7 +94,3 @@ class DatabaseManager:
             return None
         finally:
             cursor.close()
-
-
-        
-
