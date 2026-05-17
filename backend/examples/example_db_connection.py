@@ -29,8 +29,8 @@ def test_database_connection():
         print(f"Sėkmė! \nNaujas vartotojas pridėtas su ID: {new_user_id}")
 
     except Exception as e:
-        print(f"❌ Klaida testuojant duomenų bazę: {e}")
-        print("Patikrinkite, ar veikia jūsų MySQL serveris ir ar teisingi .env duomenys.")
+        print(f"Klaida: {e}")
+        
 
     finally:
         db.close_connection()
