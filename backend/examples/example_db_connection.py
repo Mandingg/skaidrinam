@@ -22,6 +22,11 @@ def test_database_connection():
         print("Ar atsakymas yra sąrašas? ", isinstance(result_users, list))
 
         print("Bandoma atlikti įterpimo užklausą į 'users' lentelę...")
+        new_user_id = db.insert(
+            "INSERT INTO users (name, surname, email, password_hash, role, created_at) VALUES (%s, %s, %s, %s, %s, NOW());",
+            ("test_user", "test_surname", "test@example.com", "test_password", "user"),
+        )
+        print(f"Sėkmė! \nNaujas vartotojas pridėtas su ID: {new_user_id}")
 
     except Exception as e:
         print(f"❌ Klaida testuojant duomenų bazę: {e}")
