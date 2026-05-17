@@ -21,16 +21,20 @@ class UserService:
         results = self.db.fetch_all(query)
         return [UserModel(**user) for user in results]
 
-    def get_user_by(self, criterion: str, value):
+    def get_user_by(self, criteria: dict):
         """
-        Fetches a single user based on a given criterion (e.g., id, email).
-        Returns it as a UserModel instance or None if not found.
+        Fetches a single user from the database based on the provided criteria.
+        Criteria should be a dictionary where keys are column names and values are the values to match.
+        Returns a UserModel instance if a user is found, otherwise returns None.
         """
-        query = f"SELECT * FROM users WHERE {criterion} = %s"
-        result = self.db.fetch_one(
-            query,
-            (value),
-        )
+        if "password_hash" in criteria:
+            print("Warning: 'password_hash' should not be used as a search criterion." \
+            "It will be ignored.")
+            del criteria["password_hash"]
+        field_names = " AND ".join([f"{field} = %s" for field in criteria.keys()])
+        query = f"SELECT * FROM users WHERE {field_names}"
+        params = list(criteria.values())
+        result = self.db.fetch_one(query, params)
         if result:
             return UserModel(**result)
         return None
@@ -57,7 +61,7 @@ class UserService:
         query = f"UPDATE users SET {field_names} WHERE id = %s"
         params = list(updated_fields.values()) + [user_id]
         return self.db.update(query, params)
-    
+
     def delete_user(self, user_id: int):
         """
         Deletes a user from the database based on the provided user ID.
