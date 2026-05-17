@@ -1,5 +1,5 @@
-from db_connection import DBConnection
-from models.user import UserModel
+from app.services.db_connection import DatabaseManager
+from app.models.user import UserModel
 
 
 class UserService:
@@ -10,7 +10,7 @@ class UserService:
     """
 
     def __init__(self):
-        self.db = DBConnection()
+        self.db = DatabaseManager()
 
     def get_all_users(self):
         """

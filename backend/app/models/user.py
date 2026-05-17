@@ -8,4 +8,4 @@ class UserModel(BaseModel):
     surname: str = Field(min_length=1, max_length=55)
     email: EmailStr = Field(max_length=255)
     password_hash: str = Field(min_length=7, max_length=255)
-    role: Literal["admin", "user"] = "user"
+    role: Literal["ADMIN", "USER"] = "USER"
