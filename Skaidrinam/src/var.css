@@ -1,0 +1,92 @@
+/*----- GLOBAL STYLES -----*/
+* {
+    box-sizing: border-box;
+}
+body {
+    background-color: var(--background-light);
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+:root {
+/* =========================
+    COLORS
+  ========================== */
+
+    --color-primary: #457b3b;
+    --color-primary-dark: #3d6e35;
+
+    --color-secondary: #d1e2d3;
+
+    --color-error: #d64040;
+    --color-error-dark: #bf3a3a;
+
+    --color-neutral: #2d312e;  
+
+    --color-navigation: #f9f9f7;
+
+    --color-background: #ffffff;
+
+    /* =========================
+    TYPOGRAPHY
+  ========================== */
+
+    --font-family: sans-serif;
+
+    --text-display: 40px;
+    --text-h1: 28px;
+    --text-h2: 20px;
+    --text-body: 16px;
+    --text-small: 14px;
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* =========================
+    SPACING (4px system)
+  ========================== */
+
+    --space-1: 4px;
+    --space-2: 8px;  
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+
+    /* =========================
+    BORDER RADIUS
+  ========================== */
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-pill: 999px;
+
+    /* =========================
+    BORDERS
+  ========================== */
+
+    --border-color: #e5e7eb;
+
+    /* =========================
+    SHADOWS
+  ========================== */
+
+    --shadow-sm: 0px 4px 12px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0px 10px 25px rgba(0, 0, 0, 0.05);
+
+    /* =========================
+    LAYOUT
+  ========================== */
+
+    --sidebar-width: 240px;
+    --container-max-width: 1440px;
+
+    /* =========================
+    BREAKPOINTS
+  ========================== */
+
+    --bp-mobile: 600px;
+    --bp-tablet: 1024px;
+
+}
