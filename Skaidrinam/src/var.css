@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 body {
-    background-color: var(--background-light);
+    background-color: var(--color-background);
     max-width: 1440px;
     margin: 0 auto;
 }
@@ -33,7 +33,7 @@ body {
 
     --font-family: sans-serif;
 
-    --text-display: 40px;
+    --text-display: 32px;
     --text-h1: 28px;
     --text-h2: 20px;
     --text-body: 16px;
@@ -45,7 +45,7 @@ body {
     --font-weight-bold: 700;
 
     /* =========================
-    SPACING (4px system)
+    SPACING 
   ========================== */
 
     --space-1: 4px;
