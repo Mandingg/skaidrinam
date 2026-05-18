@@ -72,6 +72,7 @@ class DatabaseManager:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query, params)
+            self.connection.commit()  # AJ pridejau, nes be to neissaugodavo duomenu
             return cursor.lastrowid
         except connector.Error as err:
             print(f"Error executing query: {err}")
