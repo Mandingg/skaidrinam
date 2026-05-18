@@ -6,6 +6,9 @@
   flex-direction: column;
   height: 100vh;
   position: fixed;
+
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
 }
 
 /* LOGO */
@@ -67,7 +70,6 @@
 .nav-link.inactive:hover {
   background: var(--color-secondary);
 }
-
 
 /* USER */
 .user {
