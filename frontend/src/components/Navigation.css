@@ -6,28 +6,31 @@
   flex-direction: column;
   height: 100vh;
   position: fixed;
-
   line-height: var(--line-height-normal);
   letter-spacing: var(--letter-spacing-normal);
 }
 
+
 /* LOGO */
-.logo {
-  padding: var(--space-5);
+.navigation-logo {
+  padding: var(--space-3);
   display: flex;
-  align-items: center;
+  align-items: center;     
+  justify-content: center;   
   gap: var(--space-3);
 }
 
 .logo-icon {
   width: 32px;
   height: 32px;
+  object-fit: contain; 
 }
 
 .logo-text {
   font-size: var(--text-display);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
+  margin: 0; 
 }
 
 /* NAV */
@@ -60,7 +63,7 @@
 /* STATES */
 .active {
   background: var(--color-primary);
-  color: white;
+  color: var(--color-background);
 }
 
 .inactive {
@@ -112,7 +115,8 @@
 
 .user-email {
   font-size: var(--text-small);
-  color: gray;
+  color: var(--color-neutral);
+  opacity: 60%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

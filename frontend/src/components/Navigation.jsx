@@ -16,14 +16,14 @@ function Navigation() {
   return (
     <aside className="sidebar">
       {/* LOGO */}
-      <div className="logo">
+      <div className="navigation-logo">
         <img src={LogoIcon} alt="logo" className="logo-icon" />
         <h1 className="logo-text">Čekiukai</h1>
       </div>
 
       {/* NAV */}
       <nav className="nav">
-        <NavLink
+        <NavLink 
           to="/pagrindinis"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
@@ -64,7 +64,7 @@ function Navigation() {
         </NavLink>
 
         <NavLink to="/atsijungti" className="nav-link inactive">
-          <img src={LogoutIcon} alt="logout" className="icon" />
+          <img src={LogoutIcon} alt="logout" className="navigation-icon" />
           Atsijungti
         </NavLink>
       </nav>
