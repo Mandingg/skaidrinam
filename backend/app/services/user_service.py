@@ -68,4 +68,4 @@ class UserService:
         Returns the number of affected rows.
         """
         query = "DELETE FROM users WHERE id = %s"
-        return self.db.update(query, (user_id,))
+        return self.db.delete(query, (user_id,))

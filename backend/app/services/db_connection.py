@@ -84,6 +84,7 @@ class DatabaseManager:
         cursor = self.connection.cursor()
         try:
             cursor.execute(query, params)
+            self.connection.commit()
             return cursor.rowcount
         except connector.Error as err:
             print(f"Error executing query: {err}")
