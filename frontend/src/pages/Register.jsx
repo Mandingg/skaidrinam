@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { registerUser } from "../services/userService";
 
 function Register() {
@@ -11,8 +12,11 @@ function Register() {
     surname: "",
     email: "",
     password: "",
+    repeatPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
@@ -28,8 +32,19 @@ function Register() {
     setMessage("");
     setIsError(false);
 
+    if (formData.password !== formData.repeatPassword) {
+      setMessage("Slaptažodžiai nesutampa");
+      setIsError(true);
+      return;
+    }
+
     try {
-      const data = await registerUser(formData);
+      const data = await registerUser({
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email,
+        password: formData.password,
+      });
 
       setMessage(data.message);
       setIsError(false);
@@ -39,6 +54,7 @@ function Register() {
         surname: "",
         email: "",
         password: "",
+        repeatPassword: "",
       });
     } catch (error) {
       setMessage(error.message);
@@ -47,62 +63,164 @@ function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md p-8 border rounded-xl shadow-lg flex flex-col gap-4"
-      >
-        <h1 className="text-3xl font-bold text-center">Registracija</h1>
+    <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+      <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-sm p-8 md:p-12">
+        <div className="flex flex-col items-center mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 flex items-center justify-center">
+              <svg
+                fill="none"
+                height="40"
+                stroke="#437d38"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                width="40"
+              >
+                <path
+                  d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"
+                  fill="#f0fdf4"
+                />
+                <path d="M16 8h-8" />
+                <path d="M16 12h-8" />
+                <path d="M16 16h-8" />
+              </svg>
+            </div>
 
-        <input
-          name="name"
-          type="text"
-          placeholder="Vardas"
-          value={formData.name}
-          onChange={handleChange}
-          className="border p-3 rounded"
-        />
+            <h1 className="text-3xl font-semibold text-gray-900">
+              Čekiukai
+            </h1>
+          </div>
 
-        <input
-          name="surname"
-          type="text"
-          placeholder="Pavardė"
-          value={formData.surname}
-          onChange={handleChange}
-          className="border p-3 rounded"
-        />
+          <h2 className="text-xl font-semibold text-gray-800">
+            Registruotis
+          </h2>
+        </div>
 
-        <input
-          name="email"
-          type="email"
-          placeholder="El.paštas"
-          value={formData.email}
-          onChange={handleChange}
-          className="border p-3 rounded"
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              Vardas
+            </label>
+            <input
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Įveskite vardą"
+              required
+              type="text"
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+            />
+          </div>
 
-        <input
-          name="password"
-          type="password"
-          placeholder="Slaptažodis"
-          value={formData.password}
-          onChange={handleChange}
-          className="border p-3 rounded"
-        />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              Pavardė
+            </label>
+            <input
+              name="surname"
+              value={formData.surname}
+              onChange={handleChange}
+              placeholder="Įveskite pavardę"
+              required
+              type="text"
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="bg-black text-white py-3 rounded hover:opacity-90"
-        >
-          Registruotis
-        </button>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              El. paštas
+            </label>
+            <input
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Įveskite el. paštą"
+              required
+              type="email"
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              Slaptažodis
+            </label>
+            <div className="relative">
+              <input
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Įveskite slaptažodį"
+                required
+                type={showPassword ? "text" : "password"}
+                className="w-full px-4 py-2.5 pr-10 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                👁
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              Pakartokite slaptažodį
+            </label>
+            <div className="relative">
+              <input
+                name="repeatPassword"
+                value={formData.repeatPassword}
+                onChange={handleChange}
+                placeholder="Pakartokite slaptažodį"
+                required
+                type={showRepeatPassword ? "text" : "password"}
+                className="w-full px-4 py-2.5 pr-10 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                👁
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-[#437d38] text-white py-3 rounded-md font-semibold text-base hover:bg-[#386a2f] transition-colors duration-200"
+          >
+            Registruotis
+          </button>
+        </form>
 
         {message && (
-          <p className={`text-center ${isError ? "text-red-600" : "text-green-600"}`}>
+          <p
+            className={`mt-4 text-center text-sm font-medium ${isError ? "text-red-600" : "text-green-700"
+              }`}
+          >
             {message}
           </p>
         )}
-      </form>
+
+        <div className="mt-8 text-center">
+          <p className="text-sm text-gray-600">
+            Jau turite paskyrą?{" "}
+            <Link
+              to="/prisijungimas"
+              className="text-[#437d38] font-semibold hover:underline"
+            >
+              Prisijunkite
+            </Link>
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

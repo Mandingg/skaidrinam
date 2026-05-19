@@ -1,3 +1,5 @@
+from streamlit import user
+
 from app.services.db_connection import DatabaseManager
 from app.models.user import UserModel
 # ==AJ==
@@ -88,7 +90,9 @@ class UserService:
         if existing_user:
             raise ValueError(
                 "Toks el.paštas jau egzistuoja. Prašome naudoti kitą el.paštą.")
-
+        print("PASSWORD VALUE:", user.password)
+        print("PASSWORD LENGTH:", len(user.password))
+        print("PASSWORD BYTES:", len(user.password.encode("utf-8")))
         password_hash = self._hash_password(user.password)
 
         query = """
