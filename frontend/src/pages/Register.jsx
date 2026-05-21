@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { registerUser } from "../services/userService";
+import cekioLogo from "../assets/LogoIcon.svg"
 
 function Register() {
   useEffect(() => {
@@ -67,26 +68,11 @@ function Register() {
       <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-sm p-8 md:p-12">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 flex items-center justify-center">
-              <svg
-                fill="none"
-                height="40"
-                stroke="#437d38"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                width="40"
-              >
-                <path
-                  d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"
-                  fill="#f0fdf4"
-                />
-                <path d="M16 8h-8" />
-                <path d="M16 12h-8" />
-                <path d="M16 16h-8" />
-              </svg>
-            </div>
+            <img
+              src={cekioLogo}
+              alt="Čekiukai logo"
+              className="w-10 h-10 text-[#437d38]"
+            />
 
             <h1 className="text-3xl font-semibold text-gray-900">
               Čekiukai
