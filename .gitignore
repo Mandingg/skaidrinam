@@ -18,6 +18,8 @@ env/
 .env
 .env.*
 .env
+backend/.venvScriptsactivate/
+backend/pyvenv.cfg
 
 # Python cache
 .mypy_cache/
