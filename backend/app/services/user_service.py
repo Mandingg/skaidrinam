@@ -137,5 +137,4 @@ class UserService:
         Returns the number of affected rows.
         """
         query = "DELETE FROM users WHERE id = %s"
-        # ==AJ== pataisiau iš update į delete
-        return self.db.delete(query, (user_id,))
+        return self.db.update(query, (user_id,))
