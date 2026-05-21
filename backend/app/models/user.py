@@ -18,10 +18,22 @@ class UserCreateModel(BaseModel):
     email: EmailStr = Field(max_length=255)
     password: str = Field(min_length=8, max_length=72)
 
+class UserUpdateModel(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=55)
+    surname: str | None = Field(default=None, min_length=1, max_length=55)
+    email: EmailStr | None = Field(default=None, max_length=255)
+    password: str | None = Field(default=None, min_length=8, max_length=72)
 
 class UserResponseModel(BaseModel):
     id: int
     name: str
     email: EmailStr
     message: str = "Paskyra sukurta sėkmingai"
+
+class UserUpdateResponseModel(BaseModel):
+    id: int
+    name: str
+    surname: str
+    email: EmailStr
+    message: str = "Paskyra atnaujinta"
 # ==AJ==
