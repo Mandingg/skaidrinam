@@ -27,6 +27,7 @@ def register_user(user: UserCreateModel):
             detail="Įvyko serverio klaida kuriant paskyrą"
         )
 
+
 @router.put("/{user_id}", status_code=status.HTTP_200_OK)
 def update_user(user_id: int, user_update: UserUpdateModel):
     try:

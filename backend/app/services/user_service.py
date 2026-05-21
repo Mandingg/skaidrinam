@@ -145,12 +145,25 @@ class UserService:
         update_fields = {}
 
         if user.name is not None:
+            if user.name == existing_user.name:
+                raise ValueError(
+                    "Įvestas toks pats vardas, kaip ir dabar naudojamas. Prašome įvesti kitą vardą."
+                )
             update_fields["name"] = user.name
 
         if user.surname is not None:
+            if user.surname == existing_user.surname:
+                raise ValueError(
+                    "Įvestas toks pats pavardė, kaip ir dabar naudojamas. Prašome įvesti kitą pavardę."
+                )
             update_fields["surname"] = user.surname
 
         if user.email is not None:
+            if user.email == existing_user.email:
+                raise ValueError(
+                    "Įvestas toks pats el.paštas, kaip ir dabar naudojamas. Prašome įvesti kitą el.paštą."
+                )
+
             email_owner = self._get_user_by_email(user.email)
 
             if email_owner and email_owner.id != user_id:
