@@ -20,6 +20,9 @@ env/
 .env
 backend/.venvScriptsactivate/
 backend/pyvenv.cfg
+backend/Lib/
+backend/Scripts/
+backend/pyvenv.cfg
 
 # Python cache
 .mypy_cache/
