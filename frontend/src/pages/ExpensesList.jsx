@@ -2,202 +2,194 @@ import React, { useState, useEffect } from 'react';
 import TopAppBar from './TopAppBar';
 import SideNavBar from './SideNavBar';
 import ExpenseFilters from './ExpenseFilters';
+import { getUserCategories } from '../services/expenseService';
 
-// Laikinieji išlaidų duomenys (Mock data). 
-// Atkreipk dėmesį: dabar čia saugomas category_id (skaičius), kuris susijęs su tavo categories lentele!
-const INITIAL_EXPENSES = [
-  { id: 74291, title: 'Pieno produktai, Duona', shop: 'Maxima XX', date: '2023-10-28', category_id: 1, amount: 24.50, badge: 'M' },
-  { id: 12093, title: 'Valymo priemonės', shop: 'Lidl', date: '2023-10-27', category_id: 2, amount: 12.15, badge: 'N' },
-  { id: 88212, title: 'Degalai A95', shop: 'Circle K', date: '2023-10-25', category_id: 3, amount: 65.00, badge: 'C' },
-  { id: 55410, title: 'Vitaminai C, D3', shop: 'Eurovaistinė', date: '2023-10-24', category_id: 4, amount: 32.40, badge: 'S' }
-];
 
 function ExpensesPage() {
-  const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
-  const [sortBy, setSortBy] = useState('DATE_DESC');
-  const [categories, setCategories] = useState([]);
+    const [expenses, setExpenses] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('ALL');
+    const [sortBy, setSortBy] = useState('DATE_DESC');
+    const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/expenses/categories?user_id=1')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Nepavyko gauti kategorijų');
+    useEffect(() => {
+        const loadCategories = async () => {
+            const data = await getUserCategories(1);
+            setCategories(data);
+        };
+        loadCategories()
+    }, []);
+
+    useEffect(() => {
+        const loadExpenses = async ()=>{
+
         }
-        return response.json();
-      })
-      .then(data => {
-        setCategories(data);
-      })
-      .catch(error => console.error('Klaida užkraunant kategorijas iš API:', error));
-  }, []);
-
-  // --- Filtravimo ir Rūšiavimo variklis ---
-  const filteredAndSortedExpenses = expenses
-    .filter(expense => {
-      // 1. Paieška pagal pavadinimą arba parduotuvę
-      const matchesSearch = 
-        expense.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        expense.shop.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      // 2. Filtravimas pagal kategorijos ID!
-      // Kadangi <select> grąžina tekstą, o mūsų laukas yra skaičius, suvienodiname tipus su String()
-      const matchesCategory = 
-        selectedCategory === 'ALL' || 
-        String(expense.category_id) === String(selectedCategory);
-      
-      return matchesSearch && matchesCategory;
     })
-    .sort((a, b) => {
-      // 3. Rūšiavimas
-      if (sortBy === 'DATE_DESC') return new Date(b.date) - new Date(a.date);
-      if (sortBy === 'DATE_ASC') return new Date(a.date) - new Date(b.date);
-      if (sortBy === 'PRICE_ASC') return a.amount - b.amount;
-      if (sortBy === 'PRICE_DESC') return b.amount - a.amount;
-      return 0;
-    });
 
-  // Pagalbinė funkcija surasti kategorijos pavadinimui ir pritaikyti stiliui pagal ID
-  const getCategoryBadge = (categoryId) => {
-    // Surandame kategorijos objektą mūsų categories sąraše
-    const foundCategory = categories.find(cat => String(cat.id) === String(categoryId));
-    const categoryName = foundCategory ? foundCategory.name.toUpperCase() : 'KITA';
+    const filteredAndSortedExpenses = expenses
+        .filter(expense => {
+            // 1. Paieška pagal pavadinimą arba parduotuvę
+            const matchesSearch =
+                expense.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                expense.shop.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Priskiriame spalvas pagal pavadinimą (iš tavo HTML dizaino)
-    let styles = 'bg-slate-100 text-slate-600';
-    if (categoryName.includes('MAISTAS')) styles = 'bg-brand-green-tint text-primary';
-    if (categoryName.includes('NAMAI')) styles = 'bg-surface-container-high text-on-surface-variant';
-    if (categoryName.includes('TRANSPORTAS')) styles = 'bg-secondary-fixed text-on-secondary-fixed-variant';
-    if (categoryName.includes('SVEIKATA')) styles = 'bg-error-red-tint text-error-red';
+            // 2. Filtravimas pagal kategorijos ID!
+            // Kadangi <select> grąžina tekstą, o mūsų laukas yra skaičius, suvienodiname tipus su String()
+            const matchesCategory =
+                selectedCategory === 'ALL' ||
+                String(expense.category_id) === String(selectedCategory);
+
+            return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => {
+            // 3. Rūšiavimas
+            if (sortBy === 'DATE_DESC') return new Date(b.date) - new Date(a.date);
+            if (sortBy === 'DATE_ASC') return new Date(a.date) - new Date(b.date);
+            if (sortBy === 'PRICE_ASC') return a.amount - b.amount;
+            if (sortBy === 'PRICE_DESC') return b.amount - a.amount;
+            return 0;
+        });
+
+    // Pagalbinė funkcija surasti kategorijos pavadinimui ir pritaikyti stiliui pagal ID
+    const getCategoryBadge = (categoryId) => {
+        // Surandame kategorijos objektą mūsų categories sąraše
+        const foundCategory = categories.find(cat => String(cat.id) === String(categoryId));
+        const categoryName = foundCategory ? foundCategory.name.toUpperCase() : 'KITA';
+
+        // Priskiriame spalvas pagal pavadinimą (iš tavo HTML dizaino)
+        let styles = 'bg-slate-100 text-slate-600';
+        if (categoryName.includes('MAISTAS')) styles = 'bg-brand-green-tint text-primary';
+        if (categoryName.includes('NAMAI')) styles = 'bg-surface-container-high text-on-surface-variant';
+        if (categoryName.includes('TRANSPORTAS')) styles = 'bg-secondary-fixed text-on-secondary-fixed-variant';
+        if (categoryName.includes('SVEIKATA')) styles = 'bg-error-red-tint text-error-red';
+
+        return (
+            <span className={`px-sm py-xs font-bold text-micro-label rounded-full uppercase ${styles}`}>
+                {categoryName.toLowerCase()}
+            </span>
+        );
+    };
 
     return (
-      <span className={`px-sm py-xs font-bold text-micro-label rounded-full uppercase ${styles}`}>
-        {categoryName.toLowerCase()}
-      </span>
+        <div className="font-body-md text-body-md bg-surface-page min-h-screen">
+
+            {/* 🛑 Iškelta išorinė viršutinė juosta */}
+            <TopAppBar />
+
+            <div className="flex min-h-[calc(100vh-64px)]">
+
+                {/* 🗂️ Iškeltas išorinis šoninis meniu */}
+                <SideNavBar />
+
+                {/* 📈 Pagrindinis turinys */}
+                <main className="flex-1 ml-64 p-xl max-w-container-max mx-auto w-full">
+
+                    <section className="mb-xl">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-lg">
+                            <div>
+                                <h1 className="font-display-lg text-display-lg text-on-surface mb-xs">Mano išlaidos</h1>
+                                <p className="text-body-lg text-on-surface-variant">Peržiūrėkite ir valdykite visus užregistruotus kvitus.</p>
+                            </div>
+                        </div>
+
+                        {/* 🎛️ Iškeltas filtrų skydelis (perduodame ir gautas kategorijas) */}
+                        <ExpenseFilters
+                            searchTerm={searchTerm}
+                            setSearchTerm={setSearchTerm}
+                            selectedCategory={selectedCategory}
+                            setSelectedCategory={setSelectedCategory}
+                            sortBy={sortBy}
+                            setSortBy={setSortBy}
+                            categories={categories}
+                        />
+                    </section>
+
+                    {/* KVITŲ LENTELĖ */}
+                    <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+                        <div className="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
+                            <h3 className="font-headline-sm text-headline-sm text-on-surface">Paskutiniai kvitai</h3>
+                            <button className="flex items-center gap-xs px-sm py-xs rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant font-label-md">
+                                <span className="material-symbols-outlined text-[20px]">download</span>
+                                <span>Eksportuoti CSV</span>
+                            </button>
+                        </div>
+
+                        <div className="overflow-x-auto custom-scrollbar">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-surface-container-low/50">
+                                        <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant">Pavadinimas</th>
+                                        <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Parduotuvė</th>
+                                        <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Data</th>
+                                        <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Kategorija</th>
+                                        <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant text-right">Suma</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-outline-variant">
+                                    {filteredAndSortedExpenses.map((expense) => (
+                                        <tr key={expense.id} className="hover:bg-surface-container-low transition-colors group">
+                                            <td className="px-xl py-lg">
+                                                <div className="flex items-center gap-md">
+                                                    <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">
+                                                        {expense.badge}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-bold text-on-surface">{expense.title}</div>
+                                                        <div className="text-caption text-on-surface-variant">Kvitas #{expense.id}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-md py-lg">
+                                                <div className="flex items-center gap-xs">
+                                                    <span className="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
+                                                    <span className="text-on-surface">{expense.shop}</span>
+                                                </div>
+                                            </td>
+                                            <td className="px-md py-lg text-on-surface-variant">{expense.date}</td>
+                                            <td className="px-md py-lg">
+                                                {/* Dinamiškai sugeneruojama kategorijos etiketė pagal ID */}
+                                                {getCategoryBadge(expense.category_id)}
+                                            </td>
+                                            <td className="px-xl py-lg text-right font-bold text-on-surface">{expense.amount.toFixed(2)} €</td>
+                                        </tr>
+                                    ))}
+
+                                    {filteredAndSortedExpenses.length === 0 && (
+                                        <tr>
+                                            <td colSpan="5" className="px-xl py-lg text-center text-on-surface-variant">
+                                                Nėra kvitų, atitinkančių parinktus filtrus.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
+                            <span className="font-label-md text-label-md text-on-surface-variant">
+                                Rodoma 1-{filteredAndSortedExpenses.length} iš {filteredAndSortedExpenses.length} įrašų
+                            </span>
+                            <div className="flex gap-xs">
+                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
+                                    <span className="material-symbols-outlined">chevron_left</span>
+                                </button>
+                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-primary bg-primary text-on-primary font-bold">1</button>
+                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
+                                    <span className="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <div className="fixed bottom-lg right-lg z-50">
+                <button className="w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center group">
+                    <span className="material-symbols-outlined text-[32px] group-hover:rotate-90 transition-transform duration-300">add</span>
+                </button>
+            </div>
+        </div>
     );
-  };
-
-  return (
-    <div className="font-body-md text-body-md bg-surface-page min-h-screen">
-      
-      {/* 🛑 Iškelta išorinė viršutinė juosta */}
-      <TopAppBar />
-
-      <div className="flex min-h-[calc(100vh-64px)]">
-        
-        {/* 🗂️ Iškeltas išorinis šoninis meniu */}
-        <SideNavBar />
-
-        {/* 📈 Pagrindinis turinys */}
-        <main className="flex-1 ml-64 p-xl max-w-container-max mx-auto w-full">
-          
-          <section className="mb-xl">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-lg">
-              <div>
-                <h1 className="font-display-lg text-display-lg text-on-surface mb-xs">Mano išlaidos</h1>
-                <p className="text-body-lg text-on-surface-variant">Peržiūrėkite ir valdykite visus užregistruotus kvitus.</p>
-              </div>
-            </div>
-
-            {/* 🎛️ Iškeltas filtrų skydelis (perduodame ir gautas kategorijas) */}
-            <ExpenseFilters 
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              categories={categories}
-            />
-          </section>
-
-          {/* KVITŲ LENTELĖ */}
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
-            <div className="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
-              <h3 className="font-headline-sm text-headline-sm text-on-surface">Paskutiniai kvitai</h3>
-              <button className="flex items-center gap-xs px-sm py-xs rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant font-label-md">
-                <span className="material-symbols-outlined text-[20px]">download</span>
-                <span>Eksportuoti CSV</span>
-              </button>
-            </div>
-
-            <div className="overflow-x-auto custom-scrollbar">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface-container-low/50">
-                    <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant">Pavadinimas</th>
-                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Parduotuvė</th>
-                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Data</th>
-                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Kategorija</th>
-                    <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant text-right">Suma</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-outline-variant">
-                  {filteredAndSortedExpenses.map((expense) => (
-                    <tr key={expense.id} className="hover:bg-surface-container-low transition-colors group">
-                      <td className="px-xl py-lg">
-                        <div className="flex items-center gap-md">
-                          <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">
-                            {expense.badge}
-                          </div>
-                          <div>
-                            <div className="font-bold text-on-surface">{expense.title}</div>
-                            <div className="text-caption text-on-surface-variant">Kvitas #{expense.id}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-md py-lg">
-                        <div className="flex items-center gap-xs">
-                          <span className="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
-                          <span className="text-on-surface">{expense.shop}</span>
-                        </div>
-                      </td>
-                      <td className="px-md py-lg text-on-surface-variant">{expense.date}</td>
-                      <td className="px-md py-lg">
-                        {/* Dinamiškai sugeneruojama kategorijos etiketė pagal ID */}
-                        {getCategoryBadge(expense.category_id)}
-                      </td>
-                      <td className="px-xl py-lg text-right font-bold text-on-surface">{expense.amount.toFixed(2)} €</td>
-                    </tr>
-                  ))}
-
-                  {filteredAndSortedExpenses.length === 0 && (
-                    <tr>
-                      <td colSpan="5" className="px-xl py-lg text-center text-on-surface-variant">
-                        Nėra kvitų, atitinkančių parinktus filtrus.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
-              <span className="font-label-md text-label-md text-on-surface-variant">
-                Rodoma 1-{filteredAndSortedExpenses.length} iš {filteredAndSortedExpenses.length} įrašų
-              </span>
-              <div className="flex gap-xs">
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
-                  <span className="material-symbols-outlined">chevron_left</span>
-                </button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-primary bg-primary text-on-primary font-bold">1</button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
-                  <span className="material-symbols-outlined">chevron_right</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-
-      <div className="fixed bottom-lg right-lg z-50">
-        <button className="w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center group">
-          <span className="material-symbols-outlined text-[32px] group-hover:rotate-90 transition-transform duration-300">add</span>
-        </button>
-      </div>
-    </div>
-  );
 }
 
 export default ExpensesPage;

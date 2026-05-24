@@ -63,3 +63,11 @@ export async function registerUser(formData) {
 
   return data;
 }
+
+export const getCurrentUserId = () => {
+  // Pavyzdžiui, ateityje:
+  // const token = localStorage.getItem('token');
+  // return decodeToken(token).userId;
+  
+  return 1; 
+};
