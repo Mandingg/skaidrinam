@@ -1,268 +1,203 @@
-return(
-<div class="flex items-center gap-md">
-    <div class="hidden md:flex items-center bg-surface-container-low px-sm py-xs rounded-lg border border-outline-variant">
-        <span class="material-symbols-outlined text-on-surface-variant text-sm mr-xs">search</span>
-            <input class="bg-transparent border-none focus:ring-0 text-body-md w-64" placeholder="Ieškoti išlaidų..." type="text" />
+import React, { useState, useEffect } from 'react';
+import TopAppBar from './TopAppBar';
+import SideNavBar from './SideNavBar';
+import ExpenseFilters from './ExpenseFilters';
+
+// Laikinieji išlaidų duomenys (Mock data). 
+// Atkreipk dėmesį: dabar čia saugomas category_id (skaičius), kuris susijęs su tavo categories lentele!
+const INITIAL_EXPENSES = [
+  { id: 74291, title: 'Pieno produktai, Duona', shop: 'Maxima XX', date: '2023-10-28', category_id: 1, amount: 24.50, badge: 'M' },
+  { id: 12093, title: 'Valymo priemonės', shop: 'Lidl', date: '2023-10-27', category_id: 2, amount: 12.15, badge: 'N' },
+  { id: 88212, title: 'Degalai A95', shop: 'Circle K', date: '2023-10-25', category_id: 3, amount: 65.00, badge: 'C' },
+  { id: 55410, title: 'Vitaminai C, D3', shop: 'Eurovaistinė', date: '2023-10-24', category_id: 4, amount: 32.40, badge: 'S' }
+];
+
+function ExpensesPage() {
+  const [expenses, setExpenses] = useState(INITIAL_EXPENSES);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [sortBy, setSortBy] = useState('DATE_DESC');
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/api/expenses/categories?user_id=1')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Nepavyko gauti kategorijų');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setCategories(data);
+      })
+      .catch(error => console.error('Klaida užkraunant kategorijas iš API:', error));
+  }, []);
+
+  // --- Filtravimo ir Rūšiavimo variklis ---
+  const filteredAndSortedExpenses = expenses
+    .filter(expense => {
+      // 1. Paieška pagal pavadinimą arba parduotuvę
+      const matchesSearch = 
+        expense.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        expense.shop.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // 2. Filtravimas pagal kategorijos ID!
+      // Kadangi <select> grąžina tekstą, o mūsų laukas yra skaičius, suvienodiname tipus su String()
+      const matchesCategory = 
+        selectedCategory === 'ALL' || 
+        String(expense.category_id) === String(selectedCategory);
+      
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      // 3. Rūšiavimas
+      if (sortBy === 'DATE_DESC') return new Date(b.date) - new Date(a.date);
+      if (sortBy === 'DATE_ASC') return new Date(a.date) - new Date(b.date);
+      if (sortBy === 'PRICE_ASC') return a.amount - b.amount;
+      if (sortBy === 'PRICE_DESC') return b.amount - a.amount;
+      return 0;
+    });
+
+  // Pagalbinė funkcija surasti kategorijos pavadinimui ir pritaikyti stiliui pagal ID
+  const getCategoryBadge = (categoryId) => {
+    // Surandame kategorijos objektą mūsų categories sąraše
+    const foundCategory = categories.find(cat => String(cat.id) === String(categoryId));
+    const categoryName = foundCategory ? foundCategory.name.toUpperCase() : 'KITA';
+
+    // Priskiriame spalvas pagal pavadinimą (iš tavo HTML dizaino)
+    let styles = 'bg-slate-100 text-slate-600';
+    if (categoryName.includes('MAISTAS')) styles = 'bg-brand-green-tint text-primary';
+    if (categoryName.includes('NAMAI')) styles = 'bg-surface-container-high text-on-surface-variant';
+    if (categoryName.includes('TRANSPORTAS')) styles = 'bg-secondary-fixed text-on-secondary-fixed-variant';
+    if (categoryName.includes('SVEIKATA')) styles = 'bg-error-red-tint text-error-red';
+
+    return (
+      <span className={`px-sm py-xs font-bold text-micro-label rounded-full uppercase ${styles}`}>
+        {categoryName.toLowerCase()}
+      </span>
+    );
+  };
+
+  return (
+    <div className="font-body-md text-body-md bg-surface-page min-h-screen">
+      
+      {/* 🛑 Iškelta išorinė viršutinė juosta */}
+      <TopAppBar />
+
+      <div className="flex min-h-[calc(100vh-64px)]">
+        
+        {/* 🗂️ Iškeltas išorinis šoninis meniu */}
+        <SideNavBar />
+
+        {/* 📈 Pagrindinis turinys */}
+        <main className="flex-1 ml-64 p-xl max-w-container-max mx-auto w-full">
+          
+          <section className="mb-xl">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-lg">
+              <div>
+                <h1 className="font-display-lg text-display-lg text-on-surface mb-xs">Mano išlaidos</h1>
+                <p className="text-body-lg text-on-surface-variant">Peržiūrėkite ir valdykite visus užregistruotus kvitus.</p>
+              </div>
+            </div>
+
+            {/* 🎛️ Iškeltas filtrų skydelis (perduodame ir gautas kategorijas) */}
+            <ExpenseFilters 
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              categories={categories}
+            />
+          </section>
+
+          {/* KVITŲ LENTELĖ */}
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+            <div className="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
+              <h3 className="font-headline-sm text-headline-sm text-on-surface">Paskutiniai kvitai</h3>
+              <button className="flex items-center gap-xs px-sm py-xs rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant font-label-md">
+                <span className="material-symbols-outlined text-[20px]">download</span>
+                <span>Eksportuoti CSV</span>
+              </button>
+            </div>
+
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-surface-container-low/50">
+                    <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant">Pavadinimas</th>
+                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Parduotuvė</th>
+                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Data</th>
+                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Kategorija</th>
+                    <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant text-right">Suma</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant">
+                  {filteredAndSortedExpenses.map((expense) => (
+                    <tr key={expense.id} className="hover:bg-surface-container-low transition-colors group">
+                      <td className="px-xl py-lg">
+                        <div className="flex items-center gap-md">
+                          <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">
+                            {expense.badge}
+                          </div>
+                          <div>
+                            <div className="font-bold text-on-surface">{expense.title}</div>
+                            <div className="text-caption text-on-surface-variant">Kvitas #{expense.id}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-md py-lg">
+                        <div className="flex items-center gap-xs">
+                          <span className="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
+                          <span className="text-on-surface">{expense.shop}</span>
+                        </div>
+                      </td>
+                      <td className="px-md py-lg text-on-surface-variant">{expense.date}</td>
+                      <td className="px-md py-lg">
+                        {/* Dinamiškai sugeneruojama kategorijos etiketė pagal ID */}
+                        {getCategoryBadge(expense.category_id)}
+                      </td>
+                      <td className="px-xl py-lg text-right font-bold text-on-surface">{expense.amount.toFixed(2)} €</td>
+                    </tr>
+                  ))}
+
+                  {filteredAndSortedExpenses.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="px-xl py-lg text-center text-on-surface-variant">
+                        Nėra kvitų, atitinkančių parinktus filtrus.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
+              <span className="font-label-md text-label-md text-on-surface-variant">
+                Rodoma 1-{filteredAndSortedExpenses.length} iš {filteredAndSortedExpenses.length} įrašų
+              </span>
+              <div className="flex gap-xs">
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
+                  <span className="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-primary bg-primary text-on-primary font-bold">1</button>
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
+                  <span className="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <div className="fixed bottom-lg right-lg z-50">
+        <button className="w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center group">
+          <span className="material-symbols-outlined text-[32px] group-hover:rotate-90 transition-transform duration-300">add</span>
+        </button>
+      </div>
     </div>
-    <div class="flex gap-sm">
-<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors cursor-pointer active:scale-95">
-<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
-</button>
-<button class="p-xs rounded-full hover:bg-surface-container-low transition-colors cursor-pointer active:scale-95">
-<span class="material-symbols-outlined text-on-surface-variant">help</span>
-</button>
-<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant ml-xs">
-<img alt="Vartotojo profilis" data-alt="A professional and clean studio headshot of a middle-aged man with a friendly expression. He is set against a soft, neutral studio background that aligns with a high-end corporate financial application. The lighting is balanced and professional, utilizing soft key lights to create a warm and approachable feeling. The aesthetic is modern and minimalistic, matching the organic green and neutral palette of the financial management UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMBo6Hw1m8iUK_mbYZKxVMq5v5okV6bii7F26Fm6sZJ_1W5hMBYuRAyv9mfVtgmIkmUGq59tT0Jo5oFkNHr3OxgB4CuWZ1vKqUm2s0oifGFfATFAERnGDlMt7fZuOhsBCwiK1HPsfY1DsLylaMPYLrEwSBqaTFa9VvlhTJoQUCfeKxuU4um6LKoRPN5CbtuJHTP_bkAFDSFWPeR2OTkCVhcT_E0aQvvkiS2NdwDvMnFyGy_mynRQiHnreCiQOeDC5dG412nJ_jnNI">
-</div>
-</div>
-</div>
-</header>
-<div class="flex min-h-[calc(100vh-64px)]">
-<!-- SideNavBar -->
-<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col p-md bg-surface-sidebar border-r border-outline-variant z-40">
-<div class="flex flex-col gap-xs mb-lg">
-<div class="flex items-center gap-sm p-sm mb-md">
-<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
-<span class="material-symbols-outlined text-on-primary-container">receipt_long</span>
-</div>
-<div>
-<div class="font-headline-sm text-headline-sm font-bold text-primary">Čekiukai</div>
-<div class="font-caption text-caption text-on-surface-variant">Finansų apskaita</div>
-</div>
-</div>
-<nav class="flex flex-col gap-xs">
-<a class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-98" href="#">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
-</a>
-<a class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-98" href="#">
-<span class="material-symbols-outlined">insights</span>
-<span class="font-label-lg text-label-lg">Analytics</span>
-</a>
-<a class="flex items-center gap-md p-sm bg-primary-fixed text-on-primary-fixed rounded-lg font-bold transition-all active:scale-98" href="#">
-<span class="material-symbols-outlined">verified</span>
-<span class="font-label-lg text-label-lg">Warranties</span>
-</a>
-<a class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all active:scale-98" href="#">
-<span class="material-symbols-outlined">person</span>
-<span class="font-label-lg text-label-lg">Profile</span>
-</a>
-</nav>
-</div>
-<button class="h-14 w-full bg-primary text-on-primary font-bold rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-sm mt-auto mb-lg">
-<span class="material-symbols-outlined">add_a_photo</span>
-                Scan Receipt
-            </button>
-<div class="pt-md border-t border-outline-variant flex flex-col gap-xs">
-<a class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all" href="#">
-<span class="material-symbols-outlined">settings</span>
-<span class="font-label-lg text-label-lg">Settings</span>
-</a>
-<a class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all text-error" href="#">
-<span class="material-symbols-outlined">logout</span>
-<span class="font-label-lg text-label-lg">Logout</span>
-</a>
-</div>
-</aside>
-<!-- Main Content Area -->
-<main class="flex-1 ml-64 p-xl max-w-container-max mx-auto">
-<!-- Page Header & Filters -->
-<section class="mb-xl">
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-lg">
-<div>
-<h1 class="font-display-lg text-display-lg text-on-surface mb-xs">Mano išlaidos</h1>
-<p class="text-body-lg text-on-surface-variant">Peržiūrėkite ir valdykite visus užregistruotus kvitus.</p>
-</div>
-</div>
-<!-- Filter Controls Grid -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-lg p-lg bg-surface-container-low border border-outline-variant rounded-xl">
-<!-- Search Input -->
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Ieškoti kvitų</label>
-<div class="relative">
-<input class="h-14 w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Pvz. Maxima..." type="text">
-<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-</div>
-</div>
-<!-- Date Range -->
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Laikotarpis</label>
-<div class="relative">
-<input class="h-14 w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-xl focus:border-primary focus:ring-1 focus:ring-primary transition-all" type="text" value="2023-10-01 - 2023-10-31">
-<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">calendar_month</span>
-</div>
-</div>
-<!-- Category Filter -->
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Kategorija</label>
-<div class="relative">
-<select class="h-14 w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-xl focus:border-primary focus:ring-1 focus:ring-primary appearance-none transition-all">
-<option>Visos kategorijos</option>
-<option>Maistas</option>
-<option>Transportas</option>
-<option>Namai</option>
-</select>
-<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
-<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">category</span>
-</div>
-</div>
-<!-- Sorting Menu -->
-<div class="flex flex-col gap-xs">
-<label class="font-label-md text-label-md text-on-surface-variant">Rūšiuoti pagal</label>
-<div class="relative">
-<select class="h-14 w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-xl focus:border-primary focus:ring-1 focus:ring-primary appearance-none transition-all">
-<option>Data (naujausi viršuje)</option>
-<option>Data (seniausi viršuje)</option>
-<option>Kaina (didėjanti)</option>
-<option>Kaina (mažėjanti)</option>
-</select>
-<span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">sort</span>
-<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">swap_vert</span>
-</div>
-</div>
-</div>
-</section>
-<!-- Stats/Bento Grid Area (Visual Depth) -->
-<!-- Expenses List Card -->
-<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
-<div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Paskutiniai kvitai</h3>
-<div class="flex gap-xs"><button class="flex items-center gap-xs px-sm py-xs rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant font-label-md">
-<span class="material-symbols-outlined text-[20px]">download</span>
-<span class="">Eksportuoti CSV</span>
-</button>
+  );
+}
 
-
-</div>
-</div>
-<div class="overflow-x-auto custom-scrollbar">
-<table class="w-full text-left border-collapse">
-<thead>
-<tr class="bg-surface-container-low/50">
-<th class="px-xl py-md font-label-lg text-label-lg text-on-surface-variant">Pavadinimas</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Parduotuvė</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Data</th>
-<th class="px-md py-md font-label-lg text-label-lg text-on-surface-variant">Kategorija</th>
-<th class="px-xl py-md font-label-lg text-label-lg text-on-surface-variant text-right">Suma</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-outline-variant">
-<!-- Row 1 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-xl py-lg">
-<div class="flex items-center gap-md">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">M</div>
-<div>
-<div class="font-bold text-on-surface">Pieno produktai, Duona</div>
-<div class="text-caption text-on-surface-variant">Kvitas #74291</div>
-</div>
-</div>
-</td>
-<td class="px-md py-lg">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
-<span class="text-on-surface">Maxima XX</span>
-</div>
-</td>
-<td class="px-md py-lg text-on-surface-variant">2023-10-28</td>
-<td class="px-md py-lg">
-<span class="px-sm py-xs bg-brand-green-tint text-primary font-bold text-micro-label rounded-full uppercase">Maistas</span>
-</td>
-<td class="px-xl py-lg text-right font-bold text-on-surface">24.50 €</td>
-</tr>
-<!-- Row 2 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-xl py-lg">
-<div class="flex items-center gap-md">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">N</div>
-<div>
-<div class="font-bold text-on-surface">Valymo priemonės</div>
-<div class="text-caption text-on-surface-variant">Kvitas #12093</div>
-</div>
-</div>
-</td>
-<td class="px-md py-lg">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
-<span class="text-on-surface">Lidl</span>
-</div>
-</td>
-<td class="px-md py-lg text-on-surface-variant">2023-10-27</td>
-<td class="px-md py-lg">
-<span class="px-sm py-xs bg-surface-container-high text-on-surface-variant font-bold text-micro-label rounded-full uppercase">Namai</span>
-</td>
-<td class="px-xl py-lg text-right font-bold text-on-surface">12.15 €</td>
-</tr>
-<!-- Row 3 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-xl py-lg">
-<div class="flex items-center gap-md">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">C</div>
-<div>
-<div class="font-bold text-on-surface">Degalai A95</div>
-<div class="text-caption text-on-surface-variant">Kvitas #88212</div>
-</div>
-</div>
-</td>
-<td class="px-md py-lg">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
-<span class="text-on-surface">Circle K</span>
-</div>
-</td>
-<td class="px-md py-lg text-on-surface-variant">2023-10-25</td>
-<td class="px-md py-lg">
-<span class="px-sm py-xs bg-secondary-fixed text-on-secondary-fixed-variant font-bold text-micro-label rounded-full uppercase">Transportas</span>
-</td>
-<td class="px-xl py-lg text-right font-bold text-on-surface">65.00 €</td>
-</tr>
-<!-- Row 4 -->
-<tr class="hover:bg-surface-container-low transition-colors group">
-<td class="px-xl py-lg">
-<div class="flex items-center gap-md">
-<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">S</div>
-<div>
-<div class="font-bold text-on-surface">Vitaminai C, D3</div>
-<div class="text-caption text-on-surface-variant">Kvitas #55410</div>
-</div>
-</div>
-</td>
-<td class="px-md py-lg">
-<div class="flex items-center gap-xs">
-<span class="material-symbols-outlined text-on-surface-variant text-[18px]">store</span>
-<span class="text-on-surface">Eurovaistinė</span>
-</div>
-</td>
-<td class="px-md py-lg text-on-surface-variant">2023-10-24</td>
-<td class="px-md py-lg">
-<span class="px-sm py-xs bg-error-red-tint text-error-red font-bold text-micro-label rounded-full uppercase">Sveikata</span>
-</td>
-<td class="px-xl py-lg text-right font-bold text-on-surface">32.40 €</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
-<span class="font-label-md text-label-md text-on-surface-variant">Rodoma 1-4 iš 42 įrašų</span>
-<div class="flex gap-xs">
-<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-primary bg-primary text-on-primary font-bold">1</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors">2</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors">3</button>
-<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition-colors">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
-</div>
-</div>
-</main>
-</div>
-<!-- Floating Action Button (FAB) -->
-<div class="fixed bottom-lg right-lg z-50">
-<button class="w-16 h-16 bg-primary text-on-primary rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center group">
-<span class="material-symbols-outlined text-[32px] group-hover:rotate-90 transition-transform duration-300">add</span>
-</button>
-</div>
-)
+export default ExpensesPage;
