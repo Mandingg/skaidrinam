@@ -1,0 +1,75 @@
+From 59dfc084716318125f148cc9475dbcc9c3ebf6bf Mon Sep 17 00:00:00 2001
+From: "[Andrius]" <[andrius.jurkus@stud.techin.lt]>
+Date: Wed, 20 May 2026 22:11:01 +0300
+Subject: [PATCH] pabaigti user, user_routes, user_service
+
+---
+ backend/app/services/user_service.py | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/backend/app/services/user_service.py b/backend/app/services/user_service.py
+index d13b4ef..1a0e2f8 100644
+--- a/backend/app/services/user_service.py
++++ b/backend/app/services/user_service.py
+@@ -1,9 +1,8 @@
+-from streamlit import user
+ 
+ from app.services.db_connection import DatabaseManager
+ from app.models.user import UserModel
+ # ==AJ==
+-from app.models.user import UserCreateModel
++from app.models.user import UserCreateModel, UserUpdateModel
+ from passlib.context import CryptContext
+ 
+ 
+@@ -130,7 +129,7 @@ class UserService:
+     #     params = list(updated_fields.values()) + [user_id]
+     #     return self.db.update(query, params)
+ 
+-    def update_user(self, user_id: int, user_update: UserUpdateModel):
++    def update_user(self, user_id: int, user: UserUpdateModel):
+         """
+         Updates user account information.
+         Allows updating:
+@@ -148,7 +147,7 @@ class UserService:
+         if user.name is not None:
+             update_fields["name"] = user.name
+ 
+-        if user.name is not None:
++        if user.surname is not None:
+             update_fields["surname"] = user.surname
+ 
+         if user.email is not None:
+@@ -156,7 +155,7 @@ class UserService:
+ 
+             if email_owner and email_owner.id != user_id:
+                 raise ValueError(
+-                    "Toks el.paštas jau naudojamas"
++                    "Toks el.paštas jau naudojamas."
+                 )
+             update_fields["email"] = user.email
+ 
+@@ -179,7 +178,19 @@ class UserService:
+         """
+ 
+         params = list(update_fields.values()) + [user_id]
+-    #     return self.db.update(query, params)
++
++        self.db.update(query, params)
++
++        updated_user = self.get_user_by({'id': user_id})
++
++        return {
++            "id": updated_user.id,
++            "name": updated_user.name,
++            "surname": updated_user.surname,
++            "email": updated_user.email,
++            "message": "Paskyra atnaujinta"
++        }
++
+     # ==AJ==
+ 
+     def delete_user(self, user_id: int):
+-- 
+2.52.0.windows.1
+
