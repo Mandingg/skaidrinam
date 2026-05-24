@@ -18,7 +18,7 @@ class CategoryService:
         ORDER BY name
         """
 
-        categories = self.db.execute_query(query)
+        categories = self.db.fetch_all(query)
 
         return [CategoryModel(**category) for category in categories]
 
@@ -27,22 +27,21 @@ class CategoryService:
         SELECT id
         FROM categories
         WHERE user_id = %s 
-        AND LOWE(name) = LOWER(%s)
+        AND LOWER(name) = LOWER(%s)
         """
 
-        existing_category = self.db.execute_query(
-            query, (user_id, category.name))
+        existing_category = self.db.fetch_one(query, (user_id, category.name))
         if existing_category:
             raise ValueError(
-                f"Kategorija pavadinimu '{category.name}' jau egzistuoja.")
-        
+                f"Kategorija '{category.name}' jau egzistuoja.")
+
         insert_query = """
         INSERT INTO categories (user_id, name)
         VALUES (%s, %s)
         """
 
-        self.db.execute_query(insert_query, (user_id, category.name))
-    
+        self.db.insert(insert_query, (user_id, category.name))
+
     def update_category(self, category_id: int, category: CategoryUpdateModel, user_id: int):
         query = """
         SELECT id
@@ -52,10 +51,11 @@ class CategoryService:
         AND id != %s
         """
 
-        existing_category = self.db.execute_query(
+        existing_category = self.db.fetch_one(
             query, (user_id, category.name, category_id))
         if existing_category:
-            raise ValueError("Kategorija '{category.name}' jau egzistuoja.")
+            raise ValueError(
+                f"Kategorija '{category.name}' jau egzistuoja.")
 
         update_query = """
         UPDATE categories
@@ -63,12 +63,27 @@ class CategoryService:
         WHERE id = %s
         AND user_id = %s
         """
-        self.db.execute_query(update_query, (category.name, category_id, user_id))
-    
+
+        affected_rows = self.db.update(
+            update_query,
+            (category.name, category_id, user_id)
+        )
+
+        if affected_rows == 0:
+            raise ValueError("Kategorija nerasta arba nepriklauso vartotojui.")
+
     def delete_category(self, category_id: int, user_id: int):
         delete_query = """
         DELETE FROM categories
         WHERE id = %s
         AND user_id = %s
         """
-        self.db.execute_query(delete_query, (category_id, user_id))
+        affected_rows = self.db.delete(
+            delete_query,
+            (category_id, user_id)
+        )
+
+        if affected_rows == 0:
+            raise ValueError(
+                "Kategorija nerasta arba nepriklauso vartotojui."
+            )
