@@ -39,3 +39,26 @@ class ExpenseService:
             VALUES (%s, %s, %s, %s)
         """
         self.db.insert(query, (user_id, action_type, record_id, record_name))
+
+
+    def get_user_categories(self, user_id: int):
+        """
+        Gets all categories for a specific user.
+        Returns a list of dictionaries with category id and name.
+        """
+        query = "SELECT id, name FROM categories WHERE user_id = %s"
+        results = self.db.fetch_all(query, (user_id,))
+
+        return results
+    
+    def get_expenses_by_user(self, user_id: int):
+        """"
+        Gets all expenses for a given user.
+        Returns a list of ExpenseModel instances."""
+        query="SELECT * FROM expenses WHERE user_id = %s"
+        results = self.db.fetch_all(query, (user_id,))
+        if results is None:
+            return []
+        expenses = [ExpenseModel(**row) for row in results]
+        return expenses
+    
