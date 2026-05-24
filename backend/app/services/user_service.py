@@ -154,7 +154,7 @@ class UserService:
         if user.surname is not None:
             if user.surname == existing_user.surname:
                 raise ValueError(
-                    "Įvestas toks pats pavardė, kaip ir dabar naudojamas. Prašome įvesti kitą pavardę."
+                    "Įvesta tokia pati pavardė, kaip ir dabar naudojama. Prašome įvesti kitą pavardę."
                 )
             update_fields["surname"] = user.surname
 
@@ -190,9 +190,9 @@ class UserService:
             WHERE id = %s
         """
 
-        params = list(update_fields.values()) + [user_id]
+        input_values = list(update_fields.values()) + [user_id]
 
-        self.db.update(query, params)
+        self.db.update(query, input_values)
 
         updated_user = self.get_user_by({'id': user_id})
 

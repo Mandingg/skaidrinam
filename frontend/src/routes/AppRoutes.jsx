@@ -7,7 +7,6 @@ function AppRoutes() {
         <Routes>
             <Route path="/registracija" element={<Register />} />
             <Route path="/profilis/redaguoti" element={<ProfileEdit />} />
-            
         </Routes>
     );
 }
