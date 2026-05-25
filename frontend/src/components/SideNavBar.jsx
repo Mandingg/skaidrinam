@@ -1,5 +1,3 @@
-import React from 'react';
-
 function SideNavBar() {
   return (
     <aside className="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col p-md bg-surface-sidebar border-r border-outline-variant z-40">

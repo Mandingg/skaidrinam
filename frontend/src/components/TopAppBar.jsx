@@ -1,5 +1,3 @@
-import React from 'react';
-
 function TopAppBar() {
   return (
     <header className="flex justify-between items-center h-16 px-md w-full sticky top-0 z-50 bg-surface border-b border-outline-variant">
