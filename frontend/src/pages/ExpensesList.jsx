@@ -6,53 +6,61 @@ import { getUserCategories, getUserExpenses } from "../services/expenseService";
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [sortBy, setSortBy] = useState("DATE_DESC");
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const loadCategories = async () => {
-        const data = await getUserCategories();
-        setCategories(data);
+      const data = await getUserCategories();
+      setCategories(data);
     };
     loadCategories();
   }, []);
 
   useEffect(() => {
     const loadExpenses = async () => {
-        const data = await getUserExpenses();
-        setExpenses(data);
+      const data = await getUserExpenses();
+      setExpenses(data);
     };
     loadExpenses();
   }, []);
-  const filteredAndSortedExpenses =expenses.filter((expense) => {
+  const filteredAndSortedExpenses = expenses
+    .filter((expense) => {
       if (!expense) return false;
 
       const titleText = expense.title || expense.description || "";
-      const shopText = expense.shop_name ||  "";
+      const shopText = expense.shop_name || "";
 
       const matchesSearch =
         titleText.toLowerCase().includes(searchTerm.toLowerCase()) ||
         shopText.toLowerCase().includes(searchTerm.toLowerCase());
 
-          const matchesCategory =
+      const matchesCategory =
         selectedCategory === "ALL" ||
-        String(expense.category_name || "").toLowerCase() === String(selectedCategory).toLowerCase();
+        String(expense.category_name || "").toLowerCase() ===
+          String(selectedCategory).toLowerCase();
 
-      return matchesSearch && matchesCategory;
+      const given_date = new Date(selectedDate);
+      const expense_date = new Date(expense.expense_date);
+      const matchesDate =
+        !selectedDate || expense_date.toDateString() === given_date.toDateString();
+
+
+      return matchesSearch && matchesCategory && matchesDate;
     })
     .sort((a, b) => {
-
       if (sortBy === "DATE_DESC") {
         return new Date(b.expense_date) - new Date(a.expense_date);
       }
       if (sortBy === "DATE_ASC") {
         return new Date(a.expense_date) - new Date(b.expense_date);
       }
-      if (sortBy === "AMOUNT_DESC") {
+      if (sortBy === "PRICE_DESC") {
         return parseFloat(b.amount) - parseFloat(a.amount);
       }
-      if (sortBy === "AMOUNT_ASC") {
+      if (sortBy === "PRICE_ASC") {
         return parseFloat(a.amount) - parseFloat(b.amount);
       }
       return 0;
@@ -108,6 +116,8 @@ function ExpensesPage() {
               sortBy={sortBy}
               setSortBy={setSortBy}
               categories={categories}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
             />
           </section>
 
