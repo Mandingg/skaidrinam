@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
 import SearchBar from "../components/SearchBar";
-import { getUserCategories, getUserExpenses} from "../services/expenseService";
+import { getUserCategories, getUserExpenses } from "../services/expenseService";
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
@@ -29,9 +28,12 @@ function ExpensesPage() {
 
   const filteredAndSortedExpenses = expenses
     .filter((expense) => {
+      const titleText = expense.title || expense.description || "";
+      const shopText = expense.shop || "";
+
       const matchesSearch =
-        expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        expense.shop_name.toLowerCase().includes(searchTerm.toLowerCase());
+        titleText.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        shopText.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesCategory =
         selectedCategory === "ALL" ||
@@ -40,28 +42,93 @@ function ExpensesPage() {
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
-      if (sortBy === "DATE_DESC") return new Date(b.date) - new Date(a.date);
-      if (sortBy === "DATE_ASC") return new Date(a.date) - new Date(b.date);
-      if (sortBy === "PRICE_ASC") return a.amount - b.amount;
-      if (sortBy === "PRICE_DESC") return b.amount - a.amount;
+      if (sortBy === "DATE_DESC")
+        return new Date(b.expense_date) - new Date(a.expense_date);
+      if (sortBy === "DATE_ASC")
+        return new Date(a.expense_date) - new Date(b.expense_date);
+      if (sortBy === "PRICE_ASC") return Number(a.amount) - Number(b.amount);
+      if (sortBy === "PRICE_DESC") return Number(b.amount) - Number(a.amount);
       return 0;
     });
 
+  const renderCategoryBadge = (categoryId) => {
+    const foundCategory = categories.find(
+      (cat) => String(cat.id) === String(categoryId),
+    );
+    const categoryName = foundCategory
+      ? foundCategory.name.toUpperCase()
+      : "KITA";
+
+    // Naudojame jūsų komandos nustatytas spalvas iš var.css
+    let badgeStyle = {
+      backgroundColor: "var(--color-secondary)",
+      color: "var(--color-neutral)",
+    };
+
+    if (
+      categoryName.includes("KURAS") ||
+      categoryName.includes("TRANSPORTAS")
+    ) {
+      badgeStyle = {
+        backgroundColor: "var(--color-secondary)",
+        color: "var(--color-primary-dark)",
+      };
+    }
+    if (categoryName.includes("KLAIDA") || categoryName.includes("SVEIKATA")) {
+      badgeStyle = { backgroundColor: "var(--color-error)", color: "#ffffff" };
+    }
+
+    return (
+      <span
+        className="px-3 py-1 font-semibold rounded-full uppercase text-[12px]"
+        style={badgeStyle}
+      >
+        {categoryName.toLowerCase()}
+      </span>
+    );
+  };
+
   return (
-    <div className="font-body-md text-body-md bg-surface-page min-h-screen">
-      <TopAppBar />
+    <div
+      className="min-h-screen text-[14px]"
+      style={{
+        backgroundColor: "var(--color-background)",
+        fontFamily: "var(--font-family)",
+      }}
+    >
 
       <div className="flex min-h-[calc(100vh-64px)]">
         <SideNavBar />
-        <main className="flex-1 ml-64 p-xl max-w-container-max mx-auto w-full">
-          <section className="mb-xl">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-lg">
+
+        {/* Pagrindinis turinys, lygiavimui naudojame jūsų --space kintamuosius */}
+        <main
+          className="flex-1 ml-64 w-full"
+          style={{
+            padding: "var(--space-5)",
+            maxWidth: "1200px",
+            margin: "0 auto",
+          }}
+        >
+          <section style={{ marginBottom: "var(--space-5)" }}>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
               <div>
-                <h1 className="font-display-lg text-display-lg text-on-surface mb-xs">
+                <h1
+                  className="font-bold mb-1"
+                  style={{
+                    color: "var(--color-neutral)",
+                    fontSize: "var(--text-display)",
+                  }}
+                >
                   Mano išlaidos
                 </h1>
-                <p className="text-body-lg text-on-surface-variant">
-                  Peržiūrėkite ir valdykite visus užregistruotus kvitus.
+                <p
+                  style={{
+                    color: "var(--color-neutral)",
+                    opacity: 0.7,
+                    fontSize: "var(--text-body)",
+                  }}
+                >
+                  Peržiūrėkite visas užregistruotas išlaidas.
                 </p>
               </div>
             </div>
@@ -77,80 +144,162 @@ function ExpensesPage() {
             />
           </section>
 
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
-            <div className="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
-              <h3 className="font-headline-sm text-headline-sm text-on-surface">
-                Paskutiniai kvitai
-              </h3>
-              <button className="flex items-center gap-xs px-sm py-xs rounded-lg border border-outline-variant hover:bg-surface-container-low transition-colors text-on-surface-variant font-label-md">
-                <span className="material-symbols-outlined text-[20px]">
-                  download
-                </span>
-                <span>Eksportuoti CSV</span>
+          <div
+            className="border overflow-hidden"
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "var(--radius-md)",
+              borderColor: "var(--color-secondary)",
+            }}
+          >
+            <div
+              className="border-b flex justify-between items-center"
+              style={{
+                padding: "var(--space-3) var(--space-4)",
+                borderColor: "var(--color-secondary)",
+              }}
+            >
+              <button
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-8 transition-opacity font-medium"
+                style={{
+                  borderColor: "var(--color-primary)",
+                  color: "var(--color-primary)",
+                }}
+              >
+                Eksportuoti CSV
               </button>
             </div>
 
-            <div className="overflow-x-auto custom-scrollbar">
+            <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-surface-container-low/50">
-                    <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant">
+                  <tr style={{ backgroundColor: "var(--color-navigation)" }}>
+                    <th
+                      className="font-semibold"
+                      style={{
+                        padding: "var(--space-3) var(--space-4)",
+                        color: "var(--color-primary-dark)",
+                      }}
+                    >
                       Pavadinimas
                     </th>
-                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">
+                    <th
+                      className="font-semibold"
+                      style={{
+                        padding: "var(--space-3) var(--space-3)",
+                        color: "var(--color-primary-dark)",
+                      }}
+                    >
                       Parduotuvė
                     </th>
-                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">
+                    <th
+                      className="font-semibold"
+                      style={{
+                        padding: "var(--space-3) var(--space-3)",
+                        color: "var(--color-primary-dark)",
+                      }}
+                    >
                       Data
                     </th>
-                    <th className="px-md py-md font-label-lg text-label-lg text-on-surface-variant">
+                    <th
+                      className="font-semibold"
+                      style={{
+                        padding: "var(--space-3) var(--space-3)",
+                        color: "var(--color-primary-dark)",
+                      }}
+                    >
                       Kategorija
                     </th>
-                    <th className="px-xl py-md font-label-lg text-label-lg text-on-surface-variant text-right">
+                    <th
+                      className="font-semibold text-right"
+                      style={{
+                        padding: "var(--space-3) var(--space-4)",
+                        color: "var(--color-primary-dark)",
+                      }}
+                    >
                       Suma
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-outline-variant">
+                <tbody
+                  className="divide-y"
+                  style={{ borderColor: "var(--color-secondary)" }}
+                >
                   {filteredAndSortedExpenses.map((expense) => (
                     <tr
                       key={expense.id}
-                      className="hover:bg-surface-container-low transition-colors group"
+                      className="hover:bg-slate-50/50 transition-colors"
                     >
-                      <td className="px-xl py-lg">
-                        <div className="flex items-center gap-md">
+                      <td style={{ padding: "var(--space-3) var(--space-4)" }}>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-10 h-10 rounded-lg flex items-center justify-center font-bold uppercase text-[16px]"
+                            style={{
+                              backgroundColor: "var(--color-secondary)",
+                              color: "var(--color-primary-dark)",
+                            }}
+                          >
+                            {expense.badge ||
+                              (
+                                expense.title ||
+                                expense.description ||
+                                "E"
+                              ).charAt(0)}
+                          </div>
                           <div>
-                            <div className="font-bold text-on-surface">
+                            <div
+                              className="font-semibold"
+                              style={{ color: "var(--color-neutral)" }}
+                            >
                               {expense.title || expense.description}
                             </div>
-                            <div className="text-caption text-on-surface-variant">
-                              ID #{expense.id}
+                            <div
+                              className="text-[12px]"
+                              style={{
+                                color: "var(--color-neutral)",
+                                opacity: 0.6,
+                              }}
+                            >
+                              Kvitas #{expense.id}
                             </div>
                           </div>
                         </div>
                       </td>
-
-                      <td className="px-md py-lg">
-                        <div className="flex items-center gap-xs">
-                          <span className="px-md py-lg text-on-surface-variant">
-                            {expense.shop_name}
+                      <td
+                        style={{
+                          padding: "var(--space-3) var(--space-3)",
+                          color: "var(--color-neutral)",
+                        }}
+                      >
+                        <div className="flex items-center gap-1">
+                          <span
+                            className="material-symbols-outlined text-[18px]"
+                            style={{ color: "var(--color-primary)" }}
+                          >
+                            {expense.shop || "Kita"}
                           </span>
                         </div>
                       </td>
-
-                      <td className="px-md py-lg text-on-surface-variant">
+                      <td
+                        style={{
+                          padding: "var(--space-3) var(--space-3)",
+                          color: "var(--color-neutral)",
+                          opacity: 0.8,
+                        }}
+                      >
                         {expense.expense_date}
                       </td>
-
-                      <td className="px-md py-lg">
-                        <span className="px-sm py-xs font-bold text-micro-label bg-slate-100 text-slate-600 rounded-full uppercase">
-                          {expense.category_name ||
-                            `ID: ${expense.category_id}`}
-                        </span>
+                      <td style={{ padding: "var(--space-3) var(--space-3)" }}>
+                        {renderCategoryBadge(expense.category_id)}
                       </td>
-
-
-                      <td className="px-xl py-lg text-right font-bold text-on-surface">
+                      <td
+                        className="text-right font-bold"
+                        style={{
+                          padding: "var(--space-3) var(--space-4)",
+                          color: "var(--color-neutral)",
+                          fontSize: "var(--text-body)",
+                        }}
+                      >
                         {Number(expense.amount).toFixed(2)} €
                       </td>
                     </tr>
@@ -160,9 +309,10 @@ function ExpensesPage() {
                     <tr>
                       <td
                         colSpan="5"
-                        className="px-xl py-lg text-center text-on-surface-variant"
+                        className="text-center py-8"
+                        style={{ color: "var(--color-neutral)", opacity: 0.5 }}
                       >
-                        Nėra kvitų, atitinkančių parinktus filtrus.
+                        Nėra išlaidų, atitinkančių parinktus filtrus.
                       </td>
                     </tr>
                   )}
@@ -170,24 +320,35 @@ function ExpensesPage() {
               </table>
             </div>
 
-            <div className="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant flex items-center justify-between">
-              <span className="font-label-md text-label-md text-on-surface-variant">
+            <div
+              className="border-t flex items-center justify-between"
+              style={{
+                padding: "var(--space-3) var(--space-4)",
+                backgroundColor: "var(--color-navigation)",
+                borderColor: "var(--color-secondary)",
+              }}
+            >
+              <span style={{ color: "var(--color-neutral)", opacity: 0.7 }}>
                 Rodoma 1-{filteredAndSortedExpenses.length} iš{" "}
                 {filteredAndSortedExpenses.length} įrašų
               </span>
-              <div className="flex gap-xs">
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
-                  <span className="material-symbols-outlined">
-                    chevron_left
-                  </span>
+              <div className="flex gap-1">
+                <button className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
+                  {"<"}
                 </button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-primary bg-primary text-on-primary font-bold">
+                <button
+                  className="w-9 h-9 flex items-center justify-center rounded-lg border font-bold"
+                  style={{
+                    backgroundColor: "var(--color-primary)",
+                    color: "#ffffff",
+                    borderColor: "var(--color-primary)",
+                  }}
+                >
                   1
                 </button>
-                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant opacity-50 cursor-not-allowed">
-                  <span className="material-symbols-outlined">
-                    chevron_right
-                  </span>
+                
+                <button className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
+                    {">"}
                 </button>
               </div>
             </div>
