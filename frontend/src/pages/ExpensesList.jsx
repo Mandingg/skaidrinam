@@ -12,81 +12,51 @@ function ExpensesPage() {
 
   useEffect(() => {
     const loadCategories = async () => {
-      const data = await getUserCategories();
-      setCategories(data);
+        const data = await getUserCategories();
+        setCategories(data);
     };
     loadCategories();
   }, []);
 
   useEffect(() => {
     const loadExpenses = async () => {
-      const data = await getUserExpenses();
-      setExpenses(data);
+        const data = await getUserExpenses();
+        setExpenses(data);
     };
     loadExpenses();
   }, []);
+  const filteredAndSortedExpenses =expenses.filter((expense) => {
+      if (!expense) return false;
 
-  const filteredAndSortedExpenses = expenses
-    .filter((expense) => {
       const titleText = expense.title || expense.description || "";
-      const shopText = expense.shop || "";
+      const shopText = expense.shop_name ||  "";
 
       const matchesSearch =
         titleText.toLowerCase().includes(searchTerm.toLowerCase()) ||
         shopText.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesCategory =
+          const matchesCategory =
         selectedCategory === "ALL" ||
-        String(expense.category_id) === String(selectedCategory);
+        String(expense.category_name || "").toLowerCase() === String(selectedCategory).toLowerCase();
 
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
-      if (sortBy === "DATE_DESC")
+
+      if (sortBy === "DATE_DESC") {
         return new Date(b.expense_date) - new Date(a.expense_date);
-      if (sortBy === "DATE_ASC")
+      }
+      if (sortBy === "DATE_ASC") {
         return new Date(a.expense_date) - new Date(b.expense_date);
-      if (sortBy === "PRICE_ASC") return Number(a.amount) - Number(b.amount);
-      if (sortBy === "PRICE_DESC") return Number(b.amount) - Number(a.amount);
+      }
+      if (sortBy === "AMOUNT_DESC") {
+        return parseFloat(b.amount) - parseFloat(a.amount);
+      }
+      if (sortBy === "AMOUNT_ASC") {
+        return parseFloat(a.amount) - parseFloat(b.amount);
+      }
       return 0;
     });
-
-  const renderCategoryBadge = (categoryId) => {
-    const foundCategory = categories.find(
-      (cat) => String(cat.id) === String(categoryId),
-    );
-    const categoryName = foundCategory
-      ? foundCategory.name.toUpperCase()
-      : "KITA";
-
-    // Naudojame jūsų komandos nustatytas spalvas iš var.css
-    let badgeStyle = {
-      backgroundColor: "var(--color-secondary)",
-      color: "var(--color-neutral)",
-    };
-
-    if (
-      categoryName.includes("KURAS") ||
-      categoryName.includes("TRANSPORTAS")
-    ) {
-      badgeStyle = {
-        backgroundColor: "var(--color-secondary)",
-        color: "var(--color-primary-dark)",
-      };
-    }
-    if (categoryName.includes("KLAIDA") || categoryName.includes("SVEIKATA")) {
-      badgeStyle = { backgroundColor: "var(--color-error)", color: "#ffffff" };
-    }
-
-    return (
-      <span
-        className="px-3 py-1 font-semibold rounded-full uppercase text-[12px]"
-        style={badgeStyle}
-      >
-        {categoryName.toLowerCase()}
-      </span>
-    );
-  };
 
   return (
     <div
@@ -96,11 +66,8 @@ function ExpensesPage() {
         fontFamily: "var(--font-family)",
       }}
     >
-
       <div className="flex min-h-[calc(100vh-64px)]">
         <SideNavBar />
-
-        {/* Pagrindinis turinys, lygiavimui naudojame jūsų --space kintamuosius */}
         <main
           className="flex-1 ml-64 w-full"
           style={{
@@ -232,20 +199,6 @@ function ExpensesPage() {
                     >
                       <td style={{ padding: "var(--space-3) var(--space-4)" }}>
                         <div className="flex items-center gap-3">
-                          <div
-                            className="w-10 h-10 rounded-lg flex items-center justify-center font-bold uppercase text-[16px]"
-                            style={{
-                              backgroundColor: "var(--color-secondary)",
-                              color: "var(--color-primary-dark)",
-                            }}
-                          >
-                            {expense.badge ||
-                              (
-                                expense.title ||
-                                expense.description ||
-                                "E"
-                              ).charAt(0)}
-                          </div>
                           <div>
                             <div
                               className="font-semibold"
@@ -290,7 +243,7 @@ function ExpensesPage() {
                         {expense.expense_date}
                       </td>
                       <td style={{ padding: "var(--space-3) var(--space-3)" }}>
-                        {renderCategoryBadge(expense.category_id)}
+                        {expense.category_name}
                       </td>
                       <td
                         className="text-right font-bold"
@@ -346,16 +299,15 @@ function ExpensesPage() {
                 >
                   1
                 </button>
-                
+
                 <button className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
-                    {">"}
+                  {">"}
                 </button>
               </div>
             </div>
           </div>
         </main>
       </div>
-
     </div>
   );
 }

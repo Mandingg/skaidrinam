@@ -75,7 +75,7 @@ function SearchBar({
           >
             <option value="ALL">Visos kategorijos</option>
             {categories.map((category) => (
-              <option key={category.id} value={category.id}>
+              <option key={category.id} value={category.name}>
                 {category.name.charAt(0) + category.name.slice(1).toLowerCase()}
               </option>
             ))}

@@ -1,5 +1,3 @@
-from tkinter import LEFT
-
 from app.services.db_connection import DatabaseManager
 from app.models.expense import ExpenseDisplay, ExpenseModel
 
@@ -42,6 +40,16 @@ class ExpenseService:
         """
         self.db.insert(query, (user_id, action_type, record_id, record_name))
 
+    def get_all_categories(self):
+        """
+        Gets all categories for a all users.
+        Returns a list of dictionaries with category id and name.
+        """
+        query = "SELECT id, name FROM categories"
+        results = self.db.fetch_all(query)
+
+        return results
+
     def get_user_categories(self, user_id: int):
         """
         Gets all categories for a specific user.
@@ -67,10 +75,19 @@ class ExpenseService:
     def get_expenses_with_details_by_user(self, user_id: int):
         """
         Gets all expenses for a given user, including the shop name.
-        Returns a list of ExpenseWithShop instances.
         """
         query = """
-            SELECT e.*, s.name AS shop_name, c.name AS category_name
+            SELECT
+            e.id,
+            e.user_id,
+            e.receipt_id,
+            e.category_id,
+            e.description,
+            e.description AS title,
+            e.amount,
+            e.expense_date,
+            e.created_at,
+            s.name AS shop_name, c.name AS category_name
             FROM expenses e
             LEFT JOIN receipts r ON e.receipt_id = r.id
             LEFT JOIN stores s ON r.store_id = s.id
@@ -80,5 +97,4 @@ class ExpenseService:
         results = self.db.fetch_all(query, (user_id,))
         if results is None:
             return []
-        expenses = [ExpenseDisplay(**row) for row in results]
-        return expenses
+        return results

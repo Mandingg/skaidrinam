@@ -13,6 +13,21 @@ class ExpenseModel(BaseModel):
     expense_date: date
     created_at: Optional[datetime] = None
 
+
 class ExpenseDisplay(ExpenseModel):
-    shop_name: str = None
-    category_name: str = None
+    id: int
+    user_id: int
+    receipt_id: Optional[int] = None
+    category_id: Optional[int] = None
+    description: str
+    title: Optional[str] = None
+    amount: float
+    expense_date: date
+    shop_name: str = "Kita"
+    category_name: str = "Nenurodyta"
+    created_at: Optional[datetime] = None
+    shop_name: Optional[str] = "Kita"
+    category_name: Optional[str] = "Nenurodyta"
+
+    class Config:
+        from_attributes = True

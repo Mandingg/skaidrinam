@@ -2,21 +2,25 @@ import {getCurrentUserId} from './userService';
 
 const FALLBACK_CATEGORIES = [
   { id: 1, name: 'MAISTAS' },
-  { id: 2, name: 'NAMAI' },
-  { id: 3, name: 'TRANSPORTAS' },
+  { id: 2, name: 'BUITIS' },
+  { id: 3, name: 'KURAS' },
   { id: 4, name: 'SVEIKATA' }
 ];
 
 export const getUserCategories = async () => {
   const userId = getCurrentUserId();
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/expenses/categories?user_id=${userId}`);
+    const response = await fetch(`http://127.0.0.1:8000/expenses/categories?user_id=${userId}`);
     
     if (!response.ok) {
       throw new Error('Serveris grąžino klaidą');
     }
     
     const data = await response.json();
+    if (data.length === 0) {
+      console.warn('Nerasta kategorijų, naudojamos numatytosios kategorijos');
+      return FALLBACK_CATEGORIES;
+    }
     return data;
     
   } catch (error) {
@@ -28,7 +32,7 @@ export const getUserCategories = async () => {
 export const getUserExpenses = async() => {
     const userId = getCurrentUserId();
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/expenses/categories?user_id=${userId}`);
+        const response = await fetch(`http://127.0.0.1:8000/expenses/list?user_id=${userId}`);
     if (!response.ok) {
       throw new Error('Serveris grąžino klaidą');
     }
