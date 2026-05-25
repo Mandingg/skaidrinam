@@ -15,4 +15,3 @@ export async function logout() {
 
   return response.json().catch(() => null)
 }
-
