@@ -12,3 +12,6 @@ class ExpenseModel(BaseModel):
     amount: float
     expense_date: date
     created_at: Optional[datetime] = None
+
+class ExpenseWithShop(ExpenseModel):
+    shop_name: str = None

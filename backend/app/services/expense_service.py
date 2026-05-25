@@ -1,5 +1,7 @@
+from tkinter import LEFT
+
 from app.services.db_connection import DatabaseManager
-from app.models.expense import ExpenseModel
+from app.models.expense import ExpenseModel, ExpenseWithShop
 
 
 class ExpenseService:
@@ -40,7 +42,6 @@ class ExpenseService:
         """
         self.db.insert(query, (user_id, action_type, record_id, record_name))
 
-
     def get_user_categories(self, user_id: int):
         """
         Gets all categories for a specific user.
@@ -50,15 +51,46 @@ class ExpenseService:
         results = self.db.fetch_all(query, (user_id,))
 
         return results
-    
+
     def get_expenses_by_user(self, user_id: int):
-        """"
+        """ "
         Gets all expenses for a given user.
         Returns a list of ExpenseModel instances."""
-        query="SELECT * FROM expenses WHERE user_id = %s"
+        query = "SELECT * FROM expenses WHERE user_id = %s"
         results = self.db.fetch_all(query, (user_id,))
         if results is None:
             return []
         expenses = [ExpenseModel(**row) for row in results]
         return expenses
+
+    def get_shop_for_expense(self, expense_id: int):
+        """
+        Gets the shop name for a given expense.
+        Returns the shop name as a string, or None if not found.
+        """
+        query = "SELECT (e.id, e.description, e.amount, e.expense_date,s.name)\
+                 FROM expenses e\
+                 LEFT JOIN receipts r ON e.receipt_id = r.id\
+                 LEFT JOIN stores s ON r.store_id = s.id WHERE e.id = %s"
+        result = self.db.fetch_one(query, (expense_id,))
+        return result["name"] if result else None
     
+
+
+    def get_expenses_with_shop_by_user(self, user_id: int):
+        """
+        Gets all expenses for a given user, including the shop name.
+        Returns a list of ExpenseWithShop instances.
+        """
+        query = """
+            SELECT e.*, s.name AS shop_name
+            FROM expenses e
+            LEFT JOIN receipts r ON e.receipt_id = r.id
+            LEFT JOIN stores s ON r.store_id = s.id
+            WHERE e.user_id = %s
+        """
+        results = self.db.fetch_all(query, (user_id,))
+        if results is None:
+            return []
+        expenses = [ExpenseWithShop(**row) for row in results]
+        return expenses

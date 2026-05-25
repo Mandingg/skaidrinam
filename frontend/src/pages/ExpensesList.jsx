@@ -14,7 +14,7 @@ function ExpensesPage() {
 
     useEffect(() => {
         const loadCategories = async () => {
-            const data = await getUserCategories(1);
+            const data = await getUserCategories();
             setCategories(data);
         };
         loadCategories()
@@ -22,19 +22,18 @@ function ExpensesPage() {
 
     useEffect(() => {
         const loadExpenses = async ()=>{
-
+            const data = await getUserExpenses();
+            setExpenses(data);
         }
-    })
+        loadExpenses();
+    }, []);
 
     const filteredAndSortedExpenses = expenses
         .filter(expense => {
-            // 1. Paieška pagal pavadinimą arba parduotuvę
             const matchesSearch =
-                expense.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                expense.shop.toLowerCase().includes(searchTerm.toLowerCase());
+                expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                expense.shop_name.toLowerCase().includes(searchTerm.toLowerCase());
 
-            // 2. Filtravimas pagal kategorijos ID!
-            // Kadangi <select> grąžina tekstą, o mūsų laukas yra skaičius, suvienodiname tipus su String()
             const matchesCategory =
                 selectedCategory === 'ALL' ||
                 String(expense.category_id) === String(selectedCategory);
@@ -42,7 +41,6 @@ function ExpensesPage() {
             return matchesSearch && matchesCategory;
         })
         .sort((a, b) => {
-            // 3. Rūšiavimas
             if (sortBy === 'DATE_DESC') return new Date(b.date) - new Date(a.date);
             if (sortBy === 'DATE_ASC') return new Date(a.date) - new Date(b.date);
             if (sortBy === 'PRICE_ASC') return a.amount - b.amount;
@@ -50,30 +48,10 @@ function ExpensesPage() {
             return 0;
         });
 
-    // Pagalbinė funkcija surasti kategorijos pavadinimui ir pritaikyti stiliui pagal ID
-    const getCategoryBadge = (categoryId) => {
-        // Surandame kategorijos objektą mūsų categories sąraše
-        const foundCategory = categories.find(cat => String(cat.id) === String(categoryId));
-        const categoryName = foundCategory ? foundCategory.name.toUpperCase() : 'KITA';
-
-        // Priskiriame spalvas pagal pavadinimą (iš tavo HTML dizaino)
-        let styles = 'bg-slate-100 text-slate-600';
-        if (categoryName.includes('MAISTAS')) styles = 'bg-brand-green-tint text-primary';
-        if (categoryName.includes('NAMAI')) styles = 'bg-surface-container-high text-on-surface-variant';
-        if (categoryName.includes('TRANSPORTAS')) styles = 'bg-secondary-fixed text-on-secondary-fixed-variant';
-        if (categoryName.includes('SVEIKATA')) styles = 'bg-error-red-tint text-error-red';
-
-        return (
-            <span className={`px-sm py-xs font-bold text-micro-label rounded-full uppercase ${styles}`}>
-                {categoryName.toLowerCase()}
-            </span>
-        );
-    };
-
+    
+       
     return (
         <div className="font-body-md text-body-md bg-surface-page min-h-screen">
-
-            {/* 🛑 Iškelta išorinė viršutinė juosta */}
             <TopAppBar />
 
             <div className="flex min-h-[calc(100vh-64px)]">
