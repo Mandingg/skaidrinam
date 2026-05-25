@@ -11,14 +11,16 @@ class CategoryService:
     def __init__(self):
         self.db = DatabaseManager()
 
-    def get_all_categories(self):
+    def get_all_categories(self, user_id: int):
         query = """
         SELECT id, user_id, name
         FROM categories
+        WHERE user_id is NULL
+        OR user_id = %s
         ORDER BY name
         """
 
-        categories = self.db.fetch_all(query)
+        categories = self.db.fetch_all(query, (user_id,))
 
         return [CategoryModel(**category) for category in categories]
 
