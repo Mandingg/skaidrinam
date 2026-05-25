@@ -13,5 +13,6 @@ class ExpenseModel(BaseModel):
     expense_date: date
     created_at: Optional[datetime] = None
 
-class ExpenseWithShop(ExpenseModel):
+class ExpenseDisplay(ExpenseModel):
     shop_name: str = None
+    category_name: str = None

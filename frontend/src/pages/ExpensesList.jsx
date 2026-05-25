@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TopAppBar from './TopAppBar';
 import SideNavBar from './SideNavBar';
-import ExpenseFilters from './ExpenseFilters';
+import SearchBar from './SearchBar';
 import { getUserCategories } from '../services/expenseService';
 
 
@@ -55,13 +55,8 @@ function ExpensesPage() {
             <TopAppBar />
 
             <div className="flex min-h-[calc(100vh-64px)]">
-
-                {/* 🗂️ Iškeltas išorinis šoninis meniu */}
                 <SideNavBar />
-
-                {/* 📈 Pagrindinis turinys */}
                 <main className="flex-1 ml-64 p-xl max-w-container-max mx-auto w-full">
-
                     <section className="mb-xl">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-lg mb-lg">
                             <div>
@@ -70,8 +65,7 @@ function ExpensesPage() {
                             </div>
                         </div>
 
-                        {/* 🎛️ Iškeltas filtrų skydelis (perduodame ir gautas kategorijas) */}
-                        <ExpenseFilters
+                        <SearchBar
                             searchTerm={searchTerm}
                             setSearchTerm={setSearchTerm}
                             selectedCategory={selectedCategory}
@@ -82,7 +76,6 @@ function ExpensesPage() {
                         />
                     </section>
 
-                    {/* KVITŲ LENTELĖ */}
                     <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
                         <div className="px-xl py-lg border-b border-outline-variant flex justify-between items-center">
                             <h3 className="font-headline-sm text-headline-sm text-on-surface">Paskutiniai kvitai</h3>
@@ -108,12 +101,8 @@ function ExpensesPage() {
                                         <tr key={expense.id} className="hover:bg-surface-container-low transition-colors group">
                                             <td className="px-xl py-lg">
                                                 <div className="flex items-center gap-md">
-                                                    <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary font-bold">
-                                                        {expense.badge}
-                                                    </div>
                                                     <div>
                                                         <div className="font-bold text-on-surface">{expense.title}</div>
-                                                        <div className="text-caption text-on-surface-variant">Kvitas #{expense.id}</div>
                                                     </div>
                                                 </div>
                                             </td>
