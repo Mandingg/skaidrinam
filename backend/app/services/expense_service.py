@@ -98,3 +98,18 @@ class ExpenseService:
         if results is None:
             return []
         return results
+    
+    def delete_single_expense(self, expense_id):
+        """
+        Deletes an expense from the database.`
+        Returns True if the expense was deleted, False otherwise.
+        If more than one expense was deleted, error raised.
+        """
+        query = "DELETE FROM expenses WHERE id = %s"
+        result = self.db.delete(query, (expense_id,))
+        if result==1:
+            return True
+        elif result>1:
+            raise Exception(f"Error: More than one expense deleted. Deleted count: {result}")
+        else:
+            return False
