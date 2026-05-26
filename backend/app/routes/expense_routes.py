@@ -26,3 +26,16 @@ def get_user_expenses(user_id: int):
     except Exception as error:
         print("GET EXPENSES ERROR:", error)
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida gaunant išlaidas")
+
+
+@router.delete("/delete/{expense_id}", status_code=status.HTTP_200_OK)
+def delete_expense(expense_id:int):
+    try:
+        result = expense_service.delete_single_expense(expense_id)
+        if result:
+            return {"success": True, "message": "Išlaida sėkmingai ištrinta"}
+        else:
+            raise HTTPException(status_code=404, detail="Išlaida nerasta")
+    except Exception as error:
+        print("DELETE EXPENSE ERROR:", error)
+        raise HTTPException(status_code=500, detail="Įvyko serverio klaida trinant išlaidą")

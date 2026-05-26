@@ -44,3 +44,19 @@ export const getUserExpenses = async() => {
     console.warn('API nepasiekiamas:', error.message);
     return []
 }}
+
+export const deleteExpense = async(expenseId) => {
+  try{
+    const response = await fetch(`http://localhost:8000/expenses/delete/${expenseId}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Serveris grąžino klaidą trinant išlaidą');
+    }
+    const result = await response.json();
+    return result.success;
+  }
+  catch (error) {
+    console.warn('API klaida trinant išlaidą:', error.message);
+    return false;
+}}

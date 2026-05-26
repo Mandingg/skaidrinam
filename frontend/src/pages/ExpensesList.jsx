@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import SideNavBar from "../components/SideNavBar";
 import SearchBar from "../components/SearchBar";
-import { getUserCategories, getUserExpenses } from "../services/expenseService";
+import {
+  getUserCategories,
+  getUserExpenses,
+  deleteExpense,
+} from "../services/expenseService";
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
@@ -10,6 +14,7 @@ function ExpensesPage() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [sortBy, setSortBy] = useState("DATE_DESC");
   const [categories, setCategories] = useState([]);
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -45,8 +50,8 @@ function ExpensesPage() {
       const given_date = new Date(selectedDate);
       const expense_date = new Date(expense.expense_date);
       const matchesDate =
-        !selectedDate || expense_date.toDateString() === given_date.toDateString();
-
+        !selectedDate ||
+        expense_date.toDateString() === given_date.toDateString();
 
       return matchesSearch && matchesCategory && matchesDate;
     })
@@ -65,6 +70,20 @@ function ExpensesPage() {
       }
       return 0;
     });
+
+  const handleDelete = async (expenseId) => {
+    const result = await deleteExpense(expenseId);
+    console.log("Ištrynimo rezultatas:", result);
+    if (result) {
+      setExpenses((prevExpenses) =>
+        prevExpenses.filter((item) => item.id !== expenseId),
+      );
+      setShowMessage(true);
+      setTimeout(() => setShowMessage(false), 3000);
+    } else {
+      alert("Nepavyko ištrinti įrašo.");
+    }
+  };
 
   return (
     <div
@@ -196,6 +215,14 @@ function ExpensesPage() {
                     >
                       Suma
                     </th>
+                    <th
+                      className="font-semibold text-right text-gray-500"
+                      style={{
+                        padding: "var(--space-3) var(--space-4)",
+                      }}
+                    >
+                      Ištrinti įrašą:
+                    </th>
                   </tr>
                 </thead>
                 <tbody
@@ -215,15 +242,6 @@ function ExpensesPage() {
                               style={{ color: "var(--color-neutral)" }}
                             >
                               {expense.title || expense.description}
-                            </div>
-                            <div
-                              className="text-[12px]"
-                              style={{
-                                color: "var(--color-neutral)",
-                                opacity: 0.6,
-                              }}
-                            >
-                              Kvitas #{expense.id}
                             </div>
                           </div>
                         </div>
@@ -265,13 +283,32 @@ function ExpensesPage() {
                       >
                         {Number(expense.amount).toFixed(2)} €
                       </td>
+                      <td
+                        className="text-center"
+                        style={{
+                          padding: "var(--space-3) var(--space-4)",
+                          color: "var(--color-neutral)",
+                          fontSize: "var(--text-body)",
+                        }}
+                      >
+                        <button
+                          onClick={() => {
+                            console.log("Mygtukas paspaustas. Bandome ištrinti ID:", expense.id);
+                            handleDelete(expense.id);
+                          }}
+                          className="cursor-pointer text-gray-400 hover:text-red-600 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
+                          title="Ištrinti šį įrašą"
+                        >
+                          x
+                        </button>
+                      </td>
                     </tr>
                   ))}
 
                   {filteredAndSortedExpenses.length === 0 && (
                     <tr>
                       <td
-                        colSpan="5"
+                        colSpan="6"
                         className="text-center py-8"
                         style={{ color: "var(--color-neutral)", opacity: 0.5 }}
                       >
@@ -318,6 +355,19 @@ function ExpensesPage() {
           </div>
         </main>
       </div>
+      {showMessage && (
+        <div
+          className="fixed bottom-5 right-5 flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg border text-white font-medium animate-bounce"
+          style={{
+            backgroundColor: "var(--color-primary-dark)",
+            borderColor: "var(--color-primary)",
+            zIndex: 9999,
+          }}
+        >
+          <span className="text-lg">✓</span>
+          <span>Įrašas ištrintas sėkmingai!</span>
+        </div>
+      )}
     </div>
   );
 }
