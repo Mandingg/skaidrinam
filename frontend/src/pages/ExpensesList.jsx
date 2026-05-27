@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import SideNavBar from "../components/SideNavBar";
+// import Navigation from "../components/Navigation";
 import SearchBar from "../components/SearchBar";
 import {
   getUserCategories,
@@ -16,6 +16,14 @@ function ExpensesPage() {
   const [categories, setCategories] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
 
+    useEffect(() => {
+    const loadExpenses = async () => {
+      const data = await getUserExpenses();
+      setExpenses(data);
+    };
+    loadExpenses();
+  }, []);
+
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getUserCategories();
@@ -23,14 +31,7 @@ function ExpensesPage() {
     };
     loadCategories();
   }, []);
-
-  useEffect(() => {
-    const loadExpenses = async () => {
-      const data = await getUserExpenses();
-      setExpenses(data);
-    };
-    loadExpenses();
-  }, []);
+  
   const filteredAndSortedExpenses = expenses
     .filter((expense) => {
       if (!expense) return false;
@@ -94,7 +95,7 @@ function ExpensesPage() {
       }}
     >
       <div className="flex min-h-[calc(100vh-64px)]">
-        <SideNavBar />
+        {/* <Navigation /> */}
         <main
           className="flex-1 ml-64 w-full"
           style={{

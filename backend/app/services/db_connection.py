@@ -55,10 +55,6 @@ class DatabaseManager:
             except Exception:
                 self._connect()
 
-    def close_connection(self):
-        if self.connection:
-            self.connection.close()
-
     def fetch_all(self, query, params=None):
         """Executes a SELECT query and returns all results as a list of dictionaries.
         If there are no results or an error occurs, it returns an empty list."""
@@ -128,3 +124,9 @@ class DatabaseManager:
             return None
         finally:
             cursor.close()
+
+    def close(self):
+        """Closes the database connection. Use only in examples."""
+        if self.connection and self.connection.is_connected():
+            self.connection.close()
+            print("Duomenų bazės ryšys uždarytas.")
