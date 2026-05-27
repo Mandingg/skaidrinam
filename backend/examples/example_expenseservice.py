@@ -15,6 +15,18 @@ def test_user_service():
     all_expenses = expense_service.get_expenses_by_user(1)
     print(f"Sėkmė! \nGautos išlaidos user_id=1: {all_expenses}")
 
+    print("Bandoma ištrinti išlaidų su ID 8...")
+    delete_result = expense_service.delete_single_expense(8)
+    if delete_result:
+        print("Išlaida sėkmingai ištrinta.")
+        print(delete_result)
+    else:
+        print("Išlaida su ID 8 nerasta arba trynimas nepavyko.")
+    
+    print("Bandoma gauti visas išlaidas...")
+    all_expenses = expense_service.get_expenses_by_user(1)
+    print(f"Sėkmė! \nGautos išlaidos user_id=1: {all_expenses}")
+
     # print("Bandoma pridėti išlaidų")
     # expense = ExpenseModel(user_id=1, receipt_id=None, category_id=2, description="Testas", amount=20, expense_date="2026-02-01")
     

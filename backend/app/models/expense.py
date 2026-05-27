@@ -23,10 +23,8 @@ class ExpenseDisplay(ExpenseModel):
     title: Optional[str] = None
     amount: float
     expense_date: date
-    shop_name: str = "Kita"
-    category_name: str = "Nenurodyta"
     created_at: Optional[datetime] = None
-    shop_name: Optional[str] = "Kita"
+    shop_name: Optional[str] = "Nenurodyta"
     category_name: Optional[str] = "Nenurodyta"
 
     class Config:

@@ -257,7 +257,7 @@ function ExpensesPage() {
                             className="material-symbols-outlined text-[18px]"
                             style={{ color: "var(--color-primary)" }}
                           >
-                            {expense.shop || "Kita"}
+                            {expense.shop_name || "Nenurodyta"}
                           </span>
                         </div>
                       </td>
@@ -271,7 +271,7 @@ function ExpensesPage() {
                         {expense.expense_date}
                       </td>
                       <td style={{ padding: "var(--space-3) var(--space-3)" }}>
-                        {expense.category_name}
+                        {expense.category_name || "Nenurodyta"}
                       </td>
                       <td
                         className="text-right font-bold"
