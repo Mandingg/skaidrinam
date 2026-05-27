@@ -1,4 +1,4 @@
-.login-page {
+.register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -7,7 +7,7 @@
   background: var(--color-navigation);
 }
 
-.login-card {
+.register-card {
   width: 100%;
   max-width: 450px;
   background: var(--color-background);
@@ -17,23 +17,23 @@
   padding: var(--space-5);
   padding-bottom: var(--space-5);
 }
+
 /* HEADER */
-.login-header {
+.register-header {
   display: flex;
   justify-content: center;
   margin-bottom: var(--space-4);
 }
 
-.login-logo-title {
+.register-logo-title {
   display: flex;
   align-items: center;
-  gap: var(--space-2); 
+  gap: var(--space-2);
 }
 
-.login-logo {
-  width: 52px; 
+.register-logo {
+  width: 52px;
   height: 52px;
-  color: var(--color-neutral);
 }
 
 .title {
@@ -65,12 +65,12 @@
   gap: var(--space-1);
 }
 
-label {
+.field label {
   font-size: var(--text-small);
   color: var(--color-neutral);
 }
 
-input {
+.field input {
   height: 56px;
   padding: 15px;
   border-radius: var(--radius-sm);
@@ -79,7 +79,7 @@ input {
   outline: none;
 }
 
-input:focus {
+.field input:focus {
   border-color: var(--color-primary);
 }
 
@@ -127,7 +127,7 @@ input:focus {
   margin-top: var(--space-3);
 }
 
-.login-btn {
+.register-btn {
   width: 100%;
   height: 56px;
   border: none;
@@ -139,8 +139,24 @@ input:focus {
   cursor: pointer;
 }
 
-.login-btn:hover {
+.register-btn:hover {
   background: var(--color-primary-dark);
+}
+
+/* MESSAGE */
+.message {
+  margin-top: var(--space-3);
+  text-align: center;
+  font-size: var(--text-small);
+  font-weight: var(--font-weight-medium);
+}
+
+.message.error {
+  color: var(--color-error);
+}
+
+.message.success {
+  color: var(--color-primary);
 }
 
 /* FOOTER */
@@ -149,7 +165,6 @@ input:focus {
   text-align: center;
   font-size: var(--text-small);
   color: var(--color-neutral);
-  line-height: 24px;
 }
 
 .footer a {
