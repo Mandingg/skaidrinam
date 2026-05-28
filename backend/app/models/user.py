@@ -23,10 +23,13 @@ class UserCreateModel(BaseModel):
     @classmethod
     def validate_password(cls, value: str) -> str:
         if not re.search(r"[A-Z]", value):
-            raise ValueError("Slaptažodyje turi būti bent viena didžioji raidė")
+            raise ValueError(
+                "Slaptažodyje turi būti bent viena didžioji raidė")
         if not re.search(r"[!@#$%^&*/|(),.?\":{}|<>]", value):
-            raise ValueError("Slaptažodyje turi būti bent vienas specialus simbolis")
+            raise ValueError(
+                "Slaptažodyje turi būti bent vienas specialus simbolis")
         return value
+
 
 class UserUpdateModel(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=55)
@@ -34,11 +37,13 @@ class UserUpdateModel(BaseModel):
     email: EmailStr | None = Field(default=None, max_length=255)
     password: str | None = Field(default=None, min_length=8, max_length=72)
 
+
 class UserResponseModel(BaseModel):
     id: int
     name: str
     email: EmailStr
     message: str = "Paskyra sukurta sėkmingai"
+
 
 class UserUpdateResponseModel(BaseModel):
     id: int
