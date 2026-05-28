@@ -83,6 +83,12 @@
   border-color: var(--color-primary);
 }
 
+.additional-info {
+  font-size: var(--text-xsmall);
+  color: var(--color-neutral);
+  padding-left: 10px;
+}
+
 /* PASSWORD */
 .password-wrapper {
   display: flex;
