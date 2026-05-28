@@ -1,32 +1,20 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.models.expense import ExpenseModel
-from app.services.expense_service import ExpenseService
+from app.routes.user_routes import router as user_router
+from app.routes.expenses import router as expenses_router
 
-app = FastAPI()
+app = FastAPI(title="Skaidrinam API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-)
+    allow_headers=["*"])
 
-
-@app.post("/expenses", status_code=201)
-def create_expense(expense: ExpenseModel):
-    if expense.amount is None or expense.amount <= 0:
-        raise HTTPException(
-            status_code=400,
-            detail="Kaina negali būti neigiama arba tuščia",
-        )
-
-    service = ExpenseService()
-    expense_id = service.create_expense(expense)
-
-    if expense_id is None:
-        raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
-
-    return {"message": "Įrašas išsaugotas", "id": expense_id}
+app.include_router(user_router)
+app.include_router(expenses_router)

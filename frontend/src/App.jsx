@@ -1,12 +1,7 @@
-import ExpenseForm from "./components/ExpenseForm";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return (
-    <div>
-      <h1>Skaidrinam</h1>
-      <ExpenseForm />
-    </div>
-  );
+  return <AppRoutes />;
 }
 
 export default App;
