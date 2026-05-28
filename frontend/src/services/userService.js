@@ -13,9 +13,19 @@ function translateMessage(message) {
   const translations = {
     "String should have at least 8 characters": "Turi būti bent 8 simboliai",
 
+    "String should have at most 72 characters": "Turi būti ne daugiau kaip 72 simboliai",
+
     "value is not a valid email address": "Neteisingas el. pašto formatas",
 
+    "value is not a valid email address: The part after the @-sign is not valid. It should have a period.": "Neteisingas el. pašto formatas.",
+
     "Field required": "Laukas yra privalomas",
+
+    "Value error, Slaptažodyje turi būti bent viena didžioji raidė":
+      "Slaptažodyje turi būti bent viena didžioji raidė",
+
+    "Value error, Slaptažodyje turi būti bent vienas specialus simbolis":
+      "Slaptažodyje turi būti bent vienas specialus simbolis",
   };
 
   return translations[message] || message;
