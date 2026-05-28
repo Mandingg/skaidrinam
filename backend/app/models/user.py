@@ -37,6 +37,16 @@ class UserUpdateModel(BaseModel):
     email: EmailStr | None = Field(default=None, max_length=255)
     password: str | None = Field(default=None, min_length=8, max_length=72)
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not re.search(r"[A-Z]", value):
+            raise ValueError(
+                "Slaptažodyje turi būti bent viena didžioji raidė")
+        if not re.search(r"[!@#$%^&*/|(),.?\":{}|<>]", value):
+            raise ValueError(
+                "Slaptažodyje turi būti bent vienas specialus simbolis")
+        return value
 
 class UserResponseModel(BaseModel):
     id: int

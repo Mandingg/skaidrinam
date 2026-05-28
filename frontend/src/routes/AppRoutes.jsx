@@ -7,7 +7,7 @@ import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
-import ProfileEdit from "../pages/ProfileEdit";
+import ProfileEdit from "../pages/ProfileEdit/ProfileEdit";
 
 function AppRoutes() {
   return (
