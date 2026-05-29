@@ -7,7 +7,7 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 
 category_service = CategoryService()
 
-TEMP_USER_ID = 10  # Laikinai, kol neturime login funkcionalumo.
+TEMP_USER_ID = 11  # Laikinai, kol neturime login funkcionalumo.
 
 
 @router.get("/", status_code=status.HTTP_200_OK)

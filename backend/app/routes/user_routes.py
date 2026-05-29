@@ -44,7 +44,7 @@ def update_user(user_id: int, user_update: UserUpdateModel):
             detail="Įvyko serverio klaida atnaujinant paskyrą"
         )
 
-TEMP_USER_ID = 10  # Laikinai, kol neturime login funkcionalumo.
+TEMP_USER_ID = 6  # Laikinai, kol neturime login funkcionalumo.
 
 @router.delete("/me", status_code=status.HTTP_200_OK)
 def delete_user():
