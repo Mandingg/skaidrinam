@@ -7,6 +7,7 @@ import ProfileIcon from "../assets/ProfileIcon.svg";
 import LogoutIcon from "../assets/LogoutIcon.svg";
 import LogoIcon from "../assets/LogoIcon.svg";
 import VerifiedIcon from "../assets/VerifiedIcon.svg";
+import ExpensesIcon from "../assets/ExpensesIcon.svg";
 
 function Navigation() {
   const baseClass = "nav-link";
@@ -23,7 +24,7 @@ function Navigation() {
 
       {/* NAV */}
       <nav className="nav">
-        <NavLink 
+        <NavLink
           to="/"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
@@ -41,6 +42,16 @@ function Navigation() {
         >
           <img src={ChartsIcon} alt="charts" className="icon" />
           Analitika
+        </NavLink>
+
+        <NavLink
+          to="/islaidos"
+          className={({ isActive }) =>
+            `${baseClass} ${isActive ? activeClass : inactiveClass}`
+          }
+        >
+          <img src={ExpensesIcon} alt="expenses" className="icon" />
+          Išlaidų sąrašas
         </NavLink>
 
         <NavLink
