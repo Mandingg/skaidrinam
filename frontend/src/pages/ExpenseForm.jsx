@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createExpense } from "../services/expenseApi";
 import cekioLogo from "../assets/LogoIcon.svg";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 function getUserId() {
   const token = localStorage.getItem("token");
   if (!token) return null;
@@ -24,9 +26,17 @@ function ExpenseForm() {
     expense_date: "",
     category_id: "",
   });
+  const [categories, setCategories] = useState([]);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_URL}/categories`)
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .catch(() => setCategories([]));
+  }, []);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -120,16 +130,21 @@ function ExpenseForm() {
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-gray-700">
-              Kategorija ID <span className="text-gray-400 font-normal">(nebūtinas)</span>
+              Kategorija <span className="text-gray-400 font-normal">(nebūtinas)</span>
             </label>
-            <input
+            <select
               name="category_id"
-              type="number"
               value={form.category_id}
               onChange={handleChange}
-              placeholder="Palikite tuščią"
-              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
-            />
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all bg-white"
+            >
+              <option value="">-- Pasirinkite kategoriją --</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <button

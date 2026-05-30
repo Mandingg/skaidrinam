@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.user_routes import router as user_router
 from app.routes.expenses import router as expenses_router
+from app.routes.categories import router as categories_router
 
 app = FastAPI(title="Skaidrinam API", version="1.0.0")
 
@@ -18,3 +19,4 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(expenses_router)
+app.include_router(categories_router)
