@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import SideNavBar from "../components/SideNavBar";
+import Navigation from "../components/Navigation";
 import SearchBar from "../components/SearchBar";
 import { getUserCategories, getUserExpenses } from "../services/expenseService";
 
@@ -75,13 +75,13 @@ function ExpensesPage() {
       }}
     >
       <div className="flex min-h-[calc(100vh-64px)]">
-        <SideNavBar />
+        <Navigation />
         <main
           className="flex-1 ml-64 w-full"
           style={{
             padding: "var(--space-5)",
             maxWidth: "1200px",
-            margin: "0 auto",
+            margin: "0 auto 0 var(--sidebar-width)",
           }}
         >
           <section style={{ marginBottom: "var(--space-5)" }}>
@@ -90,8 +90,10 @@ function ExpensesPage() {
                 <h1
                   className="font-bold mb-1"
                   style={{
-                    color: "var(--color-neutral)",
-                    fontSize: "var(--text-display)",
+                    color: "var(--color-primary)",
+                    fontSize: "40px",
+                    fontWeight: "var(--font-weight-bold)",
+
                   }}
                 >
                   Mano išlaidos
@@ -124,23 +126,24 @@ function ExpensesPage() {
           <div
             className="border overflow-hidden"
             style={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "var(--color-background)",
               borderRadius: "var(--radius-md)",
-              borderColor: "var(--color-secondary)",
+              borderColor: "var(--border-color)",
             }}
           >
             <div
               className="border-b flex justify-between items-center"
               style={{
                 padding: "var(--space-3) var(--space-4)",
-                borderColor: "var(--color-secondary)",
+                borderColor: "var(--border-color)",
               }}
             >
               <button
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-8 transition-opacity font-medium"
                 style={{
                   borderColor: "var(--color-primary)",
-                  color: "var(--color-primary)",
+                  backgroundColor: "var(--color-primary)",
+                  color: "#ffffff",
                 }}
               >
                 Eksportuoti CSV
