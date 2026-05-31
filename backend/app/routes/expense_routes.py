@@ -1,17 +1,24 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.responses import StreamingResponse
 import csv
 import io
-
+from app.services.db_connection import DatabaseManager
 from app.models.expense import ExpenseDisplay
 from app.services.expense_service import ExpenseService
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
-expense_service = ExpenseService()
 
+def get_db_manager():
+    db = DatabaseManager()
+    try:
+        yield db
+    finally:
+        db.close()
 
 @router.get("/categories")
-def get_user_categories(user_id: int):
+def get_user_categories(user_id: int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
     try:
         categories = expense_service.get_user_categories(user_id)
         if categories is None:
@@ -23,7 +30,9 @@ def get_user_categories(user_id: int):
 
 
 @router.get("/list", response_model=list[ExpenseDisplay])
-def get_user_expenses(user_id: int):
+def get_user_expenses(user_id: int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
     try:
         return expense_service.get_expenses_with_details_by_user(user_id)
     except Exception as error:
@@ -32,7 +41,9 @@ def get_user_expenses(user_id: int):
 
 
 @router.delete("/delete/{expense_id}", status_code=status.HTTP_200_OK)
-def delete_expense(expense_id:int):
+def delete_expense(expense_id:int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
     try:
         result = expense_service.delete_single_expense(expense_id)
         if result:
@@ -44,7 +55,9 @@ def delete_expense(expense_id:int):
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida trinant išlaidą")
     
 @router.get("/export")
-def export_expenses_to_csv(user_id: int):
+def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
     try:
         expenses = expense_service.get_expenses_with_details_by_user(user_id)
         if not expenses:

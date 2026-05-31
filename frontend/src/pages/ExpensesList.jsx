@@ -174,7 +174,7 @@ function ExpensesPage() {
               <button
                 onClick={handleExport}
                 disabled={exportMessage}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-8 transition-opacity font-medium"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer"
                 style={{
                   borderColor: "var(--color-primary)",
                   backgroundColor: "var(--color-primary)",
