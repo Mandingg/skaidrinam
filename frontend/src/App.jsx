@@ -13,26 +13,16 @@ function App() {
   const location = useLocation();
 
   const hideNavigation =
-    location.pathname === "/" ||
+    location.pathname === "/prisijungimas" ||
     location.pathname === "/registracija";
 
   return (
     <>
       {!hideNavigation && <Navigation />}
 
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/registracija" element={<Register />} />
-
-        <Route path="/pagrindinis" element={<MainPage />} />
-        <Route path="/analitika" element={<Analytics />} />
-        <Route path="/garantijos" element={<Warranties />} />
-        <Route path="/profilis" element={<Profile />} />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <AppRoutes />
     </>
   );
 }
 
-export default App
+export default App;

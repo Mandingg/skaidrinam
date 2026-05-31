@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import "./Login.css";
-import LogoIcon from "../assets/LogoIcon.svg?url";
-import VisibilityOn from "../assets/VisibilityOn.svg";
-import VisibilityOff from "../assets/VisibilityOff.svg";
+import LogoIcon from "../../assets/LogoIcon.svg?url";
+import VisibilityOn from "../../assets/VisibilityOn.svg";
+import VisibilityOff from "../../assets/VisibilityOff.svg";
+
 import { Link } from "react-router";
 
 function Login() {

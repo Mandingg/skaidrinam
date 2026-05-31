@@ -1,4 +1,4 @@
-.register-page {
+.login-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -7,7 +7,7 @@
   background: var(--color-navigation);
 }
 
-.register-card {
+.login-card {
   width: 100%;
   max-width: 450px;
   background: var(--color-background);
@@ -17,22 +17,21 @@
   padding: var(--space-5);
   padding-bottom: var(--space-5);
 }
-
 /* HEADER */
-.register-header {
+.login-header {
   display: flex;
   justify-content: center;
   margin-bottom: var(--space-4);
 }
 
-.register-logo-title {
+.login-logo-title {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-2); 
 }
 
-.register-logo {
-  width: 52px;
+.login-logo {
+  width: 52px; 
   height: 52px;
   color: var(--color-neutral);
 }
@@ -72,20 +71,16 @@ label {
 }
 
 input {
-  width: 100%;
   height: 56px;
   padding: 15px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
   font-size: var(--text-body);
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  box-sizing: border-box;
 }
 
 input:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
 /* PASSWORD */
@@ -96,12 +91,6 @@ input:focus {
   border-radius: var(--radius-sm);
   overflow: hidden;
   background: white;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.password-wrapper:focus-within {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
 .password-wrapper input {
@@ -111,11 +100,10 @@ input:focus {
   border: none;
   outline: none;
   font-size: var(--text-body);
-  background: transparent;
 }
 
 .password-wrapper input:focus {
-  box-shadow: none;
+  outline: none;
 }
 
 .toggle-btn {
@@ -126,11 +114,6 @@ input:focus {
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.toggle-btn:hover {
-  background: rgba(0, 0, 0, 0.04);
 }
 
 .icon {
@@ -139,21 +122,12 @@ input:focus {
   display: block;
 }
 
-/* ERROR */
-.error-message {
-  color: #dc2626;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: -4px;
-  margin-bottom: -4px;
-}
-
 /* BUTTON */
 .actions {
   margin-top: var(--space-3);
 }
 
-.register-btn {
+.login-btn {
   width: 100%;
   height: 56px;
   border: none;
@@ -163,15 +137,10 @@ input:focus {
   font-size: var(--text-body);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
 }
 
-.register-btn:hover {
+.login-btn:hover {
   background: var(--color-primary-dark);
-}
-
-.register-btn:active {
-  transform: scale(0.98);
 }
 
 /* FOOTER */
@@ -180,6 +149,7 @@ input:focus {
   text-align: center;
   font-size: var(--text-small);
   color: var(--color-neutral);
+  line-height: 24px;
 }
 
 .footer a {
@@ -187,25 +157,8 @@ input:focus {
   font-weight: var(--font-weight-bold);
   margin-left: 6px;
   text-decoration: none;
-  transition: opacity 0.2s ease;
 }
 
 .footer a:hover {
   text-decoration: underline;
-  opacity: 0.85;
-}
-
-/* RESPONSIVE */
-@media (max-width: 500px) {
-  .register-card {
-    padding: var(--space-4);
-  }
-
-  .title {
-    font-size: 32px;
-  }
-
-  .subtitle {
-    font-size: 24px;
-  }
 }
