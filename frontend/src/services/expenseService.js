@@ -64,7 +64,7 @@ export const deleteExpense = async(expenseId) => {
 export const exportExpensesCSV = async() => {
   const userID = getCurrentUserId();
   try{
-    const response = await fetch(`http://localhost:800/expenses/export?user_id=${userID}`);
+    const response = await fetch(`http://127.0.0.1:8000/expenses/export?user_id=${userID}`);
     if (!response.ok) {
       throw new Error(`Serverio klaida: ${response.status}: ${response.statusText}`);
     }
