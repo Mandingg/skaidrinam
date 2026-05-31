@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status
+import csv
 
 from app.models.expense import ExpenseDisplay
 from app.services.expense_service import ExpenseService
@@ -39,3 +40,16 @@ def delete_expense(expense_id:int):
     except Exception as error:
         print("DELETE EXPENSE ERROR:", error)
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida trinant išlaidą")
+    
+@router.get("/export")
+def export_expenses_to_csv(user_id: int):
+    try:
+        expenses = expense_service.get_expenses_with_details_by_user(user_id)
+        if not expenses:
+            raise HTTPException(status_code=404, detail="Nerasta išlaidų eksportavimui")
+
+        
+        
+    except Exception as error:
+        print("EXPORT EXPENSES ERROR:", error)
+        raise HTTPException(status_code=500, detail="Įvyko serverio klaida eksportuojant išlaidas į CSV")
