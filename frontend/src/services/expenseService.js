@@ -60,3 +60,25 @@ export const deleteExpense = async(expenseId) => {
     console.warn('API klaida trinant išlaidą:', error.message);
     return false;
 }}
+
+export const exportExpensesCSV = async() => {
+  const userID = getCurrentUserId();
+  try{
+    const response = await fetch(`http://localhost:800/expenses/export?user_id=${userID}`);
+    if (!response.ok) {
+      throw new Error(`Serverio klaida: ${response.status}: ${response.statusText}`);
+    }
+    const data = await response.blob();
+    const url = window.URL.createObjectURL(data);
+    const documentLink = document.createElement('a');
+    documentLink.href = url;
+    documentLink.setAttribute('download', 'expenses.csv');
+    document.body.appendChild(documentLink);
+    documentLink.click();
+    document.body.removeChild(documentLink);
+    window.URL.revokeObjectURL(url);
+    }
+  catch(error){
+    console.warn(`Klaida eksportuojant CSV: ${error.message}`);
+  }
+}

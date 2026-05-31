@@ -5,6 +5,7 @@ import {
   getUserCategories,
   getUserExpenses,
   deleteExpense,
+  exportExpensesCSV,
 } from "../services/expenseService";
 
 function ExpensesPage() {
@@ -15,8 +16,9 @@ function ExpensesPage() {
   const [sortBy, setSortBy] = useState("DATE_DESC");
   const [categories, setCategories] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
+  const [exportMessage, setExportMessage] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     const loadExpenses = async () => {
       const data = await getUserExpenses();
       setExpenses(data);
@@ -31,7 +33,7 @@ function ExpensesPage() {
     };
     loadCategories();
   }, []);
-  
+
   const filteredAndSortedExpenses = expenses
     .filter((expense) => {
       if (!expense) return false;
@@ -86,6 +88,18 @@ function ExpensesPage() {
     }
   };
 
+  const handleExport = async () => {
+    setExportMessage(true);
+    try {
+      await exportExpensesCSV();
+    } catch (error) {
+      alert("Nepakvyko eskportuoti CSV failo. Pamėginkite vėliau.");
+      console.warn("Klaida ekxportuojant duomenis;", error.message);
+    } finally {
+      setExportMessage(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen text-[14px]"
@@ -113,7 +127,6 @@ function ExpensesPage() {
                     color: "var(--color-primary)",
                     fontSize: "40px",
                     fontWeight: "var(--font-weight-bold)",
-
                   }}
                 >
                   Mano išlaidos
@@ -159,6 +172,8 @@ function ExpensesPage() {
               }}
             >
               <button
+                onClick={handleExport}
+                disabled={exportMessage}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-8 transition-opacity font-medium"
                 style={{
                   borderColor: "var(--color-primary)",
@@ -166,7 +181,7 @@ function ExpensesPage() {
                   color: "#ffffff",
                 }}
               >
-                Eksportuoti CSV
+                {exportMessage ? "Eksportuojama..." : "Eksportuoti viską į CSV"}
               </button>
             </div>
 
@@ -297,7 +312,10 @@ function ExpensesPage() {
                       >
                         <button
                           onClick={() => {
-                            console.log("Mygtukas paspaustas. Bandome ištrinti ID:", expense.id);
+                            console.log(
+                              "Mygtukas paspaustas. Bandome ištrinti ID:",
+                              expense.id,
+                            );
                             handleDelete(expense.id);
                           }}
                           className="cursor-pointer text-gray-400 hover:text-red-600 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
