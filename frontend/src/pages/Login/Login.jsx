@@ -4,9 +4,11 @@ import LogoIcon from "../../assets/LogoIcon.svg?url";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
 import VisibilityOff from "../../assets/VisibilityOff.svg";
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router"; 
 
 function Login() {
+  const navigate = useNavigate(); 
+
   useEffect(() => {
     document.title = "Prisijungimas";
   }, []);
@@ -21,33 +23,33 @@ function Login() {
     setError("");
 
     try {
+      const formData = new URLSearchParams();
+      formData.append("username", email); // El. paštas siunčiamas kaip 'username'
+      formData.append("password", password);
+
       const res = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        body: formData.toString(),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+
         setError(data.detail || "Prisijungimo klaida");
         return;
       }
 
       console.log("LOGIN SUCCESS:", data);
 
-      // jei ateity turėsi JWT:
-      // localStorage.setItem("token", data.access_token);
-
-      // jei nori saugoti user info:
-      // localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("access_token", data.access_token);
+      navigate("/"); 
 
     } catch (err) {
+      console.error("Prisijungimo klaida:", err);
       setError("Serverio klaida");
     }
   };
@@ -110,7 +112,7 @@ function Login() {
             </div>
           </div>
           
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && <p style={{ color: "red", fontSize: "14px", margin: "8px 0" }}>{error}</p>}
 
           <div className="actions">
             <button type="submit" className="login-btn">
