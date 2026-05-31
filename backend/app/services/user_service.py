@@ -90,9 +90,6 @@ class UserService:
         if existing_user:
             raise ValueError(
                 "Toks el.paštas jau egzistuoja. Prašome naudoti kitą el.paštą.")
-        print("PASSWORD VALUE:", user.password)
-        print("PASSWORD LENGTH:", len(user.password))
-        print("PASSWORD BYTES:", len(user.password.encode("utf-8")))
         password_hash = self._hash_password(user.password)
 
         query = """
@@ -138,3 +135,4 @@ class UserService:
         """
         query = "DELETE FROM users WHERE id = %s"
         return self.db.update(query, (user_id,))
+    
