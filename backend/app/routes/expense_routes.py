@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import StreamingResponse
 import csv
+import io
 
 from app.models.expense import ExpenseDisplay
 from app.services.expense_service import ExpenseService
@@ -48,8 +50,23 @@ def export_expenses_to_csv(user_id: int):
         if not expenses:
             raise HTTPException(status_code=404, detail="Nerasta išlaidų eksportavimui")
 
-        
-        
+        buffer = io.StringIO()
+        writer = csv.writer(buffer)
+        writer.writerow(["Expense ID", "Expense Date", "Input Date", "Description",
+                         "Amount", "Shop Name", "Category Name"])
+        for expense in expenses:
+            writer.writerow([
+                expense["id"],
+                expense["expense_date"],
+                expense["created_at"],
+                expense["description"],
+                expense["amount"],
+                expense.get("shop_name", ""),
+                expense.get("category_name", "")
+            ])
+        buffer.seek(0)
+        headers = {'Content-Disposition': 'attachment; filename="expenses.csv"'}
+        return StreamingResponse(buffer, media_type="text/csv", headers=headers)
     except Exception as error:
         print("EXPORT EXPENSES ERROR:", error)
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida eksportuojant išlaidas į CSV")
