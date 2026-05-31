@@ -4,6 +4,7 @@
 1. Eikite į `backend` aplanką (cd backend)
 2. Jei neturite, sukurkite ir aktyvuokite virtualią aplinką:
    * **Windows:** `py -m venv venv` tada `.\venv\Scripts\activate`
+   * **GITbash:** `py -m venv venv` `source venv/Scripts/activate`
    * **macOS/Linux:** `python3 -m venv venv` tada `source venv/bin/activate`
 3. **SVARBU:** Įdiekite visas bibliotekas:
    ```bash
