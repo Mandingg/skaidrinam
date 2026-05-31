@@ -35,8 +35,21 @@ class UserService:
         """Hashes a plaintext password using bcrypt before storing it in the database."""
         return pwd_context.hash(password)
 
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        """Verifies a plaintext password against its bcrypt hash."""
+        try:
+            return pwd_context.verify(plain_password, hashed_password)
+        except Exception:
+            return False
+
     def _get_user_by_email(self, email: str):
         """Fetches a user from the database based on their email address."""
+        if hasattr(self.db, 'connection') and self.db.connection:
+            try:
+                self.db.connection.commit()
+            except Exception:
+                pass
+            
         query = "SELECT * FROM users WHERE email = %s"
         result = self.db.fetch_one(query, (email,))
         if result:
@@ -52,7 +65,7 @@ class UserService:
         """
         if "password_hash" in criteria:
             print("Warning: 'password_hash' should not be used as a search criterion."
-                  "It will be ignored.")
+                "It will be ignored.")
             del criteria["password_hash"]
         field_names = " AND ".join(
             [f"{field} = %s" for field in criteria.keys()])
@@ -93,7 +106,7 @@ class UserService:
         password_hash = self._hash_password(user.password)
 
         query = """
-            INSERT INTO users (name, surname,email, password_hash, role, created_at)
+            INSERT INTO users (name, surname, email, password_hash, role, created_at)
             VALUES (%s, %s, %s, %s, %s, NOW())
         """
         values = (
@@ -103,10 +116,18 @@ class UserService:
             password_hash,
             "USER"
         )
+        
 
         user_id = self.db.insert(query, values)
         if user_id is None:
             raise RuntimeError("Nepavyko sukurti vartotojo duomenų bazėje.")
+        
+        if hasattr(self.db, 'connection') and self.db.connection:
+            try:
+                self.db.connection.commit()
+            except Exception:
+                pass
+            
         return {
             "id": user_id,
             "name": user.name,

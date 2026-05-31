@@ -47,7 +47,7 @@ export async function registerUser(formData) {
     password: formData.password,
   };
 
-  const response = await fetch("http://127.0.0.1:8000/users/register", {
+  const response = await fetch("http://127.0.0.1:8001/users/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

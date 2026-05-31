@@ -36,6 +36,34 @@ class DatabaseManager:
                     time.sleep(0.5)
             except connector.Error as err:
                 print(f"Error while connecting to MySQL: {err}")
+                
+    # == BU ==
+    def ensure_connection(self):
+        """Checks if connection is alive. If not, re-establishes it seamlessly."""
+        if not self.connection or not self.connection.is_connected():
+            print("MySQL Connection lost or unavailable. Reconnecting...")
+            for i in range(self.CONNECTION_TRIES):
+                try:
+                    self.connection = connector.connect(
+                        host=self.host, user=self.user, password=self.password, database=self.database, port=self.port
+                    )
+                    if self.connection.is_connected():
+                        print("Successfully reconnected to MySQL.")
+                        return
+                    time.sleep(0.5)
+                except connector.Error:
+                    pass
+        else:
+            try:
+                self.connection.ping(reconnect=True, attempts=3, delay=0.5)
+            except connector.Error:
+                print("Ping failed, resetting connection entirely.")
+                self.connection = connector.connect(
+                    host=self.host, user=self.user, password=self.password, database=self.database, port=self.port
+                )
+    # =====BU=======
+
+
 
     def close_connection(self):
         if self.connection:

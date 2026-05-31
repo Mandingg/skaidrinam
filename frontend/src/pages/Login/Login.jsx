@@ -24,10 +24,10 @@ function Login() {
 
     try {
       const formData = new URLSearchParams();
-      formData.append("username", email); // El. paštas siunčiamas kaip 'username'
+      formData.append("username", email); // Vartotojo username yra jo el.paštas
       formData.append("password", password);
 
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch("http://localhost:8001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -46,7 +46,7 @@ function Login() {
       console.log("LOGIN SUCCESS:", data);
 
       localStorage.setItem("access_token", data.access_token);
-      navigate("/"); 
+      navigate("/pagrindinis"); 
 
     } catch (err) {
       console.error("Prisijungimo klaida:", err);
