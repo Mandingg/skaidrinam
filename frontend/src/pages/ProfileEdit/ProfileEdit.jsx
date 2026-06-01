@@ -78,13 +78,10 @@ function ProfileEdit() {
             setMessage(data.message);
             setIsError(false);
 
-            setFormData({
-                name: "",
-                surname: "",
-                email: "",
-                password: "",
-                repeatPassword: "",
-            });
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
         } catch (error) {
             setMessage(error.message);
             setIsError(true);
