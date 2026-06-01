@@ -104,3 +104,6 @@ class CategoryService:
             raise ValueError(
                 "Kategorija nerasta arba nepriklauso vartotojui."
             )
+
+    def get_all(self):
+        return self.db.fetch_all("SELECT id, name FROM categories")
