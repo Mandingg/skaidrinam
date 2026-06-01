@@ -1,9 +1,6 @@
 from fastapi import FastAPI
-<<<<<<< HEAD
 from app.routes.user_routes import router as user_router
 from app.routes.category_routes import router as category_router
-=======
->>>>>>> main
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.user_routes import router as user_router
@@ -23,9 +20,6 @@ app.add_middleware(
     allow_headers=["*"])
 
 app.include_router(user_router)
-<<<<<<< HEAD
 app.include_router(category_router)
-=======
 app.include_router(expenses_router)
 app.include_router(categories_router)
->>>>>>> main

@@ -7,11 +7,8 @@ import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
-<<<<<<< HEAD
 import ProfileEdit from "../pages/ProfileEdit/ProfileEdit";
-=======
 import ExpenseForm from "../pages/ExpenseForm";
->>>>>>> main
 
 function AppRoutes() {
   return (
