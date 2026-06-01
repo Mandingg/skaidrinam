@@ -2,11 +2,21 @@ import { useEffect } from "react";
 import './MainPage.css';
 import EditPen from "../../assets/EditPen.svg";
 import AddNote from "../../assets/AddNote.svg";
+import { useNavigate } from "react-router";
 
 function MainPage() {
     useEffect(() => {
     document.title = "Pradžia";
   }, []);
+
+  const navigate = useNavigate();
+
+  const now = new Date();
+
+  const currentDate = new Intl.DateTimeFormat("lt-LT", {
+    year: "numeric",
+    month: "long",
+  }).format(now);
 
   return (
     <div className="dashboard">
@@ -14,9 +24,14 @@ function MainPage() {
         <header className="page-header">
           <h2>Pradžia</h2>
 
-          <button className="date-btn">
-            2024 m. gegužė
-          </button>
+          <div className="date-filter">
+            <select>
+              <option>{currentDate}</option>
+              <option>Einamasis mėnuo</option>
+              <option>Paskutinės 30 dienų</option>
+              <option>Einamieji metai</option>
+            </select>
+          </div>
         </header>
 
         <section className="stats-grid">
@@ -31,7 +46,7 @@ function MainPage() {
           </div>
 
           <div className="stat-card average">
-            <p>Bendras mėnesio vidurkis</p>
+            <p>Mokėjimų balansas</p>
             <h3>€275.40</h3>
             <span>
               (Pajamos €1,950.00 - Išlaidos €1,674.60)
@@ -47,7 +62,7 @@ function MainPage() {
             </p>
 
             <div className="action-grid">
-              <div className="action-card">
+              <div className="action-card" onClick={() => navigate("/prideti/rankinis")}>
                 <div className="icon-wrapper">
                   <img src={EditPen} alt="Rankinis įvedimas" className="action-icon"/>
                 </div>
@@ -59,7 +74,7 @@ function MainPage() {
                 </p>
               </div>
 
-              <div className="action-card upload">
+              <div className="action-card upload" onClick={() => navigate("/prideti/automatinis")}>
                 <div className="icon-wrapper">
                   <img src={AddNote} alt="Dokumentas" className="action-icon" />
                 </div>

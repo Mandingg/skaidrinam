@@ -19,12 +19,19 @@
   font-weight: var(--font-weight-bold);
 }
 
-.date-btn {
-  border: 2px solid var(--border-color);
-  background: white;
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-3);
+.date-filter {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
 }
+
+.date-filter select {
+  border: 2px solid var(--border-color);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: rgba(53, 95, 53, 0.189);
+}
+
 
 /* =========================
    STATS
@@ -117,6 +124,12 @@
   background: var(--color-secondary);
   border: 2px solid var(--border-color);
   text-align: center;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
 }
 
 .icon-wrapper {
@@ -186,6 +199,6 @@
   font-weight: var(--font-weight-bold);
 }
 
-.transactions-panel {
+/* .transactions-panel {
   min-height: 420px;
-}
+} */
