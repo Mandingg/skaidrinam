@@ -71,13 +71,9 @@ VALUES (
 -- LOGS
 INSERT INTO logs (
   user_id,
-  action_type,
-  record_id,
-  record_name
+  action
 )
 VALUES (
   1,
-  'USER_REGISTERED',
-  NULL,
-  NULL
+  'USER_REGISTERED'
 );
