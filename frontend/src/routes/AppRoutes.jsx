@@ -8,6 +8,7 @@ import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import ProfileEdit from "../pages/ProfileEdit";
+import ExpenseForm from "../pages/ExpenseForm";
 
 function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ function AppRoutes() {
       <Route path="/analitika" element={<Analytics />} />
       <Route path="/garantijos" element={<Warranties />} />
       <Route path="/profilis" element={<Profile />} />
+      <Route path="/islaidos/nauja" element={<ExpenseForm />} />
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
