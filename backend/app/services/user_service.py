@@ -165,7 +165,6 @@ class UserService:
         if user.name is not None:
             if user.name != existing_user.name:
                 update_fields["name"] = user.name
-                
 
         if user.surname is not None:
             if user.surname != existing_user.surname:
@@ -220,5 +219,20 @@ class UserService:
         Deletes a user from the database based on the provided user ID.
         Returns the number of affected rows.
         """
-        query = "DELETE FROM users WHERE id = %s"
-        return self.db.delete(query, (user_id,))
+        existing_user = self.get_user_by({"id": user_id})
+
+        if not existing_user:
+            raise ValueError("Tokio vartotojo nėra.")
+
+        query = """ 
+            DELETE FROM users
+            WHERE id = %s
+         """
+        
+        affected_rows = self.db.delete(query, (user_id,))
+        if affected_rows == 0 or affected_rows is None:
+            raise ValueError("Nepavyko ištrinti paskyros.")
+
+        return {
+            "message": "Paskyra sėkmingai ištrinta"
+        }

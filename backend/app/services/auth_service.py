@@ -1,28 +1,28 @@
-from passlib.context import CryptContext
-from app.services.user_service import UserService
+# from passlib.context import CryptContext
+# from app.services.user_service import UserService
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-class AuthService:
-    def __init__(self):
-        self.users = UserService()
+# class AuthService:
+#     def __init__(self):
+#         self.users = UserService()
 
-    def login(self, email: str, password: str):
-        user = self.users._get_user_by_email(email)
+#     def login(self, email: str, password: str):
+#         user = self.users._get_user_by_email(email)
 
-        if not user:
-            return {"error": "Vartotojas nerastas"}
+#         if not user:
+#             return {"error": "Vartotojas nerastas"}
 
-        if not pwd_context.verify(password, user.password_hash):
-            return {"error": "Blogas slaptažodis"}
+#         if not pwd_context.verify(password, user.password_hash):
+#             return {"error": "Blogas slaptažodis"}
 
-        token = create_token({
-            "sub": user.email,
-            "role": user.role
-        })
+#         token = create_token({
+#             "sub": user.email,
+#             "role": user.role
+#         })
 
-        return {
-            "access_token": token,
-            "token_type": "bearer"
-        }
+#         return {
+#             "access_token": token,
+#             "token_type": "bearer"
+#         }
