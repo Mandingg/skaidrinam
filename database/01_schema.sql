@@ -18,9 +18,13 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
   id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NULL,
   name VARCHAR(55) NOT NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY name_UNIQUE (name)
+  UNIQUE KEY uq_categories_user_name (user_id, name),
+  CONSTRAINT fk_categories_users
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE stores (
@@ -78,7 +82,9 @@ CREATE TABLE expenses (
 CREATE TABLE logs (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NULL,
-  action VARCHAR(255) NOT NULL,
+  action_type VARCHAR(100) NOT NULL,
+  record_id INT NULL,
+  record_name VARCHAR(255) NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   INDEX fk_logs_users_idx (user_id),
