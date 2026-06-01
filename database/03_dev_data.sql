@@ -77,12 +77,7 @@ INSERT INTO logs (
 )
 VALUES (
   1,
-<<<<<<< HEAD
-  'USER_REGISTERED'
-);
-=======
   'USER_REGISTERED',
   NULL,
   NULL
 );
->>>>>>> main
