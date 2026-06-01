@@ -3,7 +3,7 @@ from fastapi.responses import StreamingResponse
 import csv
 import io
 from app.services.db_connection import DatabaseManager
-from app.models.expense import ExpenseDisplay, ExpenseModel
+from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel
 from app.services.expense_service import ExpenseService
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
@@ -55,6 +55,32 @@ def get_user_expenses(user_id: int, db: DatabaseManager = Depends(get_db_manager
         print("GET EXPENSES ERROR:", error)
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida gaunant išlaidas")
 
+@router.get("/{expense_id}")
+def get_expense(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
+    expense = expense_service.get_by_id(expense_id)
+    if not expense:
+        raise HTTPException(status_code=404, detail="Įrašas nerastas")
+    return expense
+
+
+@router.put("/{expense_id}")
+def update_expense(expense_id: int,data: ExpenseUpdateModel, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db    
+    if data.amount <= 0:
+        raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
+
+    existing = expense_service.get_by_id(expense_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Įrašas nerastas")
+
+    success = expense_service.update_expense(expense_id, existing["user_id"], data)
+    if not success:
+        raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
+
+    return {"message": "Įrašas atnaujintas"}
 
 @router.delete("/delete/{expense_id}", status_code=status.HTTP_200_OK)
 def delete_expense(expense_id:int, db: DatabaseManager = Depends(get_db_manager)):

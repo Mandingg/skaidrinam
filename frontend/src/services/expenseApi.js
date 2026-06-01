@@ -1,3 +1,4 @@
+import { getCurrentUserId } from "./userService";
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export async function getExpense(id) {
@@ -19,6 +20,7 @@ export async function updateExpense(id, expenseData) {
 }
 
 export async function createExpense(expenseData) {
+  expenseData.user_id = getCurrentUserId(); // Pridėkite user_id prie expenseData
   const response = await fetch(`${API_URL}/expenses/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

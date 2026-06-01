@@ -24,25 +24,25 @@ expense_service = ExpenseService()
     # return {"message": "Įrašas išsaugotas", "id": expense_id}
 
 
-@router.get("/{expense_id}")
-def get_expense(expense_id: int):
-    expense = expense_service.get_by_id(expense_id)
-    if not expense:
-        raise HTTPException(status_code=404, detail="Įrašas nerastas")
-    return expense
+# @router.get("/{expense_id}")
+# def get_expense(expense_id: int):
+#     expense = expense_service.get_by_id(expense_id)
+#     if not expense:
+#         raise HTTPException(status_code=404, detail="Įrašas nerastas")
+#     return expense
 
 
-@router.put("/{expense_id}")
-def update_expense(expense_id: int, data: ExpenseUpdateModel):
-    if data.amount <= 0:
-        raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
+# @router.put("/{expense_id}")
+# def update_expense(expense_id: int, data: ExpenseUpdateModel):
+#     if data.amount <= 0:
+#         raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
 
-    existing = expense_service.get_by_id(expense_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="Įrašas nerastas")
+#     existing = expense_service.get_by_id(expense_id)
+#     if not existing:
+#         raise HTTPException(status_code=404, detail="Įrašas nerastas")
 
-    success = expense_service.update_expense(expense_id, existing["user_id"], data)
-    if not success:
-        raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
+#     success = expense_service.update_expense(expense_id, existing["user_id"], data)
+#     if not success:
+#         raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
 
-    return {"message": "Įrašas atnaujintas"}
+#     return {"message": "Įrašas atnaujintas"}
