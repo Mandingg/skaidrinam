@@ -158,6 +158,7 @@ function Register() {
                 />
               </button>
             </div>
+            <p className="additional-info">*Slaptazodis turi turėti vieną didžiąją raidę ir vieną spec.simbolį</p>
           </div>
 
           {/* Repeat Password */}
@@ -213,9 +214,8 @@ function Register() {
         {/* Message */}
         {message && (
           <p
-            className={`message ${
-              isError ? "error" : "success"
-            }`}
+            className={`message ${isError ? "error" : "success"
+              }`}
           >
             {message}
           </p>

@@ -1,9 +1,8 @@
-from streamlit import user
 
 from app.services.db_connection import DatabaseManager
 from app.models.user import UserModel
 # ==AJ==
-from app.models.user import UserCreateModel
+from app.models.user import UserCreateModel, UserUpdateModel
 from passlib.context import CryptContext
 
 
@@ -135,19 +134,86 @@ class UserService:
             "email": user.email,
             "message": "Paskyra sukurta sėkmingai"
         }
-    # ==AJ==
 
-    def update_user(self, user_id: int, updated_fields: dict):
+    # def update_user(self, user_id: int, updated_fields: dict): #REIKIA PERRASYTI, NES REIKIA TIKRINTI AR NERA TOKIO USERS IR HASHINTI PASSWORDA
+    #     """
+    #     Updates an existing user in the database based on the provided user ID
+    #     and a dictionary of fields and their new values to update.
+    #     Returns the number of affected rows.
+    #     """
+    #     field_names = ", ".join(
+    #         [f"{field} = %s" for field in updated_fields.keys()])
+    #     query = f"UPDATE users SET {field_names} WHERE id = %s"
+    #     params = list(updated_fields.values()) + [user_id]
+    #     return self.db.update(query, params)
+
+    def update_user(self, user_id: int, user: UserUpdateModel):
         """
-        Updates an existing user in the database based on the provided user ID
-        and a dictionary of fields and their new values to update.
-        Returns the number of affected rows.
+        Updates user account information.
+        Allows updating:
+        - name
+        - surname
+        - email
+        - password
         """
+        existing_user = self.get_user_by({"id": user_id})
+        if not existing_user:
+            raise ValueError("Tokio vartotojo nėra.")
+
+        update_fields = {}
+
+        if user.name is not None:
+            if user.name != existing_user.name:
+                update_fields["name"] = user.name
+                
+
+        if user.surname is not None:
+            if user.surname != existing_user.surname:
+                update_fields["surname"] = user.surname
+
+        if user.email is not None:
+            if user.email != existing_user.email:
+                email_owner = self._get_user_by_email(user.email)
+
+                if email_owner and email_owner.id != user_id:
+                    raise ValueError(
+                        "Toks el.paštas jau naudojamas."
+                )
+                update_fields["email"] = user.email
+
+        if user.password is not None:
+            update_fields["password_hash"] = self._hash_password(user.password)
+
+        if not update_fields:
+            raise ValueError(
+                "Duomenys nebuvo pakeisti. Prašome pateikti bent vieną naują reikšmę."
+            )
+
         field_names = ", ".join(
-            [f"{field} = %s" for field in updated_fields.keys()])
-        query = f"UPDATE users SET {field_names} WHERE id = %s"
-        params = list(updated_fields.values()) + [user_id]
-        return self.db.update(query, params)
+            [f"{field} = %s" for field in update_fields.keys()]
+        )
+
+        query = f"""
+            UPDATE users
+            SET {field_names}
+            WHERE id = %s
+        """
+
+        input_values = list(update_fields.values()) + [user_id]
+
+        self.db.update(query, input_values)
+
+        updated_user = self.get_user_by({'id': user_id})
+
+        return {
+            "id": updated_user.id,
+            "name": updated_user.name,
+            "surname": updated_user.surname,
+            "email": updated_user.email,
+            "message": "Paskyra atnaujinta"
+        }
+
+    # ==AJ==
 
     def delete_user(self, user_id: int):
         """
@@ -155,5 +221,4 @@ class UserService:
         Returns the number of affected rows.
         """
         query = "DELETE FROM users WHERE id = %s"
-        return self.db.update(query, (user_id,))
-    
+        return self.db.delete(query, (user_id,))
