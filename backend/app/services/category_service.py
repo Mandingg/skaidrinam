@@ -25,24 +25,39 @@ class CategoryService:
         return [CategoryModel(**category) for category in categories]
 
     def create_category(self, category: CategoryCreateModel, user_id: int):
+
+        category_name = category.name.strip()
+
+        if not category_name:
+            raise ValueError("Kategorijos pavadinimas negali būti tuščias.")
+
         query = """
         SELECT id
         FROM categories
-        WHERE user_id = %s 
-        AND LOWER(name) = LOWER(%s)
+        WHERE LOWER(TRIM(name)) = LOWER(TRIM(%s))
+        AND (user_id = %s OR user_id IS NULL)
+        LIMIT 1
         """
 
-        existing_category = self.db.fetch_one(query, (user_id, category.name))
+        existing_category = self.db.fetch_one(query, (category_name, user_id))
         if existing_category:
             raise ValueError(
-                f"Kategorija '{category.name}' jau egzistuoja.")
+                f"Kategorija '{category_name}' jau egzistuoja.")
 
         insert_query = """
         INSERT INTO categories (user_id, name)
         VALUES (%s, %s)
         """
 
-        self.db.insert(insert_query, (user_id, category.name))
+        new_id = self.db.insert(
+            insert_query,
+            (user_id, category_name)
+        )
+
+        if new_id is None:
+            raise ValueError(
+                f"Kategorija '{category_name}' jau egzistuoja."
+            )
 
     def update_category(self, category_id: int, category: CategoryUpdateModel, user_id: int):
         query = """

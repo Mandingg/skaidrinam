@@ -16,6 +16,7 @@ def get_categories():
         return category_service.get_all_categories(TEMP_USER_ID)
 
     except Exception as error:
+        print("get_categories error:", error)  # Log error for debugging
         raise HTTPException(
             status_code=500,
             detail=str(error),
