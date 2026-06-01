@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import Literal
+import re
 
 
 class UserModel(BaseModel):
@@ -18,10 +19,46 @@ class UserCreateModel(BaseModel):
     email: EmailStr = Field(max_length=255)
     password: str = Field(min_length=8, max_length=72)
 
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not re.search(r"[A-Z]", value):
+            raise ValueError(
+                "Slaptažodyje turi būti bent viena didžioji raidė")
+        if not re.search(r"[!@#$%^&*/|(),.?\":{}|<>]", value):
+            raise ValueError(
+                "Slaptažodyje turi būti bent vienas specialus simbolis")
+        return value
+
+
+class UserUpdateModel(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=55)
+    surname: str | None = Field(default=None, min_length=1, max_length=55)
+    email: EmailStr | None = Field(default=None, max_length=255)
+    password: str | None = Field(default=None, min_length=8, max_length=72)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, value: str) -> str:
+        if not re.search(r"[A-Z]", value):
+            raise ValueError(
+                "Slaptažodyje turi būti bent viena didžioji raidė")
+        if not re.search(r"[!@#$%^&*/|(),.?\":{}|<>]", value):
+            raise ValueError(
+                "Slaptažodyje turi būti bent vienas specialus simbolis")
+        return value
 
 class UserResponseModel(BaseModel):
     id: int
     name: str
     email: EmailStr
     message: str = "Paskyra sukurta sėkmingai"
+
+
+class UserUpdateResponseModel(BaseModel):
+    id: int
+    name: str
+    surname: str
+    email: EmailStr
+    message: str = "Paskyra atnaujinta"
 # ==AJ==
