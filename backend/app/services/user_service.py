@@ -157,11 +157,11 @@ class UserService:
             if user.email != existing_user.email:
                 email_owner = self._get_user_by_email(user.email)
 
-            if email_owner and email_owner.id != user_id:
-                raise ValueError(
-                    "Toks el.paštas jau naudojamas."
+                if email_owner and email_owner.id != user_id:
+                    raise ValueError(
+                        "Toks el.paštas jau naudojamas."
                 )
-            update_fields["email"] = user.email
+                update_fields["email"] = user.email
 
         if user.password is not None:
             update_fields["password_hash"] = self._hash_password(user.password)

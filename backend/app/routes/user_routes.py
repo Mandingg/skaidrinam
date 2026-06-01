@@ -43,3 +43,20 @@ def update_user(user_id: int, user_update: UserUpdateModel):
             status_code=500,
             detail="Įvyko serverio klaida atnaujinant paskyrą"
         )
+
+@router.get("/{user_id}", status_code=status.HTTP_200_OK)
+def get_user(user_id: int):
+    user = user_service.get_user_by({"id": user_id})
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tokio vartotojo nėra."
+        )
+    
+    return {
+        "id": user.id,
+        "name": user.name,
+        "surname": user.surname,
+        "email": user.email
+    }

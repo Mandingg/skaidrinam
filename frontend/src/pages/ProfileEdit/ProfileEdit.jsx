@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { updateUser } from "../../services/userService";
+import { updateUser, getUser } from "../../services/userService";
+
 
 import "./ProfileEdit.css";
 
@@ -33,6 +34,26 @@ function ProfileEdit() {
     };
 
     const userId = localStorage.getItem("userId") || 2; //Redaguoja userId 2, bet po login'o turi perimti local storage
+
+    useEffect(() => {
+        async function loadUser() {
+            try {
+                const data = await getUser(userId);
+
+                setFormData((previous) => ({
+                    ...previous,
+                    name: data.name,
+                    surname: data.surname,
+                    email: data.email
+                }));
+            }
+            catch (error) {
+                setMessage(error.message);
+                setIsError(true)
+            }
+        }
+        loadUser();
+    }, [userId]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
