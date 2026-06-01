@@ -1,4 +1,5 @@
 from app.services.db_connection import DatabaseManager
+<<<<<<< HEAD
 from app.models.category import (
     CategoryModel, CategoryCreateModel, CategoryUpdateModel)
 
@@ -89,3 +90,13 @@ class CategoryService:
             raise ValueError(
                 "Kategorija nerasta arba nepriklauso vartotojui."
             )
+=======
+
+
+class CategoryService:
+    def __init__(self):
+        self.db = DatabaseManager()
+
+    def get_all(self):
+        return self.db.fetch_all("SELECT id, name FROM categories")
+>>>>>>> main
