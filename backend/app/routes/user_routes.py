@@ -44,7 +44,7 @@ def update_user(user_id: int, user_update: UserUpdateModel):
             detail="Įvyko serverio klaida atnaujinant paskyrą"
         )
 
-TEMP_USER_ID = 6  # Laikinai, kol neturime login funkcionalumo.
+TEMP_USER_ID = 13  # Laikinai, kol neturime login funkcionalumo.
 
 @router.delete("/me", status_code=status.HTTP_200_OK)
 def delete_user():
@@ -63,3 +63,19 @@ def delete_user():
             status_code=500,
             detail="Įvyko serverio klaida trinant paskyrą"
         )
+@router.get("/{user_id}", status_code=status.HTTP_200_OK)
+def get_user(user_id: int):
+    user = user_service.get_user_by({"id": user_id})
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Tokio vartotojo nėra."
+        )
+    
+    return {
+        "id": user.id,
+        "name": user.name,
+        "surname": user.surname,
+        "email": user.email
+    }

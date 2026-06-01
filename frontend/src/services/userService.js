@@ -101,15 +101,32 @@ export async function updateUser(userId, formData) {
   return data;
 }
 
+export async function getUser(userId) {
+  const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(getErrorMessage(data.detail));
+  }
+
+  return data;
+}
+
 export async function deleteUser() {
-  const response = await fetch(`http://127.0.0.1:8000/users/me`, {
+  const response = await fetch("http://127.0.0.1:8000/users/me", {
     method: "DELETE",
   });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.detail || "Nepavyko ištrinti paskyros");
+    throw new Error(getErrorMessage(data.detail));
   }
 
   return data;
