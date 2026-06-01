@@ -29,3 +29,10 @@ class ExpenseDisplay(ExpenseModel):
 
     class Config:
         from_attributes = True
+
+
+class ExpenseUpdateModel(BaseModel):
+    description: str
+    amount: float
+    expense_date: date
+    category_id: Optional[int] = None
