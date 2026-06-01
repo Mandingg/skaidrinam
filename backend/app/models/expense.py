@@ -12,3 +12,10 @@ class ExpenseModel(BaseModel):
     amount: float
     expense_date: date
     created_at: Optional[datetime] = None
+
+
+class ExpenseUpdateModel(BaseModel):
+    description: str
+    amount: float
+    expense_date: date
+    category_id: Optional[int] = None
