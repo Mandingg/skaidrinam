@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router";
 
-import MainPage from "../pages/MainPage";
+import MainPage from "../pages/MainPage/MainPage";
 import Analytics from "../pages/Analytics";
 import Warranties from "../pages/Warranties";
 import Profile from "../pages/Profile";
