@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import {
   getUserCategories,
@@ -6,6 +7,8 @@ import {
   deleteExpense,
   exportExpensesCSV,
 } from "../services/expenseService";
+import EditIcon from "../assets/EditIcon.svg";
+import DeleteIcon from "../assets/DeleteIcon.svg";
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
@@ -238,7 +241,15 @@ function ExpensesPage() {
                         padding: "var(--space-3) var(--space-4)",
                       }}
                     >
-                      Ištrinti įrašą:
+                      Redaguoti
+                    </th>
+                    <th
+                      className="font-semibold text-right text-gray-500"
+                      style={{
+                        padding: "var(--space-3) var(--space-4)",
+                      }}
+                    >
+                      Ištrinti
                     </th>
                   </tr>
                 </thead>
@@ -308,6 +319,19 @@ function ExpensesPage() {
                           fontSize: "var(--text-body)",
                         }}
                       >
+                        <Link to={`/islaidos/${expense.id}/redaguoti`}
+                        ClassName="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-orange-50">
+                          <img src={EditIcon} alt="edit" className="w-5 h-5" />
+                        </Link>
+                      </td>
+                      <td
+                        className="text-center"
+                        style={{
+                          padding: "var(--space-3) var(--space-4)",
+                          color: "var(--color-neutral)",
+                          fontSize: "var(--text-body)",
+                        }}
+                      >
                         <button
                           onClick={() => {
                             console.log(
@@ -316,10 +340,10 @@ function ExpensesPage() {
                             );
                             handleDelete(expense.id);
                           }}
-                          className="cursor-pointer text-gray-400 hover:text-red-600 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
+                          className="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
                           title="Ištrinti šį įrašą"
                         >
-                          x
+                          <img src={DeleteIcon} alt="delete" className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>
