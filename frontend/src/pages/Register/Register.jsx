@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { registerUser } from "../../services/userService";
+import { useNavigate } from "react-router";
 
 import "./Register.css";
 
@@ -25,6 +26,8 @@ function Register() {
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+
+  const navigate =useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -56,8 +59,9 @@ function Register() {
       setIsError(false);
 
       setTimeout(() => {
-                window.location.reload();
+        navigate("/prisijungimas");
             }, 2000);
+
     } catch (error) {
       setMessage(error.message);
       setIsError(true);
