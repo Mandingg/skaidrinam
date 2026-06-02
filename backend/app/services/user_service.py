@@ -43,23 +43,23 @@ class UserService:
 
     def _get_user_by_email(self, email: str):
         """Fetches a user from the database based on their email address."""
-        if not hasattr(self.db, 'connection'):
-            self.db.connection = None
-
         if hasattr(self.db, 'ensure_connection'):
             self.db.ensure_connection()
 
         if self.db.connection and self.db.connection.is_connected():
             try:
                 self.db.connection.commit()
+                cursor = self.db.connection.cursor()
+                cursor.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+                cursor.close()
             except Exception:
                 pass
+
         query = "SELECT * FROM users WHERE email = %s"
         result = self.db.fetch_one(query, (email,))
         if result:
             return UserModel(**result)
         return None
-    
     # ==AJ==
 
     def get_user_by(self, criteria: dict):

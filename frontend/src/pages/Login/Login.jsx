@@ -24,7 +24,7 @@ function Login() {
 
     try {
       const formData = new URLSearchParams();
-      formData.append("username", email); // Vartotojo username yra jo el.paštas
+      formData.append("username", email); 
       formData.append("password", password);
 
       const res = await fetch("http://localhost:8000/auth/login", {
@@ -37,16 +37,19 @@ function Login() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-
-        setError(data.detail || "Prisijungimo klaida");
-        return;
+      if (res.ok) { 
+        console.log("LOGIN SUCCESS:", data);
+        
+        // 1. Įrašome NAUJĄ žetoną
+        localStorage.setItem("token", data.access_token);
+        
+        // 2. Nukreipiame su pilnu perkrovimu, kad atsinaujintų visi komponentai
+        window.location.href = "/pagrindinis"; 
+      } else {
+        // Klaidų tvarkymas iš serverio pusės
+        setError(data.detail || "Neteisingas el. paštas arba slaptažodis");
+        return; // <-- BŪTINA: sustabdo funkciją, kad nevykdytų nukreipimo žemiau!
       }
-
-      console.log("LOGIN SUCCESS:", data);
-
-      localStorage.setItem("access_token", data.access_token);
-      navigate("/pagrindinis"); 
 
     } catch (err) {
       console.error("Prisijungimo klaida:", err);

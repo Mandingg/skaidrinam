@@ -24,7 +24,7 @@ class AuthService:
         """
         user = self.users._get_user_by_email(email)
 
-        if not user or not self.verify_password(password, user.password_hash):
+        if not user or not self.users.verify_password(password, user.password_hash):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Neteisingas el. paštas arba slaptažodis",
