@@ -31,9 +31,8 @@ class AuthService:
                 headers={"WWW-Authenticate": "Bearer"},
             )
 
-        token = create_token(data={
-            "sub": user.email,
-            "role": user.role
+        token = create_token({
+            "sub": str(user.id)
         })
 
         return {

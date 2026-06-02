@@ -7,13 +7,21 @@ user_service = UserService()
 
 @router.get("/me")
 def me(payload=Depends(get_current_user)):
-    user = user_service._get_user_by_email(payload["sub"])
-    
+
+    user_id = payload.get("sub")
+
+    if not user_id:
+        return {"error": "No user id in token"}
+
+    user = user_service.get_user_by({"id": int(user_id)})
+
     if user:
         return {
+            "id": user.id,
             "name": user.name,          
             "surname": user.surname,    
             "email": user.email
+            
         }
     
     return {"name": "Svečias", "surname": "", "email": "Neprisijungęs"}
