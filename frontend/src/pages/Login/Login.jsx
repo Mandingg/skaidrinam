@@ -40,15 +40,12 @@ function Login() {
       if (res.ok) { 
         console.log("LOGIN SUCCESS:", data);
         
-        // 1. Įrašome NAUJĄ žetoną
         localStorage.setItem("token", data.access_token);
         
-        // 2. Nukreipiame su pilnu perkrovimu, kad atsinaujintų visi komponentai
         window.location.href = "/pagrindinis"; 
       } else {
-        // Klaidų tvarkymas iš serverio pusės
         setError(data.detail || "Neteisingas el. paštas arba slaptažodis");
-        return; // <-- BŪTINA: sustabdo funkciją, kad nevykdytų nukreipimo žemiau!
+        return; 
       }
 
     } catch (err) {
