@@ -42,7 +42,7 @@ function Login() {
         
         localStorage.setItem("token", data.access_token);
         
-        window.location.href = "/pagrindinis"; 
+        navigate("/pagrindinis", { replace: true }); 
       } else {
         setError(data.detail || "Neteisingas el. paštas arba slaptažodis");
         return; 
