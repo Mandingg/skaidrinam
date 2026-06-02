@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Navigation from "../components/Navigation";
 import SearchBar from "../components/SearchBar";
 import {
   getUserCategories,
@@ -109,9 +108,8 @@ function ExpensesPage() {
       }}
     >
       <div className="flex min-h-[calc(100vh-64px)]">
-        <Navigation />
         <main
-          className="flex-1 ml-64 w-full"
+          className="flex-1 w-full"
           style={{
             padding: "var(--space-5)",
             maxWidth: "1200px",
