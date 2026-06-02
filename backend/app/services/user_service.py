@@ -145,39 +145,30 @@ class UserService:
         update_fields = {}
 
         if user.name is not None:
-            if user.name == existing_user.name:
-                raise ValueError(
-                    "Įvestas toks pats vardas, kaip ir dabar naudojamas. Prašome įvesti kitą vardą."
-                )
-            update_fields["name"] = user.name
+            if user.name != existing_user.name:
+                update_fields["name"] = user.name
+                
 
         if user.surname is not None:
-            if user.surname == existing_user.surname:
-                raise ValueError(
-                    "Įvesta tokia pati pavardė, kaip ir dabar naudojama. Prašome įvesti kitą pavardę."
-                )
-            update_fields["surname"] = user.surname
+            if user.surname != existing_user.surname:
+                update_fields["surname"] = user.surname
 
         if user.email is not None:
-            if user.email == existing_user.email:
-                raise ValueError(
-                    "Įvestas toks pats el.paštas, kaip ir dabar naudojamas. Prašome įvesti kitą el.paštą."
-                )
+            if user.email != existing_user.email:
+                email_owner = self._get_user_by_email(user.email)
 
-            email_owner = self._get_user_by_email(user.email)
-
-            if email_owner and email_owner.id != user_id:
-                raise ValueError(
-                    "Toks el.paštas jau naudojamas."
+                if email_owner and email_owner.id != user_id:
+                    raise ValueError(
+                        "Toks el.paštas jau naudojamas."
                 )
-            update_fields["email"] = user.email
+                update_fields["email"] = user.email
 
         if user.password is not None:
             update_fields["password_hash"] = self._hash_password(user.password)
 
         if not update_fields:
             raise ValueError(
-                "Duomenys pakeitimui neužpildyti"
+                "Duomenys nebuvo pakeisti. Prašome pateikti bent vieną naują reikšmę."
             )
 
         field_names = ", ".join(
