@@ -14,6 +14,13 @@ class ExpenseModel(BaseModel):
     created_at: Optional[datetime] = None
 
 
+class ExpenseUpdateModel(BaseModel):
+    description: str
+    amount: float
+    expense_date: date
+    category_id: Optional[int] = None
+
+
 class ExpenseDisplay(ExpenseModel):
     id: int
     user_id: int

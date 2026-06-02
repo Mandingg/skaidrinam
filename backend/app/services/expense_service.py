@@ -33,6 +33,22 @@ class ExpenseService:
             self._log(expense.user_id, expense_id, expense.description, "CREATE")
         return expense_id
 
+    def get_by_id(self, expense_id: int):
+        query = "SELECT * FROM expenses WHERE id = %s"
+        return self.db.fetch_one(query, (expense_id,))
+
+    def update_expense(self, expense_id: int, user_id: int, data) -> bool:
+        query = """
+            UPDATE expenses
+            SET description = %s, amount = %s, expense_date = %s, category_id = %s
+            WHERE id = %s
+        """
+        params = (data.description, data.amount, data.expense_date, data.category_id, expense_id)
+        rows = self.db.update(query, params)
+        if rows:
+            self._log(user_id, expense_id, data.description, "UPDATE")
+        return rows is not None and rows > 0
+
     def _log(self, user_id: int, record_id: int, record_name: str, action_type: str):
         query = """
             INSERT INTO logs (user_id, action_type, record_id, record_name)

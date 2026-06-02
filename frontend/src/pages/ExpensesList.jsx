@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import SearchBar from "../components/SearchBar";
 import {
   getUserCategories,
@@ -312,20 +312,20 @@ function ExpensesPage() {
                         {Number(expense.amount).toFixed(2)} €
                       </td>
                       <td
-                        className="text-center"
+                        className="text-right"
                         style={{
                           padding: "var(--space-3) var(--space-4)",
                           color: "var(--color-neutral)",
                           fontSize: "var(--text-body)",
                         }}
                       >
-                        <Link to={`/islaidos/${expense.id}/redaguoti`}
-                        ClassName="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-orange-50">
+                        <Link to={`redaguoti/${expense.id}`}
+                        className="inline-flex items-center justify-center gap-2 px-2 py-1 no-underline cursor-pointer">
                           <img src={EditIcon} alt="edit" className="w-5 h-5" />
                         </Link>
                       </td>
                       <td
-                        className="text-center"
+                        className="text-right"
                         style={{
                           padding: "var(--space-3) var(--space-4)",
                           color: "var(--color-neutral)",
@@ -340,7 +340,7 @@ function ExpensesPage() {
                             );
                             handleDelete(expense.id);
                           }}
-                          className="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 rounded-xl hover:bg-red-50"
+                          className="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 "
                           title="Ištrinti šį įrašą"
                         >
                           <img src={DeleteIcon} alt="delete" className="w-5 h-5" />
