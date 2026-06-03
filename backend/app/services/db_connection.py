@@ -44,16 +44,44 @@ class DatabaseManager:
             except connector.Error as err:
                 print(f"Nepavyko prisijungti prie DB (bandymas {i+1}): {err}")
                 time.sleep(2)
-
-    def _ensure_connection(self):
-        if self.connection is None:
-            self._connect()
-        elif not self.connection.is_connected():
-            print("Ryšys prarastas. Bandoma persijungti prie MySQL...")
+                
+    # == BU ==
+    def ensure_connection(self):
+        """Checks if connection is alive. If not, re-establishes it seamlessly."""
+        if not self.connection or not self.connection.is_connected():
+            print("MySQL Connection lost or unavailable. Reconnecting...")
+            for i in range(self.CONNECTION_TRIES):
+                try:
+                    self.connection = connector.connect(
+                        host=self.host, user=self.user, password=self.password, database=self.database, port=self.port
+                    )
+                    if self.connection.is_connected():
+                        print("Successfully reconnected to MySQL.")
+                        return
+                    time.sleep(0.5)
+                except connector.Error:
+                    pass
+        else:
             try:
-                self.connection.reconnect(attempts=3, delay=1)
-            except Exception:
-                self._connect()
+                self.connection.ping(reconnect=True, attempts=3, delay=0.5)
+            except connector.Error:
+                print("Ping failed, resetting connection entirely.")
+                self.connection = connector.connect(
+                    host=self.host, user=self.user, password=self.password, database=self.database, port=self.port
+                )
+    # =====BU=======
+
+
+
+    # def _ensure_connection(self):
+    #     if self.connection is None:
+    #         self._connect()
+    #     elif not self.connection.is_connected():
+    #         print("Ryšys prarastas. Bandoma persijungti prie MySQL...")
+    #         try:
+    #             self.connection.reconnect(attempts=3, delay=1)
+    #         except Exception:
+    #             self._connect()
 
     def fetch_all(self, query, params=None):
         """Executes a SELECT query and returns all results as a list of dictionaries.

@@ -1,4 +1,5 @@
 import { NavLink } from "react-router";
+import { useState, useEffect } from "react";
 import "./Navigation.css";
 
 import HomeIcon from "../assets/HomeIcon.svg";
@@ -14,6 +15,32 @@ function Navigation() {
   const activeClass = "active";
   const inactiveClass = "inactive";
 
+const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
+    return;
+  }
+
+  fetch("http://127.0.0.1:8000/me", {
+    method: "GET",
+    headers: { "Authorization": `Bearer ${token}` },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setUser({
+        name: data.name,
+        surname: data.surname,
+        email: data.email
+      });
+    })
+    .catch(() => {
+      setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
+    });
+}, []);
+
   return (
     <aside className="sidebar">
       {/* LOGO */}
@@ -24,8 +51,8 @@ function Navigation() {
 
       {/* NAV */}
       <nav className="nav">
-        <NavLink
-          to="/"
+        <NavLink 
+          to="/pagrindinis"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
@@ -87,8 +114,8 @@ function Navigation() {
         </div>
 
         <div className="user-text">
-          <span className="user-name">Jonas Petrauskas</span>
-          <span className="user-email">jonas@example.com</span>
+          <span className="user-name">{user.name} {user.surname}</span>
+          <span className="user-email">{user.email}</span>
         </div>
       </div>
     </aside>

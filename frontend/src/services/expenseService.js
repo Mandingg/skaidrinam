@@ -8,7 +8,7 @@ const FALLBACK_CATEGORIES = [
 ];
 
 export const getUserCategories = async () => {
-  const userId = getCurrentUserId();
+  const userId = await getCurrentUserId();
   try {
     const response = await fetch(`http://127.0.0.1:8000/expenses/categories?user_id=${userId}`);
     
@@ -30,7 +30,7 @@ export const getUserCategories = async () => {
 };
 
 export const getUserExpenses = async() => {
-    const userId = getCurrentUserId();
+    const userId = await getCurrentUserId();
     try {
         const response = await fetch(`http://127.0.0.1:8000/expenses/list?user_id=${userId}`);
     if (!response.ok) {
@@ -62,7 +62,7 @@ export const deleteExpense = async(expenseId) => {
 }}
 
 export const exportExpensesCSV = async() => {
-  const userID = getCurrentUserId();
+  const userID = await getCurrentUserId();
   try{
     const response = await fetch(`http://127.0.0.1:8000/expenses/export?user_id=${userID}`);
     if (!response.ok) {
