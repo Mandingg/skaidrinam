@@ -46,7 +46,7 @@ class DatabaseManager:
                 time.sleep(2)
                 
     # == BU ==
-    def ensure_connection(self):
+    def _ensure_connection(self):
         """Checks if connection is alive. If not, re-establishes it seamlessly."""
         if not self.connection or not self.connection.is_connected():
             print("MySQL Connection lost or unavailable. Reconnecting...")

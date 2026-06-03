@@ -23,6 +23,10 @@ function ExpensesPage() {
   const [exportMessage, setExportMessage] = useState(false);
 
   useEffect(() => {
+    document.title = "Mano išlaidos";
+  }, []);
+
+  useEffect(() => {
     const loadExpenses = async () => {
       const data = await getUserExpenses();
       setExpenses(data);
