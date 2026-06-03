@@ -126,7 +126,13 @@ class DatabaseManager:
             cursor.close()
 
     def close(self):
-        """Closes the database connection. Use only in examples."""
+        """Closes the database connection."""
         if self.connection and self.connection.is_connected():
             self.connection.close()
             print("Duomenų bazės ryšys uždarytas.")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
