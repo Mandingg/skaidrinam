@@ -9,6 +9,7 @@ import {
 } from "../services/expenseService";
 import EditIcon from "../assets/EditIcon.svg";
 import DeleteIcon from "../assets/DeleteIcon.svg";
+import Warning from "../assets/Warning.svg";
 
 function ExpensesPage() {
   const [expenses, setExpenses] = useState([]);
@@ -17,6 +18,7 @@ function ExpensesPage() {
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [sortBy, setSortBy] = useState("DATE_DESC");
   const [categories, setCategories] = useState([]);
+  const [itemToDelete, setItemToDelete] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
   const [exportMessage, setExportMessage] = useState(false);
 
@@ -76,6 +78,10 @@ function ExpensesPage() {
       return 0;
     });
 
+  const triggerDeleteConfirmation = (id) => {
+    setItemToDelete(id);
+  };
+
   const handleDelete = async (expenseId) => {
     const result = await deleteExpense(expenseId);
     console.log("Ištrynimo rezultatas:", result);
@@ -84,6 +90,7 @@ function ExpensesPage() {
         prevExpenses.filter((item) => item.id !== expenseId),
       );
       setShowMessage(true);
+      setItemToDelete(null);
       setTimeout(() => setShowMessage(false), 3000);
     } else {
       alert("Nepavyko ištrinti įrašo.");
@@ -319,8 +326,10 @@ function ExpensesPage() {
                           fontSize: "var(--text-body)",
                         }}
                       >
-                        <Link to={`redaguoti/${expense.id}`}
-                        className="inline-flex items-center justify-center gap-2 px-2 py-1 no-underline cursor-pointer">
+                        <Link
+                          to={`redaguoti/${expense.id}`}
+                          className="inline-flex items-center justify-center gap-2 px-2 py-1 no-underline cursor-pointer"
+                        >
                           <img src={EditIcon} alt="edit" className="w-5 h-5" />
                         </Link>
                       </td>
@@ -338,12 +347,16 @@ function ExpensesPage() {
                               "Mygtukas paspaustas. Bandome ištrinti ID:",
                               expense.id,
                             );
-                            handleDelete(expense.id);
+                            triggerDeleteConfirmation(expense.id);
                           }}
                           className="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 "
                           title="Ištrinti šį įrašą"
                         >
-                          <img src={DeleteIcon} alt="delete" className="w-5 h-5" />
+                          <img
+                            src={DeleteIcon}
+                            alt="delete"
+                            className="w-5 h-5"
+                          />
                         </button>
                       </td>
                     </tr>
@@ -410,6 +423,40 @@ function ExpensesPage() {
         >
           <span className="text-lg">✓</span>
           <span>Įrašas ištrintas sėkmingai!</span>
+        </div>
+      )}
+
+      {itemToDelete !== null && (
+        <div className="fixed inset-0 bg-black/45 flex items-center justify-center z-[1000]">
+          <div className="w-full max-w-[420px] bg-white rounded-[var(--radius-md)] p-[var(--space-5)] text-center shadow-[var(--shadow-md)]">
+            <img
+              src={Warning}
+              alt="PERSPĖJIMAS"
+              className="w-[60px] h-[60px] block p-[10px] mx-auto mb-[var(--space-3)] bg-[var(--color-error-light)] rounded-full"
+            />
+
+            <h3 className="mb-[var(--space-3)] text-[var(--color-neutral)] text-[var(--text-h2)] font-[var(--font-weight-bold)]">
+              Ar tikrai norite ištrinti įrašą?
+            </h3>
+
+            <div className="flex flex-col gap-[var(--space-2)] items-center">
+              <button
+                type="button"
+                className="w-full max-w-[240px] h-[48px] rounded-[var(--radius-sm)] font-[var(--font-weight-medium)] cursor-pointer border border-solid border-[var(--border-color)] bg-transparent"
+                onClick={() => setItemToDelete(null)}
+              >
+                Atšaukti
+              </button>
+
+              <button
+                type="button"
+                className="w-full max-w-[240px] h-[48px] bg-[var(--color-error)] text-white font-[var(--font-weight-bold)] cursor-pointer rounded-[var(--radius-sm)] border-none"
+                onClick={() => handleDelete(itemToDelete)}
+              >
+                Ištrinti įrašą
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
