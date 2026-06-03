@@ -13,8 +13,6 @@ class ExpenseModel(BaseModel):
     expense_date: date
     created_at: Optional[datetime] = None
 
-
-<<<<<<<<< Temporary merge branch 1
 class ExpenseDisplay(ExpenseModel):
     id: int
     user_id: int
