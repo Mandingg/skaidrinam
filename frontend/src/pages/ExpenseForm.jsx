@@ -9,7 +9,7 @@ function getUserId() {
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.userId || payload.user_id || payload.id || null;
+    return payload.sub ? parseInt(payload.sub) : null; 
   } catch {
     return null;
   }
