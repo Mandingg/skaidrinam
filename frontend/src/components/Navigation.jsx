@@ -24,7 +24,7 @@ function Navigation() {
       {/* NAV */}
       <nav className="nav">
         <NavLink 
-          to="/"
+          to="/pagrindinis"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }

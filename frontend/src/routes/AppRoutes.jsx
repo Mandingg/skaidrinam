@@ -13,11 +13,11 @@ function AppRoutes() {
   return (
     <Routes>
       {/* AUTH */}
-      <Route path="/prisijungimas" element={<Login />} />
+      <Route path="/" element={<Login />} />
       <Route path="/registracija" element={<Register />} />
 
       {/* MAIN APP */}
-      <Route path="/" element={<MainPage />} />
+      <Route path="/pagrindinis" element={<MainPage />} />
       <Route path="/analitika" element={<Analytics />} />
       <Route path="/garantijos" element={<Warranties />} />
       <Route path="/profilis" element={<Profile />} />
