@@ -13,7 +13,7 @@ function MainPage() {
                 const token = localStorage.getItem("token"); 
 
                 // Kreipiamės į veikiantį adresą /me
-                const response = await fetch("http://127.0.0.1:8000/me", {
+                const response = await fetch("http://127.0.0.1:8001/me", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
