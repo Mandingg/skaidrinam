@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { getExpense, updateExpense } from "../services/expenseApi";
 import cekioLogo from "../assets/LogoIcon.svg";
 
@@ -23,6 +23,7 @@ function EditExpensePage() {
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_URL}/categories`)
@@ -75,12 +76,14 @@ function EditExpensePage() {
       await updateExpense(id, payload);
       setMessage("Įrašas atnaujintas");
       setIsError(false);
+      navigate("/islaidos", {replace: true});
+
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
     } finally {
       setLoading(false);
-    }
+    }    
   }
 
   if (notFound) {

@@ -1,5 +1,5 @@
 from app.services.db_connection import DatabaseManager
-from app.models.expense import ExpenseModel
+from app.models.expense import ExpenseDisplay, ExpenseModel
 
 
 class ExpenseService:
@@ -55,3 +55,77 @@ class ExpenseService:
             VALUES (%s, %s, %s, %s)
         """
         self.db.insert(query, (user_id, action_type, record_id, record_name))
+
+    def get_all_categories(self):
+        """
+        Gets all categories for a all users.
+        Returns a list of dictionaries with category id and name.
+        """
+        query = "SELECT id, name FROM categories"
+        results = self.db.fetch_all(query)
+
+        return results
+
+    def get_user_categories(self, user_id: int):
+        """
+        Gets all categories for a specific user.
+        Returns a list of dictionaries with category id and name.
+        """
+        query = "SELECT id, name FROM categories WHERE user_id = %s"
+        results = self.db.fetch_all(query, (user_id,))
+
+        return results
+
+    def get_expenses_by_user(self, user_id: int):
+        """ "
+        Gets all expenses for a given user.
+        Returns a list of ExpenseModel instances."""
+        query = "SELECT * FROM expenses WHERE user_id = %s"
+        results = self.db.fetch_all(query, (user_id,))
+        if results is None:
+            return []
+        expenses = [ExpenseModel(**row) for row in results]
+        return expenses   
+
+
+    def get_expenses_with_details_by_user(self, user_id: int):
+        """
+        Gets all expenses for a given user, including the shop name.
+        """
+        query = """
+            SELECT
+            e.id,
+            e.user_id,
+            e.receipt_id,
+            e.category_id,
+            e.description,
+            e.description AS title,
+            e.amount,
+            e.expense_date,
+            e.created_at,
+            s.name AS shop_name, c.name AS category_name
+            FROM expenses e
+            LEFT JOIN receipts r ON e.receipt_id = r.id
+            LEFT JOIN stores s ON r.store_id = s.id
+            LEFT JOIN categories c ON e.category_id = c.id
+            WHERE e.user_id = %s
+        """
+        results = self.db.fetch_all(query, (user_id,))
+        if results is None:
+            return []
+        return results
+    
+    def delete_single_expense(self, expense_id):
+        """
+        Deletes an expense from the database.`
+        Returns True if the expense was deleted, False otherwise.
+        If more than one expense was deleted, error raised.
+        """
+        query = "DELETE FROM expenses WHERE id = %s"
+        result = self.db.delete(query, (expense_id,))
+        if result==1:
+            return True
+        elif result>1:
+            raise Exception(f"Error: More than one expense deleted. Deleted count: {result}")
+        else:
+            return False

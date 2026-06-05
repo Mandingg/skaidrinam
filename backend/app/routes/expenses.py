@@ -1,48 +1,52 @@
-from fastapi import APIRouter, HTTPException, status
+"""
+Viskas perkelta i expense_routes.py, cia nebereikalinga. Palieku kol kas nebent dėl konfliktų ---> GBL
+"""
 
-from app.models.expense import ExpenseModel, ExpenseUpdateModel
-from app.services.expense_service import ExpenseService
+# from fastapi import APIRouter, HTTPException, status
 
-router = APIRouter(prefix="/expenses", tags=["expenses"])
+# from app.models.expense import ExpenseModel, ExpenseUpdateModel
+# from app.services.expense_service import ExpenseService
 
-expense_service = ExpenseService()
+# router = APIRouter(prefix="/expenses", tags=["expenses"])
 
-
-@router.post("", status_code=status.HTTP_201_CREATED)
-def create_expense(expense: ExpenseModel):
-    if expense.amount is None or expense.amount <= 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Kaina negali būti neigiama arba tuščia",
-        )
-
-    expense_id = expense_service.create_expense(expense)
-
-    if expense_id is None:
-        raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
-
-    return {"message": "Įrašas išsaugotas", "id": expense_id}
+# expense_service = ExpenseService()
 
 
-@router.get("/{expense_id}")
-def get_expense(expense_id: int):
-    expense = expense_service.get_by_id(expense_id)
-    if not expense:
-        raise HTTPException(status_code=404, detail="Įrašas nerastas")
-    return expense
+# @router.post("", status_code=status.HTTP_201_CREATED)
+# def create_expense(expense: ExpenseModel):
+#     if expense.amount is None or expense.amount <= 0:
+#         raise HTTPException(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             detail="Kaina negali būti neigiama arba tuščia",
+#         )
+
+#     expense_id = expense_service.create_expense(expense)
+
+#     if expense_id is None:
+#         raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
+
+#     return {"message": "Įrašas išsaugotas", "id": expense_id}
 
 
-@router.put("/{expense_id}")
-def update_expense(expense_id: int, data: ExpenseUpdateModel):
-    if data.amount <= 0:
-        raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
+# @router.get("/{expense_id}")
+# def get_expense(expense_id: int):
+#     expense = expense_service.get_by_id(expense_id)
+#     if not expense:
+#         raise HTTPException(status_code=404, detail="Įrašas nerastas")
+#     return expense
 
-    existing = expense_service.get_by_id(expense_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="Įrašas nerastas")
 
-    success = expense_service.update_expense(expense_id, existing["user_id"], data)
-    if not success:
-        raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
+# @router.put("/{expense_id}")
+# def update_expense(expense_id: int, data: ExpenseUpdateModel):
+#     if data.amount <= 0:
+#         raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
 
-    return {"message": "Įrašas atnaujintas"}
+#     existing = expense_service.get_by_id(expense_id)
+#     if not existing:
+#         raise HTTPException(status_code=404, detail="Įrašas nerastas")
+
+#     success = expense_service.update_expense(expense_id, existing["user_id"], data)
+#     if not success:
+#         raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
+
+#     return {"message": "Įrašas atnaujintas"}
