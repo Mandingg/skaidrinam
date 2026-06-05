@@ -7,6 +7,7 @@ import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import ExpensesList from "../pages/ExpensesList";
 import ProfileEdit from "../pages/ProfileEdit/ProfileEdit";
 import ExpenseForm from "../pages/ExpenseForm";
 import EditExpensePage from "../pages/EditExpensePage";
@@ -15,15 +16,16 @@ function AppRoutes() {
   return (
     <Routes>
       {/* AUTH */}
-      <Route path="/prisijungimas" element={<Login />} />
+      <Route path="/" element={<Login />} />
       <Route path="/registracija" element={<Register />} />
       <Route path="/profilis/redaguoti" element={<ProfileEdit />} />
 
       {/* MAIN APP */}
-      <Route path="/" element={<MainPage />} />
+      <Route path="/pagrindinis" element={<MainPage />} />
       <Route path="/analitika" element={<Analytics />} />
       <Route path="/garantijos" element={<Warranties />} />
       <Route path="/profilis" element={<Profile />} />
+      <Route path='/islaidos' element={<ExpensesList />} />
       <Route path="/islaidos/nauja" element={<ExpenseForm />} />
       <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
 
