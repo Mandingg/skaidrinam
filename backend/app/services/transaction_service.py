@@ -1,0 +1,42 @@
+from app.services.db_connection import DatabaseManager
+from app.models.transction import UnifiedTransationModel
+
+class TransactionService:
+    """
+    Service class for unified transaction-related database operations.
+    """
+    def __init__(self):
+        self.db = DatabaseManager()
+    
+    def get_unified_transactions(self, user_id: int):
+        """
+        Retrieves a unified list of transactions (both expenses and incomes) for a given user.
+        """
+        query = """
+            SELECT 
+                e.expense_date AS transaction_date,
+                'Išlaida' AS transaction_type,
+                (e.amount * -1) AS amount,
+                c.name AS category_name,
+                s.name AS shop_name,
+                NULL AS income_source
+            FROM expenses e
+            LEFT JOIN categories c ON e.category_id = c.id
+            LEFT JOIN shops s ON e.shop_id = s.id
+            WHERE e.user_id = %s
+            
+            UNION ALL
+            
+            SELECT 
+                i.income_date AS transaction_date,
+                'Įplauka' AS transaction_type,
+                i.amount,
+                NULL AS category_name,
+                NULL AS shop_name,
+                i.source AS income_source
+            FROM incomes i
+            WHERE i.user_id = %s
+        """
+        params = (user_id, user_id)
+        results = self.db.fetch_all(query, params)
+        return [UnifiedTransationModel(**row) for row in results]
