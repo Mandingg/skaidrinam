@@ -189,7 +189,7 @@ class UserService:
         return {
             "id": updated_user.id,
             "subscription_type": updated_user.subscription_type,
-            "message": f"Prenumerata atnaujinta į {subscription_type.subscription_type} prenumeratos planą."
+            "message": f"Paskyra atnaujinta į {subscription_type.subscription_type} prenumeratos planą."
         }
 
     def delete_user(self, user_id: int):

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.models.user import (UserCreateModel, UserUpdateModel, UserSubscriptionUpdateModel, UserSubscriptionUpdateResponseModel)
+from app.models.user import (UserCreateModel, UserResponseModel, UserUpdateModel, UserUpdateResponseModel, UserSubscriptionUpdateModel, UserSubscriptionUpdateResponseModel)
 from app.services.user_service import UserService
 
 
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 user_service = UserService()
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=UserResponseModel, status_code=status.HTTP_201_CREATED)
 def register_user(user: UserCreateModel):
     try:
         return user_service.create_user(user)
@@ -28,7 +28,7 @@ def register_user(user: UserCreateModel):
         )
 
 
-@router.put("/{user_id}", status_code=status.HTTP_200_OK)
+@router.put("/{user_id}", response_model=UserUpdateResponseModel, status_code=status.HTTP_200_OK)
 def update_user(user_id: int, user_update: UserUpdateModel):
     try:
         return user_service.update_user(user_id, user_update)
@@ -77,5 +77,24 @@ def get_user(user_id: int):
         "id": user.id,
         "name": user.name,
         "surname": user.surname,
-        "email": user.email
+        "email": user.email,
+        "subscription_type": user.subscription_type
     }
+
+@router.patch("/{user_id}/subscription", response_model=UserSubscriptionUpdateResponseModel, status_code=status.HTTP_200_OK)
+def update_user_subscription(user_id: int, subscription: UserSubscriptionUpdateModel):
+    try:
+        return user_service.update_subscription(user_id, subscription)
+    
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
+        )
+    
+    except Exception as error:
+        print("SUBSCRIPTION UPDATE ERROR:", error)
+        raise HTTPException(
+            status_code=500,
+            detail="Įvyko serverio klaida atnaujinant prenumeratą"
+        )
