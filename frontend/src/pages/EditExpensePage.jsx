@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { getExpense, updateExpense } from "../services/expenseApi";
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 function EditExpensePage() {
   useEffect(() => {

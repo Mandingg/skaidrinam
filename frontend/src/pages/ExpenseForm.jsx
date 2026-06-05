@@ -3,7 +3,7 @@ import { createExpense } from "../services/expenseApi";
 import { useNavigate } from "react-router"; 
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 function getUserId() {
   const token = localStorage.getItem("token");

@@ -59,7 +59,7 @@ export async function registerUser(formData) {
     password: formData.password,
   };
 
-  const response = await fetch("http://127.0.0.1:8000/users/register", {
+  const response = await fetch("http://127.0.0.1:8001/users/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export async function updateUser(userId, formData) {
   if (formData.email) input.email = formData.email;
   if (formData.password) input.password = formData.password;
 
-  const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+  const response = await fetch(`http://127.0.0.1:8001/users/${userId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export async function updateUser(userId, formData) {
 }
 
 export async function getUser(userId) {
-  const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+  const response = await fetch(`http://127.0.0.1:8001/users/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -124,7 +124,7 @@ export async function getCurrentUserId() {
     const token = localStorage.getItem("token");
 
     // Kreipiamės į veikiantį adresą /me
-    const response = await fetch("http://127.0.0.1:8000/me", {
+    const response = await fetch("http://127.0.0.1:8001/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

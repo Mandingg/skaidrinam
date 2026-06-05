@@ -18,6 +18,7 @@ function getUserIdFromToken() {
 function MainPage() {
   const [user, setUser] = useState(null);
   const [allExpenses, setAllExpenses] = useState([]);
+  const [allIncome, setAllIncome] = useState([]);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("current_month"); 
   const navigate = useNavigate();
@@ -26,41 +27,71 @@ function MainPage() {
   useEffect(() => {
     document.title = "Pradžia - Čekiukai";
 
-    async function fetchData() {
-      try {
-        const token = localStorage.getItem("token"); 
-        const userId = getUserIdFromToken();
+async function fetchData() {
+  try {
+    const token = localStorage.getItem("token");
+    const userId = getUserIdFromToken();
 
-        if (!token || !userId) {
-          throw new Error("Sesija pasibaigė. Prisijunkite iš naujo.");
-        }
-
-        const headers = {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        };
-
-        const userRes = await fetch(`http://127.0.0.1:8000/me`, { method: "GET", headers });
-        const userData = await userRes.json();
-        if (!userRes.ok) throw new Error(userData.detail || "Nepavyko gauti vartotojo duomenų");
-        setUser(userData);
-
-        const expensesRes = await fetch(`http://127.0.0.1:8000/expenses/list?user_id=${userId}`, { 
-          method: "GET", 
-          headers 
-        });
-        
-        if (expensesRes.ok) {
-          const expensesData = await expensesRes.json();
-          setAllExpenses(Array.isArray(expensesData) ? expensesData : []);
-        } else {
-          setAllExpenses([]); 
-        }
-
-      } catch (err) {
-        setError(err.message);
-      }
+    if (!token || !userId) {
+      throw new Error("Sesija pasibaigė. Prisijunkite iš naujo.");
     }
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Vartotojo duomenys
+    const userRes = await fetch("http://127.0.0.1:8001/me", {
+      method: "GET",
+      headers,
+    });
+
+    const userData = await userRes.json();
+
+    if (!userRes.ok) {
+      throw new Error(
+        userData.detail || "Nepavyko gauti vartotojo duomenų"
+      );
+    }
+
+    setUser(userData);
+
+    // Išlaidos
+    const expensesRes = await fetch(
+      `http://127.0.0.1:8001/expenses/list?user_id=${userId}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    if (expensesRes.ok) {
+      const expensesData = await expensesRes.json();
+      setAllExpenses(Array.isArray(expensesData) ? expensesData : []);
+    } else {
+      setAllExpenses([]);
+    }
+
+    // Pajamos
+    const incomeRes = await fetch(
+      `http://127.0.0.1:8001/incomes/list?user_id=${userId}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    if (incomeRes.ok) {
+      const incomeData = await incomeRes.json();
+      setAllIncome(Array.isArray(incomeData) ? incomeData : []);
+    } else {
+      setAllIncome([]);
+    }
+  } catch (err) {
+    setError(err.message);
+  }
+}
 
     fetchData();
   }, [location.pathname]); 
