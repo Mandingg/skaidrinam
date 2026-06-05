@@ -44,6 +44,25 @@ def update_user(user_id: int, user_update: UserUpdateModel):
             detail="Įvyko serverio klaida atnaujinant paskyrą"
         )
 
+TEMP_USER_ID = 13  # Laikinai, kol neturime login funkcionalumo.
+
+@router.delete("/me", status_code=status.HTTP_200_OK)
+def delete_user():
+    try:
+        return user_service.delete_user(TEMP_USER_ID)
+    
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error)
+        )
+    
+    except Exception as error:
+        print("DELETE ERROR:", error)
+        raise HTTPException(
+            status_code=500,
+            detail="Įvyko serverio klaida trinant paskyrą"
+        )
 @router.get("/{user_id}", status_code=status.HTTP_200_OK)
 def get_user(user_id: int):
     user = user_service.get_user_by({"id": user_id})

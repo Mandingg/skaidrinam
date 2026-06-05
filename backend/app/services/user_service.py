@@ -215,3 +215,20 @@ class UserService:
             "subscription_type": updated_user.subscription_type,
             "message": f"Prenumerata atnaujinta į {subscription_type.subscription_type} prenumeratos planą."
         }
+        existing_user = self.get_user_by({"id": user_id})
+
+        if not existing_user:
+            raise ValueError("Tokio vartotojo nėra.")
+
+        query = """ 
+            DELETE FROM users
+            WHERE id = %s
+         """
+        
+        affected_rows = self.db.delete(query, (user_id,))
+        if affected_rows == 0 or affected_rows is None:
+            raise ValueError("Nepavyko ištrinti paskyros.")
+
+        return {
+            "message": "Paskyra sėkmingai ištrinta"
+        }
