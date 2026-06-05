@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { createExpense } from "../services/expenseApi";
+import { useNavigate } from "react-router"; 
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function getUserId() {
   const token = localStorage.getItem("token");
@@ -16,6 +17,8 @@ function getUserId() {
 }
 
 function ExpenseForm() {
+  const navigate = useNavigate(); 
+
   useEffect(() => {
     document.title = "Nauja išlaida";
   }, []);
@@ -68,6 +71,8 @@ function ExpenseForm() {
       setMessage("Įrašas išsaugotas");
       setIsError(false);
       setForm({ description: "", amount: "", expense_date: "", category_id: "" });
+      
+      navigate("/pagrindinis"); 
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
@@ -77,8 +82,11 @@ function ExpenseForm() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-      <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-sm p-8 md:p-12">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+      
+      <div className="absolute inset-0" onClick={() => navigate("/pagrindinis")} />
+
+      <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-xl p-8 md:p-12 relative z-10">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-3 mb-6">
             <img src={cekioLogo} alt="Čekiukai logo" className="w-10 h-10" />
@@ -150,7 +158,7 @@ function ExpenseForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#437d38] text-white py-3 rounded-md font-semibold text-base hover:bg-[#386a2f] transition-colors duration-200 disabled:opacity-50"
+            className="w-full bg-[var(--color-primary)] text-white py-3 rounded-md font-semibold text-base hover:bg-[var(--color-primary-dark)] transition-colors duration-200 disabled:opacity-50"
           >
             {loading ? "Saugoma..." : "Išsaugoti"}
           </button>

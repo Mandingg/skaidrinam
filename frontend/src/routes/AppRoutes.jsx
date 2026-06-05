@@ -26,7 +26,7 @@ function AppRoutes() {
       <Route path="/garantijos" element={<Warranties />} />
       <Route path="/profilis" element={<Profile />} />
       <Route path='/islaidos' element={<ExpensesList />} />
-      <Route path="/islaidos/nauja" element={<ExpenseForm />} />
+      <Route path="/pagrindinis/naujas" element={<ExpenseForm />} />
       <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
 
       {/* 404 */}

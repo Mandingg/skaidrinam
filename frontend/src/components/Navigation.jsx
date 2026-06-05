@@ -24,7 +24,7 @@ useEffect(() => {
     return;
   }
 
-  fetch("http://127.0.0.1:8001/me", {
+  fetch("http://127.0.0.1:8000/me", {
     method: "GET",
     headers: { "Authorization": `Bearer ${token}` },
   })
