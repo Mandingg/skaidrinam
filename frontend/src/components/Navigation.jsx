@@ -60,7 +60,7 @@ function Navigation() {
           }
         >
           <img src={ProfileIcon} alt="profile" className="icon" />
-          Profilis
+          Vartotojo profilis
         </NavLink>
 
         <NavLink to="/atsijungti" className="nav-link inactive">
