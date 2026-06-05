@@ -1,5 +1,5 @@
 from app.services.db_connection import DatabaseManager
-from app.models.transction import UnifiedTransationModel
+from app.models.transaction import UnifiedTransactionModel
 
 class TransactionService:
     """
@@ -39,4 +39,4 @@ class TransactionService:
         """
         params = (user_id, user_id)
         results = self.db.fetch_all(query, params)
-        return [UnifiedTransationModel(**row) for row in results]
+        return [UnifiedTransactionModel(**row) for row in results]

@@ -4,7 +4,7 @@ from app.models.transaction import UnifiedTransactionModel
 from app.services.transaction_service import TransactionService
 
 
-router = APIRouter(prefix = "/transactions", tags=["analytics"])
+router = APIRouter(prefix = "", tags=["analytics"])
 
 def get_db_manager():
     db = DatabaseManager()
@@ -13,7 +13,7 @@ def get_db_manager():
     finally:
         db.close()
 
-@router.get("/{user_id}", response_model=list[UnifiedTransactionModel])
+@router.get("/transactions", response_model=list[UnifiedTransactionModel])
 def get_user_transactions(user_id: int, db: DatabaseManager = Depends(get_db_manager)
 ):
     service = TransactionService()
