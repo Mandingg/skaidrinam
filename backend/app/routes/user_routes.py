@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, status
-
-from app.models.user import (UserCreateModel, UserResponseModel, UserUpdateModel, UserUpdateResponseModel, UserSubscriptionUpdateModel, UserSubscriptionUpdateResponseModel)
+from fastapi import APIRouter, Depends, HTTPException, status
+from app.models.user import (UserCreateModel, UserResponseModel, UserUpdateModel,
+                             UserUpdateResponseModel, UserSubscriptionUpdateModel, UserSubscriptionUpdateResponseModel)
 from app.services.user_service import UserService
+from app.auth.dependencies import get_current_user
 
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -28,8 +29,10 @@ def register_user(user: UserCreateModel):
         )
 
 
-@router.put("/{user_id}", response_model=UserUpdateResponseModel, status_code=status.HTTP_200_OK)
-def update_user(user_id: int, user_update: UserUpdateModel):
+@router.put("/me", response_model=UserUpdateResponseModel, status_code=status.HTTP_200_OK)
+def update_user(user_update: UserUpdateModel, payload=Depends(get_current_user)):
+    user_id = int(payload.get("sub"))
+
     try:
         return user_service.update_user(user_id, user_update)
     except ValueError as error:
@@ -44,27 +47,32 @@ def update_user(user_id: int, user_update: UserUpdateModel):
             detail="Įvyko serverio klaida atnaujinant paskyrą"
         )
 
-TEMP_USER_ID = 13  # Laikinai, kol neturime login funkcionalumo.
 
 @router.delete("/me", status_code=status.HTTP_200_OK)
-def delete_user():
+def delete_user(payload=Depends(get_current_user)):
+    user_id = int(payload.get("sub"))
+
     try:
-        return user_service.delete_user(TEMP_USER_ID)
-    
+        user_service.delete_user(user_id)
+        return {"message": "Paskyra sėkmingai ištrinta."}
+
     except ValueError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(error)
         )
-    
+
     except Exception as error:
         print("DELETE ERROR:", error)
         raise HTTPException(
             status_code=500,
             detail="Įvyko serverio klaida trinant paskyrą"
         )
-@router.get("/{user_id}", status_code=status.HTTP_200_OK)
-def get_user(user_id: int):
+
+
+@router.get("/me", status_code=status.HTTP_200_OK)
+def get_user(payload=Depends(get_current_user)):
+    user_id = int(payload.get("sub"))
     user = user_service.get_user_by({"id": user_id})
 
     if not user:
@@ -72,7 +80,7 @@ def get_user(user_id: int):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tokio vartotojo nėra."
         )
-    
+
     return {
         "id": user.id,
         "name": user.name,
@@ -81,17 +89,19 @@ def get_user(user_id: int):
         "subscription_type": user.subscription_type
     }
 
-@router.patch("/{user_id}/subscription", response_model=UserSubscriptionUpdateResponseModel, status_code=status.HTTP_200_OK)
-def update_user_subscription(user_id: int, subscription: UserSubscriptionUpdateModel):
+
+@router.patch("/me/subscription", response_model=UserSubscriptionUpdateResponseModel, status_code=status.HTTP_200_OK)
+def update_user_subscription(subscription: UserSubscriptionUpdateModel, payload=Depends(get_current_user)):
+    user_id = int(payload.get("sub"))
     try:
         return user_service.update_subscription(user_id, subscription)
-    
+
     except ValueError as error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(error)
         )
-    
+
     except Exception as error:
         print("SUBSCRIPTION UPDATE ERROR:", error)
         raise HTTPException(

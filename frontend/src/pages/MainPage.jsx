@@ -10,10 +10,10 @@ function MainPage() {
         async function fetchUser() {
             try {
                 // Token ištraukimas is localStorage
-                const token = localStorage.getItem("token"); 
+                const token = localStorage.getItem("token");
 
                 // Kreipiamės į veikiantį adresą /me
-                const response = await fetch("http://127.0.0.1:8000/me", {
+                const response = await fetch("http://127.0.0.1:8000/users/me", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ function MainPage() {
         }
 
         fetchUser();
-    }, []); 
+    }, []);
 
     if (error) {
         return <p className="text-red-500">{error}</p>;

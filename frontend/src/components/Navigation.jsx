@@ -15,31 +15,33 @@ function Navigation() {
   const activeClass = "active";
   const inactiveClass = "inactive";
 
-const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
+  const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
-    return;
-  }
-
-  fetch("http://127.0.0.1:8000/me", {
-    method: "GET",
-    headers: { "Authorization": `Bearer ${token}` },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      setUser({
-        name: data.name,
-        surname: data.surname,
-        email: data.email
-      });
-    })
-    .catch(() => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
       setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
-    });
-}, []);
+      return;
+    }
+
+    fetch("http://127.0.0.1:8000/users/me", {
+      method: "GET",
+      headers: { "Authorization": `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Me Response:", data)
+        setUser({
+          name: data.name,
+          surname: data.surname,
+          email: data.email,
+          subscription: data.subscription_type
+        });
+      })
+      .catch(() => {
+        setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
+      });
+  }, []);
 
   return (
     <aside className="sidebar">
@@ -51,7 +53,7 @@ useEffect(() => {
 
       {/* NAV */}
       <nav className="nav">
-        <NavLink 
+        <NavLink
           to="/pagrindinis"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
@@ -116,6 +118,7 @@ useEffect(() => {
         <div className="user-text">
           <span className="user-name">{user.name} {user.surname}</span>
           <span className="user-email">{user.email}</span>
+          <span className="user-subscription">Planas: {user.subscription}</span>
         </div>
       </div>
     </aside>

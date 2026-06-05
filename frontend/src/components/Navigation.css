@@ -121,3 +121,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.user-subscription {
+  font-size: var(--text-small);
+  color: var(--color-neutral);
+  /* text-transform: lowercase; */
+  opacity: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

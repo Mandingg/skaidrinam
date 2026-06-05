@@ -50,7 +50,8 @@ class UserService:
             try:
                 self.db.connection.commit()
                 cursor = self.db.connection.cursor()
-                cursor.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+                cursor.execute(
+                    "SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
                 cursor.close()
             except Exception:
                 pass
@@ -70,7 +71,7 @@ class UserService:
         """
         if "password_hash" in criteria:
             print("Warning: 'password_hash' should not be used as a search criterion."
-                "It will be ignored.")
+                  "It will be ignored.")
             del criteria["password_hash"]
         field_names = " AND ".join(
             [f"{field} = %s" for field in criteria.keys()])
@@ -119,25 +120,26 @@ class UserService:
             user.surname,
             user.email,
             password_hash,
-            "USER"
+            "USER",
+            "FREE"
         )
-        
 
         user_id = self.db.insert(query, values)
         if user_id is None:
             raise RuntimeError("Nepavyko sukurti vartotojo duomenų bazėje.")
-        
+
         if hasattr(self.db, 'connection') and self.db.connection:
             try:
                 self.db.connection.commit()
             except Exception:
                 pass
-            
+
         return {
             "id": user_id,
             "name": user.name,
             "surname": user.surname,
             "email": user.email,
+            "subscription_type": "FREE",
             "message": "Paskyra sukurta sėkmingai"
         }
 
@@ -171,7 +173,6 @@ class UserService:
         if user.name is not None:
             if user.name != existing_user.name:
                 update_fields["name"] = user.name
-                
 
         if user.surname is not None:
             if user.surname != existing_user.surname:
@@ -184,7 +185,7 @@ class UserService:
                 if email_owner and email_owner.id != user_id:
                     raise ValueError(
                         "Toks el.paštas jau naudojamas."
-                )
+                    )
                 update_fields["email"] = user.email
 
         if user.password is not None:
@@ -216,6 +217,7 @@ class UserService:
             "name": updated_user.name,
             "surname": updated_user.surname,
             "email": updated_user.email,
+            "subscription_type": updated_user.subscription_type,
             "message": "Paskyra atnaujinta"
         }
 

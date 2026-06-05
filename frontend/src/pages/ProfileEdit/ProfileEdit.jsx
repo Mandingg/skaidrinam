@@ -38,12 +38,10 @@ function ProfileEdit() {
         });
     };
 
-    const userId = localStorage.getItem("userId");
-
     useEffect(() => {
         async function loadUser() {
             try {
-                const data = await getUser(userId);
+                const data = await getUser();
 
                 setFormData((previous) => ({
                     ...previous,
@@ -58,7 +56,7 @@ function ProfileEdit() {
             }
         }
         loadUser();
-    }, [userId]);
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -73,7 +71,7 @@ function ProfileEdit() {
         }
 
         try {
-            const data = await updateUser(userId, {
+            const data = await updateUser({
                 name: formData.name || null,
                 surname: formData.surname || null,
                 email: formData.email || null,

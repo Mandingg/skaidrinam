@@ -59,7 +59,7 @@ function Register() {
       setIsError(false);
 
       setTimeout(() => {
-        navigate("/prisijungimas");
+        navigate("/");
             }, 2000);
 
     } catch (error) {
