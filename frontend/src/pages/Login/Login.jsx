@@ -1,17 +1,58 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Login.css";
 import LogoIcon from "../../assets/LogoIcon.svg?url";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
 import VisibilityOff from "../../assets/VisibilityOff.svg";
 
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router"; 
 
 function Login() {
-    useEffect(() => {
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
     document.title = "Prisijungimas";
   }, []);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append("username", email); 
+      formData.append("password", password);
+
+      const res = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData.toString(),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) { 
+        console.log("LOGIN SUCCESS:", data);
+        
+        localStorage.setItem("token", data.access_token);
+        
+        navigate("/pagrindinis", { replace: true }); 
+      } else {
+        setError(data.detail || "Neteisingas el. paštas arba slaptažodis");
+        return; 
+      }
+
+    } catch (err) {
+      console.error("Prisijungimo klaida:", err);
+      setError("Serverio klaida");
+    }
+  };
 
   return (
     <div className="login-page">
@@ -19,18 +60,16 @@ function Login() {
 
         {/* Header */}
         <div className="login-header">
-
           <div className="login-logo-title">
             <img src={LogoIcon} alt="Čekiukai logo" className="login-logo" />
             <h1 className="title">Čekiukai</h1>
           </div>
-
         </div>
 
         <h2 className="subtitle">Prisijungti</h2>
 
         {/* Form */}
-        <form className="form">
+        <form className="form" onSubmit={handleLogin}>
 
           {/* Email */}
           <div className="field">
@@ -39,6 +78,8 @@ function Login() {
               id="email"
               type="email"
               placeholder="Įveskite el. paštą"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -52,6 +93,8 @@ function Login() {
                 id="password"
                 type={passwordVisible ? "text" : "password"}
                 placeholder="Įveskite slaptažodį"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
 
@@ -68,8 +111,9 @@ function Login() {
               </button>
             </div>
           </div>
+          
+          {error && <p style={{ color: "red", fontSize: "14px", margin: "8px 0" }}>{error}</p>}
 
-          {/* Button */}
           <div className="actions">
             <button type="submit" className="login-btn">
               Prisijungti
@@ -81,7 +125,7 @@ function Login() {
         {/* Footer */}
         <div className="footer">
           <p>
-            Dar neturite paskyros?
+            Dar neturite paskyros?{" "}
             <Link to="/registracija">Registruokitės</Link>
           </p>
         </div>

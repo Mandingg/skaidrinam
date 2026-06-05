@@ -10,7 +10,10 @@ pip install -r requirements.txt
 
 docker compose up -d
 
-uvicorn app.main:app --reload &
+echo "Laukiama, kol MySQL duomenų bazė bus paruošta darbui (5s)..."
+sleep 5
+
+uvicorn app.main:app --reload --port 8000 &
 
 echo "FRONTEND START"
 
