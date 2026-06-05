@@ -6,14 +6,16 @@ INSERT INTO users (
   surname,
   email,
   password_hash,
-  role
+  role,
+  subscription_type
 )
 VALUES (
   'Admin',
   'Admin',
   'admin@skaidrinam.lt',
   '$2b$12$examplehash',
-  'ADMIN'
+  'ADMIN',
+  'PREMIUM'
 );
 
 -- RECEIPTS

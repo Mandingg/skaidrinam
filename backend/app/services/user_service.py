@@ -1,13 +1,10 @@
 
 from app.services.db_connection import DatabaseManager
-from app.models.user import UserModel
-# ==AJ==
-from app.models.user import UserCreateModel, UserUpdateModel
+from app.models.user import UserModel, UserCreateModel, UserUpdateModel, UserSubscriptionUpdateModel
 from passlib.context import CryptContext
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-# ==AJ==
 
 
 class UserService:
@@ -29,7 +26,6 @@ class UserService:
         results = self.db.fetch_all(query)
         return [UserModel(**user) for user in results]
 
-    # ==AJ==
     def _hash_password(self, password: str) -> str:
         """Hashes a plaintext password using bcrypt before storing it in the database."""
         return pwd_context.hash(password)
@@ -41,7 +37,6 @@ class UserService:
         if result:
             return UserModel(**result)
         return None
-    # ==AJ==
 
     def get_user_by(self, criteria: dict):
         """
@@ -62,21 +57,6 @@ class UserService:
             return UserModel(**result)
         return None
 
-    # ==AJ==
-
-    # def create_user(self, user: UserModel): #REIKIA PERRASYTI, NES REIKIA TIKRINTI AR NERA TOKIO USERS IR HASHINTI PASSWORDA
-    #     """
-    #     Inserts a new user into the database.
-    #     Returns the ID of the newly created user.
-    #     """
-    #     query = """
-    #         INSERT INTO users (name, surname, email, password_hash, role, created_at)
-    #         VALUES (%s, %s, %s, %s, %s, NOW())
-    #     """
-    #     params = (user.name, user.surname, user.email,
-    #               user.password_hash, user.role)
-    #     return self.db.insert(query, params)
-
     def create_user(self, user: UserCreateModel):
         """
         Creates new user:
@@ -89,21 +69,19 @@ class UserService:
         if existing_user:
             raise ValueError(
                 "Toks el.paštas jau egzistuoja. Prašome naudoti kitą el.paštą.")
-        print("PASSWORD VALUE:", user.password)
-        print("PASSWORD LENGTH:", len(user.password))
-        print("PASSWORD BYTES:", len(user.password.encode("utf-8")))
         password_hash = self._hash_password(user.password)
 
         query = """
-            INSERT INTO users (name, surname,email, password_hash, role, created_at)
-            VALUES (%s, %s, %s, %s, %s, NOW())
+            INSERT INTO users (name, surname,email, password_hash, role, subscription_type, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
         """
         values = (
             user.name,
             user.surname,
             user.email,
             password_hash,
-            "USER"
+            "USER",
+            "FREE"
         )
 
         user_id = self.db.insert(query, values)
@@ -114,20 +92,9 @@ class UserService:
             "name": user.name,
             "surname": user.surname,
             "email": user.email,
+            "subscription_type": "FREE",
             "message": "Paskyra sukurta sėkmingai"
         }
-
-    # def update_user(self, user_id: int, updated_fields: dict): #REIKIA PERRASYTI, NES REIKIA TIKRINTI AR NERA TOKIO USERS IR HASHINTI PASSWORDA
-    #     """
-    #     Updates an existing user in the database based on the provided user ID
-    #     and a dictionary of fields and their new values to update.
-    #     Returns the number of affected rows.
-    #     """
-    #     field_names = ", ".join(
-    #         [f"{field} = %s" for field in updated_fields.keys()])
-    #     query = f"UPDATE users SET {field_names} WHERE id = %s"
-    #     params = list(updated_fields.values()) + [user_id]
-    #     return self.db.update(query, params)
 
     def update_user(self, user_id: int, user: UserUpdateModel):
         """
@@ -147,7 +114,6 @@ class UserService:
         if user.name is not None:
             if user.name != existing_user.name:
                 update_fields["name"] = user.name
-                
 
         if user.surname is not None:
             if user.surname != existing_user.surname:
@@ -160,7 +126,7 @@ class UserService:
                 if email_owner and email_owner.id != user_id:
                     raise ValueError(
                         "Toks el.paštas jau naudojamas."
-                )
+                    )
                 update_fields["email"] = user.email
 
         if user.password is not None:
@@ -192,10 +158,39 @@ class UserService:
             "name": updated_user.name,
             "surname": updated_user.surname,
             "email": updated_user.email,
+            "subscription_type": updated_user.subscription_type,
             "message": "Paskyra atnaujinta"
         }
 
-    # ==AJ==
+    def update_subscription(self, user_id: int, subscription_type: UserSubscriptionUpdateModel):
+        """
+        Updates the subscription type of a user.
+        """
+        existing_user = self.get_user_by({"id": user_id})
+
+        if not existing_user:
+            raise ValueError("Tokio vartotojo nėra.")
+
+        if existing_user.subscription_type == subscription_type.subscription_type:
+            raise ValueError(
+                f"Prenumeratos planas nebuvo pakeistas."
+            )
+
+        query = """
+            UPDATE users
+            SET subscription_type = %s
+            WHERE id = %s
+        """
+
+        self.db.update(query, (subscription_type.subscription_type, user_id))
+
+        updated_user = self.get_user_by({'id': user_id})
+
+        return {
+            "id": updated_user.id,
+            "subscription_type": updated_user.subscription_type,
+            "message": f"Prenumerata atnaujinta į {subscription_type.subscription_type} prenumeratos planą."
+        }
 
     def delete_user(self, user_id: int):
         """
@@ -204,3 +199,19 @@ class UserService:
         """
         query = "DELETE FROM users WHERE id = %s"
         return self.db.delete(query, (user_id,))
+
+        query = """
+            UPDATE users
+            SET subscription_type = %s
+            WHERE id = %s
+        """
+
+        self.db.update(query, (subscription_type.subscription_type, user_id))
+
+        updated_user = self.get_user_by({'id': user_id})
+
+        return {
+            "id": updated_user.id,
+            "subscription_type": updated_user.subscription_type,
+            "message": f"Prenumerata atnaujinta į {subscription_type.subscription_type} prenumeratos planą."
+        }

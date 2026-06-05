@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.models.user import (UserCreateModel, UserUpdateModel)
+from app.models.user import (UserCreateModel, UserUpdateModel, UserSubscriptionUpdateModel, UserSubscriptionUpdateResponseModel)
 from app.services.user_service import UserService
 
 

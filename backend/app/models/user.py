@@ -10,9 +10,9 @@ class UserModel(BaseModel):
     email: EmailStr = Field(max_length=255)
     password_hash: str = Field(min_length=8, max_length=255)
     role: Literal["ADMIN", "USER"] = "USER"
+    subscription_type: Literal["FREE", "PREMIUM"] = "FREE"
 
 
-# ==AJ==
 class UserCreateModel(BaseModel):
     name: str = Field(min_length=1, max_length=55)
     surname: str = Field(min_length=1, max_length=55)
@@ -29,6 +29,15 @@ class UserCreateModel(BaseModel):
             raise ValueError(
                 "Slaptažodyje turi būti bent vienas specialus simbolis")
         return value
+
+
+class UserResponseModel(BaseModel):
+    id: int
+    name: str
+    surname: str
+    email: EmailStr
+    subscription_type: Literal["FREE", "PREMIUM"]
+    message: str = "Paskyra sukurta sėkmingai"
 
 
 class UserUpdateModel(BaseModel):
@@ -48,17 +57,21 @@ class UserUpdateModel(BaseModel):
                 "Slaptažodyje turi būti bent vienas specialus simbolis")
         return value
 
-class UserResponseModel(BaseModel):
-    id: int
-    name: str
-    email: EmailStr
-    message: str = "Paskyra sukurta sėkmingai"
-
 
 class UserUpdateResponseModel(BaseModel):
     id: int
     name: str
     surname: str
     email: EmailStr
+    subscription_type: Literal["FREE", "PREMIUM"]
     message: str = "Paskyra atnaujinta"
-# ==AJ==
+
+
+class UserSubscriptionUpdateModel(BaseModel):
+    subscription_type: Literal["FREE", "PREMIUM"]
+
+
+class UserSubscriptionUpdateResponseModel(BaseModel):
+    id: int
+    subscription_type: Literal["FREE", "PREMIUM"]
+    message: str
