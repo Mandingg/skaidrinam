@@ -117,8 +117,13 @@ function Navigation() {
 
         <div className="user-text">
           <span className="user-name">{user.name} {user.surname}</span>
-          <span className="user-email">{user.email}</span>
-          <span className="user-subscription">Planas: {user.subscription}</span>
+          {/* <span className="user-email">{user.email}</span> */}
+          
+          {user.subscription?.trim().toUpperCase() === "PREMIUM" && (
+            <span className="premium-badge">
+              PREMIUM
+            </span>
+          )}
         </div>
       </div>
     </aside>

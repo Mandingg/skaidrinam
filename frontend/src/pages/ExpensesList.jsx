@@ -7,6 +7,7 @@ import {
   deleteExpense,
   exportExpensesCSV,
 } from "../services/expenseService";
+import { getUser } from "../services/userService";
 import EditIcon from "../assets/EditIcon.svg";
 import DeleteIcon from "../assets/DeleteIcon.svg";
 import Warning from "../assets/Warning.svg";
@@ -21,6 +22,8 @@ function ExpensesPage() {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [showMessage, setShowMessage] = useState(false);
   const [exportMessage, setExportMessage] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   useEffect(() => {
     document.title = "Mano išlaidos";
@@ -42,6 +45,14 @@ function ExpensesPage() {
     loadCategories();
   }, []);
 
+  useEffect(() => {
+    const loadUser = async () => {
+      const data = await getUser();
+      setUser(data)
+    };
+    loadUser();
+  }, []);
+
   const filteredAndSortedExpenses = expenses
     .filter((expense) => {
       if (!expense) return false;
@@ -56,7 +67,7 @@ function ExpensesPage() {
       const matchesCategory =
         selectedCategory === "ALL" ||
         String(expense.category_name || "").toLowerCase() ===
-          String(selectedCategory).toLowerCase();
+        String(selectedCategory).toLowerCase();
 
       const given_date = new Date(selectedDate);
       const expense_date = new Date(expense.expense_date);
@@ -102,6 +113,10 @@ function ExpensesPage() {
   };
 
   const handleExport = async () => {
+    if (user?.subscription_type !== "PREMIUM") {
+      setShowPremiumModal(true);
+      return;
+    }
     setExportMessage(true);
     try {
       await exportExpensesCSV();
@@ -189,11 +204,21 @@ function ExpensesPage() {
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer"
                 style={{
                   borderColor: "var(--color-primary)",
-                  backgroundColor: "var(--color-primary)",
-                  color: "#ffffff",
+                  backgroundColor:
+                    user?.subscription_type === "PREMIUM"
+                      ? "var(--color-primary)"
+                      : "var(--color-navigation)",
+                  color:
+                    user?.subscription_type === "PREMIUM"
+                      ? "#ffffff"
+                      : "var(--color-primary)",
                 }}
               >
-                {exportMessage ? "Eksportuojama..." : "Eksportuoti viską į CSV"}
+                {user?.subscription_type === "PREMIUM"
+                  ? exportMessage
+                    ? "Eksportuojama..."
+                    : "Eksportuoti viską į CSV"
+                  : "Eksportas tik PREMIUM"}
               </button>
             </div>
 
@@ -459,6 +484,43 @@ function ExpensesPage() {
               >
                 Ištrinti įrašą
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPremiumModal && (
+        <div className="fixed inset-0 bg-black/45 flex items-center justify-center z-[1000]">
+          <div className="w-full max-w-[420px] bg-white rounded-[var(--radius-md)] p-[var(--space-5)] text-center shadow-[var(--shadow-md)]">
+            <img
+              src={Warning}
+              alt="PERSPĖJIMAS"
+              className="w-[60px] h-[60px] block p-[10px] mx-auto mb-[var(--space-3)] bg-[var(--color-error-light)] rounded-full"
+            />
+
+            <h3 className="mb-[var(--space-3)] text-[var(--color-neutral)] text-[var(--text-h2)] font-[var(--font-weight-bold)]">
+              Funkcija prieinama tik PREMIUM vartotojams
+            </h3>
+
+            <p className="mb-[var(--space-4)] text-[var(--color-neutral)] leading-6">
+              Norėdami eksportuoti išlaidų duomenis į CSV, atnaujinkite prenumeratos planą profilio puslapyje.
+            </p>
+
+            <div className="flex flex-col gap-[var(--space-2)] items-center">
+              <button
+                type="button"
+                className="w-full max-w-[240px] h-[48px] rounded-[var(--radius-sm)] font-[var(--font-weight-medium)] cursor-pointer border border-solid border-[var(--border-color)] bg-transparent"
+                onClick={() => setShowPremiumModal(false)}
+              >
+                Uždaryti
+              </button>
+
+              <Link
+                to="/profilis"
+                className="w-full max-w-[240px] h-[48px] flex items-center justify-center bg-[var(--color-primary)] text-white font-[var(--font-weight-bold)] cursor-pointer rounded-[var(--radius-sm)] no-underline"
+              >
+                Eiti į profilį
+              </Link>
             </div>
           </div>
         </div>

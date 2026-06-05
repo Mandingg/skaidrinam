@@ -161,3 +161,22 @@ export async function getCurrentUserId() {
     console.warn(`Klaida gaunant vartotojo informaciją: ${err.message}`);
   }
 }
+
+export async function updateSubscription(subscriptionType) {
+  const response = await fetch ('http://127.0.0.1:8000/users/me/subscription', {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ subscription_type: subscriptionType }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Nepavyko gauti vartotojo prenumeratos informacijos");
+  }
+
+  return data;
+}

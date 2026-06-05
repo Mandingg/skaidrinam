@@ -143,17 +143,6 @@ class UserService:
             "message": "Paskyra sukurta sėkmingai"
         }
 
-    # def update_user(self, user_id: int, updated_fields: dict): #REIKIA PERRASYTI, NES REIKIA TIKRINTI AR NERA TOKIO USERS IR HASHINTI PASSWORDA
-    #     """
-    #     Updates an existing user in the database based on the provided user ID
-    #     and a dictionary of fields and their new values to update.
-    #     Returns the number of affected rows.
-    #     """
-    #     field_names = ", ".join(
-    #         [f"{field} = %s" for field in updated_fields.keys()])
-    #     query = f"UPDATE users SET {field_names} WHERE id = %s"
-    #     params = list(updated_fields.values()) + [user_id]
-    #     return self.db.update(query, params)
 
     def update_user(self, user_id: int, user: UserUpdateModel):
         """
@@ -220,8 +209,31 @@ class UserService:
             "subscription_type": updated_user.subscription_type,
             "message": "Paskyra atnaujinta"
         }
+    
+    def update_subscription(self, user_id: int, subscription):
+        existing_user = self.get_user_by({"id": user_id})
 
-    # ==AJ==
+        if not existing_user:
+            raise ValueError("Tokio vartotojo nėra.")
+
+        if existing_user.subscription_type == subscription.subscription_type:
+            raise ValueError("Prenumeratos planas nebuvo pakeistas.")
+
+        query = """
+            UPDATE users
+            SET subscription_type = %s
+            WHERE id = %s
+        """
+
+        self.db.update(query, (subscription.subscription_type, user_id))
+
+        updated_user = self.get_user_by({"id": user_id})
+
+        return {
+            "id": updated_user.id,
+            "subscription_type": updated_user.subscription_type,
+            "message": f"Prenumerata atnaujinta į {updated_user.subscription_type} prenumeratos planą."
+        }
 
     def delete_user(self, user_id: int):
         """

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { updateUser, deleteUser, getUser } from "../../services/userService";
+import { updateUser, deleteUser, getUser, updateSubscription } from "../../services/userService";
 import { useNavigate } from "react-router"
 
 import "./ProfileEdit.css";
@@ -22,6 +22,7 @@ function ProfileEdit() {
         email: "",
         password: "",
         repeatPassword: "",
+        subscription_type: "",
     });
 
     const [showPassword, setShowPassword] = useState(false);
@@ -47,7 +48,8 @@ function ProfileEdit() {
                     ...previous,
                     name: data.name,
                     surname: data.surname,
-                    email: data.email
+                    email: data.email,
+                    subscription_type: data.subscription_type
                 }));
             }
             catch (error) {
@@ -91,6 +93,36 @@ function ProfileEdit() {
         }
     };
 
+    const handleSubscriptionChange = async (e) => {
+        e.preventDefault();
+
+        setMessage("");
+        setIsError(false);
+
+        const newSubscription =
+            formData.subscription_type === "PREMIUM" ? "FREE" : "PREMIUM";
+
+        try {
+            const data = await updateSubscription(newSubscription);
+
+            setFormData((previous) => ({
+                ...previous,
+                subscription_type: data.subscription_type
+            }));
+
+            setMessage(data.message);
+            setIsError(false);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
+        } catch (error) {
+            setMessage(error.message);
+            setIsError(true);
+        }
+    };
+
     const handleDeleteAccount = async () => {
         setMessage("");
         setIsError(false);
@@ -98,7 +130,7 @@ function ProfileEdit() {
         try {
             const data = await deleteUser();
 
-            localStorage.removeItem("userId");
+            localStorage.removeItem("token");
 
             setMessage("Paskyra sėkmingai ištrinta.");
             setIsError(false);
@@ -262,6 +294,33 @@ function ProfileEdit() {
                             onClick={() => setShowDeleteModal(true)}
                         >
                             Ištrinti paskyrą
+                        </button>
+                    </div>
+                </form>
+
+                <form className="subscription-block" onSubmit={handleSubscriptionChange}>
+                    <h3>Prenumeratos planas</h3>
+                    <div className="subscription-plan">
+                        <div className="subscription-status">
+                            {formData.subscription_type === "PREMIUM"
+                                ? "Turite PREMIUM planą"
+                                : "Turite FREE planą"}
+                        </div>
+
+                        <div className="subscription-description">
+                            {formData.subscription_type === "PREMIUM"
+                                ? "Ačiū, kad naudojatės PREMIUM funkcijomis."
+                                : "Atnaujinkite, kad gautumėte daugiau galimybių."}
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="subscription-btn"
+                            onClick={handleSubscriptionChange}
+                        >
+                            {formData.subscription_type === "PREMIUM"
+                                ? "Grįžti į FREE planą"
+                                : "Aktyvuoti PREMIUM →"}
                         </button>
                     </div>
                 </form>
