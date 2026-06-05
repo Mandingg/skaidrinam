@@ -6,7 +6,10 @@ router = APIRouter()
 user_service = UserService()
 
 @router.get("/me")
-def me(payload=Depends(get_current_user)):
+def me(
+    period: str = "current_month", 
+    payload=Depends(get_current_user)
+    ):
 
     user_id = payload.get("sub")
 
@@ -20,8 +23,16 @@ def me(payload=Depends(get_current_user)):
             "id": user.id,
             "name": user.name,          
             "surname": user.surname,    
-            "email": user.email
+            "email": user.email,
+            "total_expenses": 0,        
+            "recent_transactions": []
             
         }
     
-    return {"name": "Svečias", "surname": "", "email": "Neprisijungęs"}
+    return {
+        "name": "Svečias", 
+        "surname": "", 
+        "email": "Neprisijungęs",
+        "total_expenses": 0,
+        "recent_transactions": []
+    }
