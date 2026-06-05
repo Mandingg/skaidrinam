@@ -15,13 +15,12 @@ def me(payload=Depends(get_current_user)):
 
     user = user_service.get_user_by({"id": int(user_id)})
 
-    if user:
-        return {
-            "id": user.id,
-            "name": user.name,          
-            "surname": user.surname,    
-            "email": user.email
-            
-        }
-    
-    return {"name": "Svečias", "surname": "", "email": "Neprisijungęs"}
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "surname": user.surname,
+        "email": user.email
+    }

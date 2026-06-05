@@ -9,6 +9,7 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import ProfileEdit from "../pages/ProfileEdit/ProfileEdit";
 import ExpenseForm from "../pages/ExpenseForm";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -16,14 +17,16 @@ function AppRoutes() {
       {/* AUTH */}
       <Route path="/" element={<Login />} />
       <Route path="/registracija" element={<Register />} />
-      <Route path="/profilis/redaguoti" element={<ProfileEdit />} />
 
       {/* MAIN APP */}
-      <Route path="/pagrindinis" element={<MainPage />} />
-      <Route path="/analitika" element={<Analytics />} />
-      <Route path="/garantijos" element={<Warranties />} />
-      <Route path="/profilis" element={<Profile />} />
-      <Route path="/islaidos/nauja" element={<ExpenseForm />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/pagrindinis" element={<MainPage />} />
+        <Route path="/analitika" element={<Analytics />} />
+        <Route path="/garantijos" element={<Warranties />} />
+        <Route path="/profilis" element={<Profile />} />
+        <Route path="/islaidos/nauja" element={<ExpenseForm />} />
+        <Route path="/profilis/redaguoti" element={<ProfileEdit />} />
+      </Route>
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
