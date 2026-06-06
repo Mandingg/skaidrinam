@@ -42,7 +42,7 @@ async function fetchData() {
     };
 
     // Vartotojo duomenys
-    const userRes = await fetch("http://127.0.0.1:8001/me", {
+    const userRes = await fetch("http://127.0.0.1:8000/me", {
       method: "GET",
       headers,
     });
@@ -59,7 +59,7 @@ async function fetchData() {
 
     // Išlaidos
     const expensesRes = await fetch(
-      `http://127.0.0.1:8001/expenses/list?user_id=${userId}`,
+      `http://127.0.0.1:8000/expenses/list?user_id=${userId}`,
       {
         method: "GET",
         headers,
@@ -75,7 +75,7 @@ async function fetchData() {
 
     // Pajamos
     const incomeRes = await fetch(
-      `http://127.0.0.1:8001/incomes/list?user_id=${userId}`,
+      `http://127.0.0.1:8000/incomes/list?user_id=${userId}`,
       {
         method: "GET",
         headers,
@@ -179,21 +179,41 @@ const filteredIncome = allIncome.filter((income) => {
   return true;
 });
 
-const allPeriodTransactions = [...filteredTransactions].reverse();
+const transactions = [
+  ...allExpenses.map((tx) => ({
+    id: `exp-${tx.id}`,
+    type: "expense",
+    title: tx.description || "Išlaida be pavadinimo",
+    category: tx.category_name || "Bendra / Kita",
+    amount: Number(tx.amount) || 0,
+    date: tx.expense_date,
+    createdAt: tx.created_at,
+  })),
 
-const expensesSum = allPeriodTransactions.reduce(
-  (sum, tx) => sum + (parseFloat(tx.amount) || 0),
-  0
-);
+  ...allIncome.map((inc) => ({
+    id: `inc-${inc.id}`,
+    type: "income",
+    title: inc.description || "Pajamos be pavadinimo",
+    category: inc.category_name || "Pajamos",
+    amount: Number(inc.amount) || 0,
+    date: inc.income_date,
+    createdAt: inc.created_at,
+  })),
+]
+.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+.slice(0, 5);
 
 const incomeSum = filteredIncome.reduce(
   (sum, income) => sum + (parseFloat(income.amount) || 0),
   0
 );
 
-const balance = incomeSum - expensesSum;
+const expensesSum = filteredTransactions.reduce(
+  (sum, tx) => sum + (parseFloat(tx.amount) || 0),
+  0
+);
 
-const transactions = allPeriodTransactions.slice(0, 5);
+const balance = incomeSum - expensesSum;
 
   // --- FORMATAVIMAS ---
   const formatCurrency = (amount) => {
@@ -287,7 +307,7 @@ const transactions = allPeriodTransactions.slice(0, 5);
           </div>
 
           <div className="panel transactions-panel">
-            <h4>Paskutinės išlaidos</h4>
+            <h4>Paskutiniai įrašai</h4>
 
             {transactions.length === 0 ? (
               <p className="panel-subtitle" style={{ marginTop: 'var(--space-3)' }}>Nėra išlaidų šiuo periodu.</p>
@@ -297,19 +317,24 @@ const transactions = allPeriodTransactions.slice(0, 5);
                   <div className="transaction" key={tx.id}>
                     <div>
                       <p className="transaction-title">
-                        {tx.description || "Išlaida be pavadinimo"}
+                        {tx.title}
                       </p>
                       <p className="transaction-category">
-                        {tx.category_name || "Bendra / Kita"}
+                        {tx.category}
                       </p>
                     </div>
 
                     <div className="transaction-right">
-                      <p className="transaction-amount" style={{ color: '#ef4444', fontWeight: '600' }}>
-                        -{formatCurrency(tx.amount)}
+                      <p className="transaction-amount" style={{
+                        color: tx.type === "income" ? "#437d38" : "#ef4444",
+                        fontWeight: "600",
+                      }}
+                      >
+                      {tx.type === "income" ? "+" : "-"}
+                      {formatCurrency(tx.amount)}
                       </p>
                       <p className="transaction-date">
-                        {formatDate(tx.expense_date)}
+                        {formatDate(tx.date)}
                       </p>
                     </div>
                   </div>

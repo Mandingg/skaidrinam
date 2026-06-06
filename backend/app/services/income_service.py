@@ -1,5 +1,5 @@
 from app.services.db_connection import DatabaseManager
-from app.models.income import IncomeCreate, IncomeUpdate, IncomeDisplay
+from app.models.income import IncomeDisplay, IncomeModel
 
 
 class IncomeService:
@@ -11,7 +11,7 @@ class IncomeService:
     def __init__(self):
         self.db = DatabaseManager()
 
-    def create_income(self, income: IncomeCreate) -> int | None:
+    def create_income(self, income: IncomeModel) -> int | None:
         """
         Inserts a new income into the database.
         Returns the ID of the newly created income, or None on failure.

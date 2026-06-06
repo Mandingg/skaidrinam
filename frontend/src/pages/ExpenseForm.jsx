@@ -4,7 +4,7 @@ import { createIncome } from "../services/incomeApi";
 import { useNavigate } from "react-router"; 
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function getUserId() {
   const token = localStorage.getItem("token");
@@ -222,9 +222,8 @@ const STORES = [
             <label className="text-sm font-medium text-gray-700">Suma (€)</label>
             <input
               name="amount"
-              type="number"
-              step="0.01"
-              min="0.01"
+              type="text"
+              inputMode="decimal"
               value={form.amount}
               onChange={handleChange}
               placeholder="0.00"
