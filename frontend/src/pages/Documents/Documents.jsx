@@ -3,10 +3,12 @@ import { useNavigate } from "react-router"
 import DocumentCard from "../../components/DocumentCard";
 import { getDocuments, deleteDocument } from "../../services/documentService";
 import "./Documents.css";
+import Warning from "../../assets/Warning.svg";
 
 function Documents() {
     const [documents, setDocuments] = useState([]);
     const [message, setMessage] = useState("");
+    const [documentToDelete, setDocumentToDelete] = useState(null);
 
 
     useEffect(() => {
@@ -25,9 +27,10 @@ function Documents() {
         }
     }
 
-    async function handleDelete(documentId) {
+    async function confirmDelete() {
         try {
-            await deleteDocument(documentId);
+            await deleteDocument(documentToDelete.id);
+            setDocumentToDelete(null);
             await fetchDocuments();
         } catch (error) {
             setMessage(error.message);
@@ -74,11 +77,52 @@ function Documents() {
                             <DocumentCard
                                 key={document.id}
                                 document={document}
-                                onDelete={handleDelete}
+                                onDeleteClick={setDocumentToDelete}
                             />
                         ))
                     )}
                 </section>
+
+                {documentToDelete && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+
+                            <img
+                                src={Warning}
+                                alt="PERSPĖJIMAS"
+                                className="warning-logo"
+                            />
+
+                            <h3>Ar tikrai norite ištrinti garantiją?</h3>
+
+                            <p>
+                                Garantija <strong>{documentToDelete.title}</strong> bus
+                                visam laikui pašalinta.
+                                Šio veiksmo atšaukti negalima.
+                            </p>
+
+                            <div className="modal-actions">
+
+                                <button
+                                    type="button"
+                                    className="cancel-btn"
+                                    onClick={() => setDocumentToDelete(null)}
+                                >
+                                    Atšaukti
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="confirm-delete-btn"
+                                    onClick={confirmDelete}
+                                >
+                                    Ištrinti
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             </div>
         </main>

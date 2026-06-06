@@ -1,6 +1,6 @@
 import "./DocumentCard.css";
 
-function DocumentCard({ document, onDelete }) {
+function DocumentCard({ document, onDeleteClick }) {
 
     const expired =
         document.valid_until &&
@@ -46,16 +46,25 @@ function DocumentCard({ document, onDelete }) {
             >
                 {expired ? "ⓘ Pasibaigusi" : "✓ Galioja"}
             </div>
-            <div className="documents-card-header">
-    <button
-        type="button"
-        className="documents-delete-button"
-        onClick={() => onDelete(document.id)}
-        title="Ištrinti"
-    >
-        🗑
-    </button>
-</div>
+            <div className="documents-card-actions">
+                <button
+                    type="button"
+                    className="documents-edit-button"
+                    onClick={() => onEdit(document.id)}
+                    title="Redaguoti"
+                >
+                    🖉
+                </button>
+
+                <button
+                    type="button"
+                    className="documents-delete-button"
+                    onClick={() => onDeleteClick(document)}
+                    title="Ištrinti"
+                >
+                    🗑
+                </button>
+            </div>
 
         </article>
     );
