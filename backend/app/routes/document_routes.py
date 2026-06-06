@@ -1,29 +1,36 @@
-from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status
 from datetime import date
 
 from app.auth.dependencies import get_current_user
-from app.services.user_service import UserService
 from app.services.document_service import DocumentService
+from app.models.document import DocumentUpdateModel
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
 document_service = DocumentService()
-user_service = UserService()
 
 
-def get_logged_user_id(payload):
-    user = user_service._get_user_by_email(payload["sub"])
+def get_logged_user_id(payload=Depends(get_current_user)):
+    try:
+        return int(payload["sub"])
 
-    if not user:
-        raise HTTPException(status_code=401, detail="Vartotojas nerastas.")
-
-    return user.id
+    except (KeyError, TypeError, ValueError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Vartotojas nerastas."
+        )
 
 
 @router.get("/")
-def get_documents(payload=Depends(get_current_user)):
-    user_id = get_logged_user_id(payload)
-    return document_service.get_user_documents(user_id)
+def get_documents(user_id: int = Depends(get_logged_user_id)):
+    try:
+        return document_service.get_user_documents(user_id)
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )
 
 
 @router.post("/")
@@ -31,11 +38,69 @@ def create_document(
     title: str = Form(...),
     valid_until: date | None = Form(None),
     file: UploadFile = File(...),
-    payload=Depends(get_current_user)
+    user_id: int = Depends(get_logged_user_id)
 ):
     try:
-        user_id = get_logged_user_id(payload)
-        return document_service.create_document(user_id, title, valid_until, file)
+        return document_service.create_document(
+            user_id,
+            title,
+            valid_until,
+            file
+        )
 
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )
+
+
+@router.put("/{document_id}")
+def update_document(
+    document_id: int,
+    document: DocumentUpdateModel,
+    user_id: int = Depends(get_logged_user_id)
+):
+    try:
+        return document_service.update_document(document_id, user_id, document)
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )
+    
+@router.delete("/{document_id}")
+def delete_document(
+    document_id: int,
+    user_id: int = Depends(get_logged_user_id)
+):
+    try:
+        return document_service.delete_document(
+            document_id,
+            user_id
+        )
+
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )

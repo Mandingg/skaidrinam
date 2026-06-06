@@ -5,6 +5,7 @@ from app.routes.expense_routes import router as expense_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.auth_routes import router as auth_routes
 from app.routes.protected_routes import router as protected_routes
+from app.routes.document_routes import router as document_routes
 
 
 from app.routes.categories import router as categories_router
@@ -24,9 +25,9 @@ app.add_middleware(
     allow_headers=["*"])
 
 app.include_router(user_router)
-
-app.include_router(auth_routes)        
+app.include_router(auth_routes)
 app.include_router(protected_routes)
 app.include_router(category_router)
 app.include_router(categories_router)
 app.include_router(expense_router)
+app.include_router(document_routes)
