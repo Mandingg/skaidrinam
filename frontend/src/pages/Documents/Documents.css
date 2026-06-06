@@ -1,0 +1,115 @@
+.documents-page {
+  min-height: 100vh;
+  background-color: var(--background-color, #f9fafb);
+  padding: 40px;
+  padding-left: 280px;
+  color: var(--text-color, #111827);
+}
+
+.documents-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.documents-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.documents-topbar h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.documents-date-button,
+.documents-add-button {
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: var(--white-color, #ffffff);
+  cursor: pointer;
+}
+
+.documents-add-button {
+  background-color: var(--primary-color, #437d38);
+  color: #ffffff;
+  border: none;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-3);
+}
+
+.documents-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  margin-bottom: 24px;
+}
+
+.documents-tabs {
+  display: flex;
+  gap: 32px;
+}
+
+.documents-tabs button {
+  background: none;
+  border: none;
+  padding: 0 0 16px;
+  color: var(--muted-text-color, #64748b);
+  cursor: pointer;
+}
+
+.documents-tabs .active {
+  color: var(--primary-color, #437d38);
+  border-bottom: 2px solid var(--primary-color, #437d38);
+}
+
+.documents-search {
+  max-width: 460px;
+  margin-bottom: 32px;
+}
+
+.documents-search input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.documents-message,
+.documents-empty {
+  color: var(--muted-text-color, #64748b);
+}
+
+@media (max-width: 1100px) {
+  .documents-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .documents-page {
+    padding: 20px;
+  }
+
+  .documents-toolbar,
+  .documents-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+  }
+}
