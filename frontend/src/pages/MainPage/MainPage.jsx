@@ -96,42 +96,104 @@ async function fetchData() {
     fetchData();
   }, [location.pathname]); 
 
-  // --- FILTRAVIMO LOGIKA FRONTENDE ---
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const currentDateStr = new Intl.DateTimeFormat("lt-LT", { year: "numeric", month: "long" }).format(now);
+// --- FILTRAVIMO LOGIKA FRONTENDE ---
+const now = new Date();
+const todayStart = new Date(
+  now.getFullYear(),
+  now.getMonth(),
+  now.getDate()
+);
 
-  const filteredTransactions = allExpenses.filter((tx) => {
-    if (!tx.expense_date) return false;
-    
-    const txDate = new Date(tx.expense_date);
-    const txDateStart = new Date(txDate.getFullYear(), txDate.getMonth(), txDate.getDate());
+const currentDateStr = new Intl.DateTimeFormat("lt-LT", {
+  year: "numeric",
+  month: "long",
+}).format(now);
 
-    if (filter === "current_month") {
-      return txDateStart.getMonth() === now.getMonth() && txDateStart.getFullYear() === now.getFullYear();
-    }
-    
-    if (filter === "last_30_days") {
-      const thirtyDaysAgo = new Date(todayStart.getTime());
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return txDateStart >= thirtyDaysAgo && txDateStart <= todayStart;
-    }
-    
-    if (filter === "current_year") {
-      return txDateStart.getFullYear() === now.getFullYear();
-    }
-    
-    return true;
-  });
+// Išlaidos
+const filteredTransactions = allExpenses.filter((tx) => {
+  if (!tx.expense_date) return false;
 
-  const allPeriodTransactions = [...filteredTransactions].reverse();
+  const txDate = new Date(tx.expense_date);
+  const txDateStart = new Date(
+    txDate.getFullYear(),
+    txDate.getMonth(),
+    txDate.getDate()
+  );
 
-  // --- MATEMATINIAI SKAIČIAVIMAI IR APRIBORJIMAI ---
-  const expensesSum = allPeriodTransactions.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0);
-  const monthlyBudget = 1500.00; 
-  const balance = monthlyBudget - expensesSum;
+  if (filter === "current_month") {
+    return (
+      txDateStart.getMonth() === now.getMonth() &&
+      txDateStart.getFullYear() === now.getFullYear()
+    );
+  }
 
-  const transactions = allPeriodTransactions.slice(0, 5);
+  if (filter === "last_30_days") {
+    const thirtyDaysAgo = new Date(todayStart.getTime());
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    return (
+      txDateStart >= thirtyDaysAgo &&
+      txDateStart <= todayStart
+    );
+  }
+
+  if (filter === "current_year") {
+    return txDateStart.getFullYear() === now.getFullYear();
+  }
+
+  return true;
+});
+
+// Pajamos
+const filteredIncome = allIncome.filter((income) => {
+  if (!income.income_date) return false;
+
+  const incomeDate = new Date(income.income_date);
+  const incomeDateStart = new Date(
+    incomeDate.getFullYear(),
+    incomeDate.getMonth(),
+    incomeDate.getDate()
+  );
+
+  if (filter === "current_month") {
+    return (
+      incomeDateStart.getMonth() === now.getMonth() &&
+      incomeDateStart.getFullYear() === now.getFullYear()
+    );
+  }
+
+  if (filter === "last_30_days") {
+    const thirtyDaysAgo = new Date(todayStart.getTime());
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    return (
+      incomeDateStart >= thirtyDaysAgo &&
+      incomeDateStart <= todayStart
+    );
+  }
+
+  if (filter === "current_year") {
+    return incomeDateStart.getFullYear() === now.getFullYear();
+  }
+
+  return true;
+});
+
+const allPeriodTransactions = [...filteredTransactions].reverse();
+
+const expensesSum = allPeriodTransactions.reduce(
+  (sum, tx) => sum + (parseFloat(tx.amount) || 0),
+  0
+);
+
+const incomeSum = filteredIncome.reduce(
+  (sum, income) => sum + (parseFloat(income.amount) || 0),
+  0
+);
+
+const balance = incomeSum - expensesSum;
+
+const transactions = allPeriodTransactions.slice(0, 5);
 
   // --- FORMATAVIMAS ---
   const formatCurrency = (amount) => {
@@ -178,8 +240,10 @@ async function fetchData() {
 
         <section className="stats-grid">
           <div className="stat-card income">
-            <p>Mėnesio biudžetas</p>
-            <h3>{formatCurrency(monthlyBudget)}</h3>
+            <p>
+              Pajamos ({filter === "current_month" ? "šį mėnesį" : "periodo"})
+            </p>
+            <h3>{formatCurrency(incomeSum)}</h3>
           </div>
 
           <div className="stat-card expense">
@@ -193,7 +257,7 @@ async function fetchData() {
               {formatCurrency(balance)}
             </h3>
             <span style={{ fontSize: '0.85rem', color: 'gray' }}>
-              ({formatCurrency(monthlyBudget)} - {formatCurrency(expensesSum)})
+              ({formatCurrency(incomeSum)} - {formatCurrency(expensesSum)})
             </span>
           </div>
         </section>
@@ -204,7 +268,7 @@ async function fetchData() {
             <p className="panel-subtitle">Greitai įveskite išlaidas arba pajamas</p>
 
             <div className="action-grid">
-              <div className="action-card" onClick={() => navigate("/pagrindinis/islaidos/ivesti")}>
+              <div className="action-card" onClick={() => navigate("/pagrindinis/naujas")}>
                 <div className="icon-wrapper">
                   <img src={EditPen} alt="Rankinis įvedimas" className="action-icon"/>
                 </div>

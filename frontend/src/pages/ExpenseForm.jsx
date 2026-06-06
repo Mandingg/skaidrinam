@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createExpense } from "../services/expenseApi";
+import { createIncome } from "../services/incomeApi";
 import { useNavigate } from "react-router"; 
 import cekioLogo from "../assets/LogoIcon.svg";
 
@@ -33,6 +34,29 @@ function ExpenseForm() {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [transactionType, setTransactionType] = useState("expense");
+
+  const INCOME_SOURCES = [
+  "Darbo užmokestis",
+  "Stipendija",
+  "Investicijos",
+  "Dovana",
+  "Kita"
+];
+
+const STORES = [
+  "Maxima",
+  "Lidl",
+  "Rimi",
+  "Norfa",
+  "Iki",
+  "Aibė",
+  "Express Market",
+  "Senukai",
+  "Ermitažas",
+  "Pepco",
+  "Kita"
+];
 
   useEffect(() => {
     fetch(`${API_URL}/categories`)
@@ -57,20 +81,29 @@ function ExpenseForm() {
       return;
     }
 
-    const payload = {
-      user_id: getUserId(),
-      description: form.description,
-      amount,
-      expense_date: form.expense_date,
-      category_id: form.category_id ? parseInt(form.category_id) : null,
-    };
-
     setLoading(true);
     try {
-      await createExpense(payload);
+      if (transactionType === "expense") {
+        await createExpense({
+          user_id: getUserId(),
+          description: form.description,
+          amount,
+          expense_date: form.expense_date,
+          category_id: form.category_id ? parseInt(form.category_id) : null,
+          store_name: form.store_name,
+        });
+      } else {
+        await createIncome({
+          user_id: getUserId(),
+          source: form.source,
+          description: form.description,
+          amount,
+          income_date: form.expense_date,
+        });
+      }
       setMessage("Įrašas išsaugotas");
       setIsError(false);
-      setForm({ description: "", amount: "", expense_date: "", category_id: "" });
+      setForm({description: "", amount: "", expense_date: "", category_id: "", source: "", store_name: ""});
       
       navigate("/pagrindinis"); 
     } catch (err) {
@@ -92,7 +125,35 @@ function ExpenseForm() {
             <img src={cekioLogo} alt="Čekiukai logo" className="w-10 h-10" />
             <h1 className="text-3xl font-semibold text-gray-900">Čekiukai</h1>
           </div>
-          <h2 className="text-xl font-semibold text-gray-800">Nauja išlaida</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            {transactionType === "expense" ? "Nauja išlaida" : "Naujos pajamos"}
+          </h2>
+        </div>
+
+        <div className="flex w-full mb-4 rounded-lg overflow-hidden border border-gray-200">
+          <button
+            type="button"
+            onClick={() => setTransactionType("expense")}
+            className={`flex-1 py-3 font-medium transition-colors ${
+              transactionType === "expense"
+                ? "bg-[var(--color-error)] text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            Išlaida
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setTransactionType("income")}
+            className={`flex-1 py-3 font-medium transition-colors ${
+              transactionType === "income"
+                ? "bg-[var(--color-primary)] text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            Pajamos
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -108,6 +169,54 @@ function ExpenseForm() {
               className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
             />
           </div>
+
+          {transactionType === "income" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Pajamų šaltinis
+              </label>
+              <select
+                name="source"
+                value={form.source}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2.5 rounded-md border border-gray-200 text-sm"
+              >
+                <option value="">-- Pasirinkite pajamų šaltinį --</option>
+
+                {INCOME_SOURCES.map((source) => (
+                  <option key={source} value={source}>
+                    {source}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {transactionType === "expense" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Parduotuvė
+              </label>
+
+              <select
+                name="store_name"
+                value={form.store_name}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-sm"
+              >
+                <option value="">-- Pasirinkite parduotuvę --</option>
+
+                {STORES.map((store) => (
+                  <option key={store} value={store}>
+                    {store}
+                  </option>
+                ))}
+
+              </select>
+            </div>
+          )}
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-gray-700">Suma (€)</label>
@@ -125,7 +234,9 @@ function ExpenseForm() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Išlaidos data</label>
+            <label className="text-sm font-medium text-gray-700">
+              {transactionType === "expense" ? "Išlaidos data" : "Pajamų data"}
+            </label>
             <input
               name="expense_date"
               type="date"
@@ -136,24 +247,26 @@ function ExpenseForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">
-              Kategorija <span className="text-gray-400 font-normal">(nebūtinas)</span>
-            </label>
-            <select
-              name="category_id"
-              value={form.category_id}
-              onChange={handleChange}
-              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all bg-white"
-            >
-              <option value="">-- Pasirinkite kategoriją --</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {transactionType === "expense" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Kategorija <span className="text-gray-400 font-normal">(nebūtinas)</span>
+              </label>
+              <select
+                name="category_id"
+                value={form.category_id}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all bg-white"
+              >
+                <option value="">-- Pasirinkite kategoriją --</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <button
             type="submit"
