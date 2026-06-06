@@ -132,7 +132,7 @@ function ProfileEdit() {
                             className="register-logo"
                         />
 
-                        <h1 className="title">Čekiukai</h1>
+                        {/* <h1 className="title">Čekiukai</h1> */}
                     </div>
                 </div>
 
