@@ -118,6 +118,19 @@ export async function getUser(userId) {
   return data;
 }
 
+export async function deleteUser() {
+  const response = await fetch("http://127.0.0.1:8000/users/me", {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(getErrorMessage(data.detail));
+  }
+
+  return data;
+}
 export async function getCurrentUserId() {
   try {
     // Token ištraukimas is localStorage
