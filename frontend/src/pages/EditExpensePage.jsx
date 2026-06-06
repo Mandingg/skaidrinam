@@ -1,24 +1,16 @@
 import { useEffect, useState } from "react";
-import { createExpense } from "../services/expenseApi";
+import { useParams, useNavigate } from "react-router";
+import { getExpense, updateExpense } from "../services/expenseApi";
 import cekioLogo from "../assets/LogoIcon.svg";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-function getUserId() {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.sub ? parseInt(payload.sub) : null; 
-  } catch {
-    return null;
-  }
-}
-
-function ExpenseForm() {
+function EditExpensePage() {
   useEffect(() => {
-    document.title = "Nauja išlaida";
+    document.title = "Redaguoti išlaidą";
   }, []);
+
+  const { id } = useParams();
 
   const [form, setForm] = useState({
     description: "",
@@ -30,6 +22,8 @@ function ExpenseForm() {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API_URL}/categories`)
@@ -37,6 +31,22 @@ function ExpenseForm() {
       .then((data) => setCategories(data))
       .catch(() => setCategories([]));
   }, []);
+
+  useEffect(() => {
+    getExpense(id)
+      .then((data) => {
+        setForm({
+          description: data.description || "",
+          amount: data.amount || "",
+          expense_date: data.expense_date || "",
+          category_id: data.category_id || "",
+        });
+      })
+      .catch((err) => {
+        if (err.message === "Įrašas nerastas") setNotFound(true);
+        else { setMessage(err.message); setIsError(true); }
+      });
+  }, [id]);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -55,7 +65,6 @@ function ExpenseForm() {
     }
 
     const payload = {
-      user_id: getUserId(),
       description: form.description,
       amount,
       expense_date: form.expense_date,
@@ -64,16 +73,25 @@ function ExpenseForm() {
 
     setLoading(true);
     try {
-      await createExpense(payload);
-      setMessage("Įrašas išsaugotas");
+      await updateExpense(id, payload);
+      setMessage("Įrašas atnaujintas");
       setIsError(false);
-      setForm({ description: "", amount: "", expense_date: "", category_id: "" });
+      navigate("/islaidos", {replace: true});
+
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
     } finally {
       setLoading(false);
-    }
+    }    
+  }
+
+  if (notFound) {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+        <p className="text-red-600 font-medium">Įrašas nerastas</p>
+      </div>
+    );
   }
 
   return (
@@ -84,7 +102,7 @@ function ExpenseForm() {
             <img src={cekioLogo} alt="Čekiukai logo" className="w-10 h-10" />
             <h1 className="text-3xl font-semibold text-gray-900">Čekiukai</h1>
           </div>
-          <h2 className="text-xl font-semibold text-gray-800">Nauja išlaida</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Redaguoti išlaidą</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -95,9 +113,8 @@ function ExpenseForm() {
               type="text"
               value={form.description}
               onChange={handleChange}
-              placeholder="Pvz.: Maisto prekės"
               required
-              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
             />
           </div>
 
@@ -110,9 +127,8 @@ function ExpenseForm() {
               min="0.01"
               value={form.amount}
               onChange={handleChange}
-              placeholder="0.00"
               required
-              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] placeholder:text-gray-400 text-sm transition-all"
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
             />
           </div>
 
@@ -152,7 +168,7 @@ function ExpenseForm() {
             disabled={loading}
             className="w-full bg-[#437d38] text-white py-3 rounded-md font-semibold text-base hover:bg-[#386a2f] transition-colors duration-200 disabled:opacity-50"
           >
-            {loading ? "Saugoma..." : "Išsaugoti"}
+            {loading ? "Saugoma..." : "Išsaugoti pakeitimus"}
           </button>
         </form>
 
@@ -166,4 +182,4 @@ function ExpenseForm() {
   );
 }
 
-export default ExpenseForm;
+export default EditExpensePage;
