@@ -10,6 +10,7 @@ import Register from "../pages/Register/Register";
 import ExpensesList from "../pages/ExpensesList";
 import ProfileEdit from "../pages/ProfileEdit/ProfileEdit";
 import ExpenseForm from "../pages/ExpenseForm";
+import ProtectedRoute from "../components/ProtectedRoute";
 import EditExpensePage from "../pages/EditExpensePage";
 
 function AppRoutes() {
@@ -18,16 +19,18 @@ function AppRoutes() {
       {/* AUTH */}
       <Route path="/" element={<Login />} />
       <Route path="/registracija" element={<Register />} />
-      <Route path="/profilis/redaguoti" element={<ProfileEdit />} />
 
       {/* MAIN APP */}
-      <Route path="/pagrindinis" element={<MainPage />} />
-      <Route path="/analitika" element={<Analytics />} />
-      <Route path="/garantijos" element={<Warranties />} />
-      <Route path="/profilis" element={<Profile />} />
-      <Route path='/islaidos' element={<ExpensesList />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/pagrindinis" element={<MainPage />} />
+        <Route path="/analitika" element={<Analytics />} />
+        <Route path="/garantijos" element={<Warranties />} />
+        <Route path="/profilis" element={<Profile />} />
+        <Route path='/islaidos' element={<ExpensesList />} />
       <Route path="/pagrindinis/naujas" element={<ExpenseForm />} />
       <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
+        <Route path="/profilis/redaguoti" element={<ProfileEdit />} />
+      </Route>
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />

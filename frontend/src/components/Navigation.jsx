@@ -19,25 +19,33 @@ const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" }
 
 useEffect(() => {
   const token = localStorage.getItem("token");
-  if (!token) {
-    setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
-    return;
-  }
+
+  if (!token) return;
 
   fetch("http://127.0.0.1:8001/me", {
     method: "GET",
-    headers: { "Authorization": `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` },
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+        return null;
+      }
+      return res.json();
+    })
     .then((data) => {
+      if (!data) return;
+
       setUser({
         name: data.name,
         surname: data.surname,
-        email: data.email
+        email: data.email,
       });
     })
     .catch(() => {
-      setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
+      localStorage.removeItem("token");
+      window.location.href = "/";
     });
 }, []);
 
