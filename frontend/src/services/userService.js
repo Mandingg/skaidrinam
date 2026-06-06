@@ -136,7 +136,6 @@ export async function deleteUser() {
 
   return data;
 }
-
 export async function getCurrentUserId() {
   try {
     // Token ištraukimas is localStorage
