@@ -131,3 +131,27 @@ export async function deleteUser() {
 
   return data;
 }
+export async function getCurrentUserId() {
+  try {
+    // Token ištraukimas is localStorage
+    const token = localStorage.getItem("token");
+
+    // Kreipiamės į veikiantį adresą /me
+    const response = await fetch("http://127.0.0.1:8000/me", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Nepavyko gauti vartotojo");
+    }
+    return data.id;
+  } catch (err) {
+    console.warn(`Klaida gaunant vartotojo informaciją: ${err.message}`);
+  }
+}

@@ -38,7 +38,7 @@ function ProfileEdit() {
         });
     };
 
-    const userId = localStorage.getItem("userId") || 2; //Redaguoja userId 2, bet po login'o turi perimti local storage
+    const userId = localStorage.getItem("userId");
 
     useEffect(() => {
         async function loadUser() {

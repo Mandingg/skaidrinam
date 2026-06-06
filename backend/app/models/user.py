@@ -8,7 +8,7 @@ class UserModel(BaseModel):
     name: str = Field(min_length=1, max_length=55)
     surname: str = Field(min_length=1, max_length=55)
     email: EmailStr = Field(max_length=255)
-    password_hash: str = Field(min_length=8, max_length=255)
+    password_hash: str 
     role: Literal["ADMIN", "USER"] = "USER"
 
 
@@ -62,3 +62,12 @@ class UserUpdateResponseModel(BaseModel):
     email: EmailStr
     message: str = "Paskyra atnaujinta"
 # ==AJ==
+
+
+# ==BU==
+class UserLoginModel(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+
+
+# ==BU==

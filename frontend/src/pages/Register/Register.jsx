@@ -225,7 +225,7 @@ function Register() {
         <div className="footer">
           <p>
             Jau turite paskyrą?
-            <Link to="/prisijungimas">
+            <Link to="/">
               Prisijunkite
             </Link>
           </p>
