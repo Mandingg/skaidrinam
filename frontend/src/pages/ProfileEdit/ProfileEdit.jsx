@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import { updateUser, getUser } from "../../services/userService";
-
+import { updateUser, deleteUser, getUser } from "../../services/userService";
+import { useNavigate } from "react-router"
 
 import "./ProfileEdit.css";
 
 import cekioLogo from "../../assets/LogoIcon.svg";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
 import VisibilityOff from "../../assets/VisibilityOff.svg";
+import Warning from "../../assets/Warning.svg";
 
 function ProfileEdit() {
     useEffect(() => {
         document.title = "Profilio redagavimas";
     }, []);
+
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         name: "",
@@ -25,6 +28,8 @@ function ProfileEdit() {
     const [showRepeatPassword, setShowRepeatPassword] = useState(false);
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteSuccess, setDeleteSuccess] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -88,6 +93,32 @@ function ProfileEdit() {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        setMessage("");
+        setIsError(false);
+
+        try {
+            const data = await deleteUser();
+
+            localStorage.removeItem("userId");
+
+            setMessage("Paskyra sėkmingai ištrinta.");
+            setIsError(false);
+            setDeleteSuccess(true);
+
+            setTimeout(() => {
+                navigate("/registracija");
+            }, 2500);
+        }
+
+        catch (error) {
+
+            setMessage(error.message);
+            setIsError(true);
+            setShowDeleteModal(false);
+        }
+    };
+
     return (
         <div className="register-page">
             <main className="register-card">
@@ -101,7 +132,7 @@ function ProfileEdit() {
                             className="register-logo"
                         />
 
-                        <h1 className="title">Čekiukai</h1>
+                        {/* <h1 className="title">Čekiukai</h1> */}
                     </div>
                 </div>
 
@@ -224,6 +255,17 @@ function ProfileEdit() {
                         </button>
                     </div>
 
+                    {/* Delete account button*/}
+
+                    <div className="delete-account">
+                        <button
+                            type="button"
+                            className="delete-account-btn"
+                            onClick={() => setShowDeleteModal(true)}
+                        >
+                            Ištrinti paskyrą
+                        </button>
+                    </div>
                 </form>
 
                 {/* Message */}
@@ -236,8 +278,58 @@ function ProfileEdit() {
                     </p>
                 )}
 
-            </main>
-        </div>
+                {showDeleteModal && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            {deleteSuccess ? (
+                                <>
+                                    <h3>Paskyra sėkmingai ištrinta</h3>
+
+                                    <p>
+                                        Nukreipiama į registracijos puslapį...
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <img
+                                        src={Warning}
+                                        alt="PERSPĖJIMAS"
+                                        className="warning-logo"
+                                    />
+
+                                    <h3>Ar tikrai norite ištrinti paskyrą?</h3>
+
+                                    <p>
+                                        Ištrynę paskyrą, visi jūsų duomenys,
+                                        čekiukai ir garantijos bus visam laikui pašalinti.
+                                        Šio veiksmo atšaukti negalima!
+                                    </p>
+
+                                    <div className="modal-actions">
+                                        <button
+                                            type="button"
+                                            className="cancel-btn"
+                                            onClick={() => setShowDeleteModal(false)}
+                                        >
+                                            Atšaukti
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="confirm-delete-btn"
+                                            onClick={handleDeleteAccount}
+                                        >
+                                            Ištrinti paskyrą
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+            </main >
+        </div >
     );
 }
 

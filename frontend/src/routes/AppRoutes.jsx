@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router";
 import MainPage from "../pages/MainPage/MainPage";
 import Analytics from "../pages/Analytics";
 import Warranties from "../pages/Warranties";
-import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
