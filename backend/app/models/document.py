@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, date
 
+
 class DocumentCreateModel(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     store_name: str | None = Field(default=None, max_length=255)
@@ -13,6 +14,7 @@ class DocumentUpdateModel(BaseModel):
     store_name: str | None = Field(default=None, max_length=255)
     purchase_date: date | None = None
     valid_until: date | None = None
+
 
 class DocumentResponseModel(BaseModel):
     id: int
