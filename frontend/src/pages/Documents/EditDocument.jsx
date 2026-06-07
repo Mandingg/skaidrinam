@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { createDocument } from "../../services/documentService";
+import { useNavigate, useParams } from "react-router";
+import { getDocument, updateDocument } from "../../services/documentService";
+
 import "./DocumentForm.css";
+
 import cekioLogo from "../../assets/LogoIcon.svg";
 
-
-function DocumentForm() {
-    useEffect(() => {
-        document.title = "Pridėti garantiją";
-    }, []);
-
+function EditDocument() {
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -17,74 +15,70 @@ function DocumentForm() {
         store_name: "",
         purchase_date: "",
         valid_until: "",
-        file: null,
     });
 
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        if (e.target.name === "file") {
-            setFormData({
-                ...formData,
-                file: e.target.files[0],
-            });
-            return;
-        }
+    useEffect(() => {
+        document.title = "Redaguoti garantiją";
+        loadDocument();
+    }, []);
 
+    async function loadDocument() {
+        try {
+            const data = await getDocument(id);
+
+            console.log("Gauta garantija:", data);
+
+            setFormData({
+                title: data.title,
+                store_name: data.store_name,
+                purchase_date: data.purchase_date,
+                valid_until: data.valid_until,
+            });
+        } catch (error) {
+            setMessage(error.message);
+            setIsError(true);
+        }
+    }
+
+    function handleChange(e) {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
-    };
+    }
 
-    const handleSubmit = async (e) => {
+    async function handleSubmit(e) {
         e.preventDefault();
 
         setMessage("");
         setIsError(false);
-
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            setMessage("Norėdami pridėti garantiją, turite prisijungti.");
-            setIsError(true);
-            return;
-        }
-
-        if (!formData.file) {
-            setMessage("Pasirinkite dokumento failą.");
-            setIsError(true);
-            return;
-        }
-
-        const dataToSend = new FormData();
-        dataToSend.append("title", formData.title);
-        dataToSend.append("store_name", formData.store_name);
-        dataToSend.append("purchase_date", formData.purchase_date);
-        dataToSend.append("valid_until", formData.valid_until);
-        dataToSend.append("file", formData.file);
+        setLoading(true);
 
         try {
-            setLoading(true);
+            const data = await updateDocument(id, {
+                title: formData.title,
+                store_name: formData.store_name,
+                purchase_date: formData.purchase_date,
+                valid_until: formData.valid_until || null,
+            });
 
-            const data = await createDocument(dataToSend);
-
-            setMessage(data.message || "Garantija sėkmingai pridėta.");
+            setMessage(data.message || "Garantija sėkmingai atnaujinta.");
             setIsError(false);
 
             setTimeout(() => {
                 navigate("/garantijos");
             }, 1500);
-
         } catch (error) {
             setMessage(error.message);
             setIsError(true);
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     return (
         <div className="register-page">
@@ -100,7 +94,7 @@ function DocumentForm() {
                     </div>
                 </div>
 
-                <h2 className="subtitle">Pridėti naują garantiją</h2>
+                <h2 className="subtitle">Redaguoti garantiją</h2>
 
                 <form onSubmit={handleSubmit} className="form">
 
@@ -151,23 +145,7 @@ function DocumentForm() {
                         />
 
                         <p className="additional-info">
-                            *Paprastai garantija galioja 24 mėnesius nuo pirkimo datos.
-                        </p>
-                    </div>
-
-                    <div className="field">
-                        <label>Dokumento failas</label>
-
-                        <input
-                            name="file"
-                            onChange={handleChange}
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            required
-                        />
-
-                        <p className="additional-info">
-                            *Leidžiami formatai: PDF, JPG, PNG.
+                            *Pakeiskite garantijos galiojimo datą, jei ji pasikeitė.
                         </p>
                     </div>
 
@@ -177,7 +155,7 @@ function DocumentForm() {
                             className="register-btn"
                             disabled={loading}
                         >
-                            {loading ? "Saugoma..." : "Išsaugoti"}
+                            {loading ? "Saugoma..." : "Išsaugoti pakeitimus"}
                         </button>
                     </div>
 
@@ -203,4 +181,4 @@ function DocumentForm() {
     );
 }
 
-export default DocumentForm;
+export default EditDocument;

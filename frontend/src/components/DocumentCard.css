@@ -12,17 +12,24 @@
 }
 
 .documents-file-preview {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
-  background-color: var(--background-color, #f1f5f9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--primary-color, #437d38);
-  flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    background-color: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.documents-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .documents-card-info h3 {

@@ -62,3 +62,46 @@ export async function deleteDocument(documentId) {
 
     return data;
 }
+
+export async function getDocument(documentId) {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/documents/${documentId}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.detail || "Nepavyko gauti garantijos."
+        );
+    }
+
+    return data;
+}
+
+export async function updateDocument(documentId, formData) {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API_URL}/documents/${documentId}`, {
+        method: "PUT",
+        headers: {
+            "content-type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            data.detail || "Nepavyko atnaujinti garantijos."
+        );
+    }
+
+    return data;
+}

@@ -31,11 +31,33 @@ def get_documents(user_id: int = Depends(get_logged_user_id)):
             status_code=500,
             detail=str(error)
         )
+    
+
+@router.get("/{document_id}")
+def get_document(document_id: int, user_id: int = Depends(get_logged_user_id),):
+    try:
+        return document_service.get_document(
+            document_id,
+             user_id
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )
 
 
 @router.post("/")
 def create_document(
     title: str = Form(...),
+    store_name: str | None = Form(None),
+    purchase_date: date | None = Form(None),
     valid_until: date | None = Form(None),
     file: UploadFile = File(...),
     user_id: int = Depends(get_logged_user_id)
@@ -44,6 +66,8 @@ def create_document(
         return document_service.create_document(
             user_id,
             title,
+            store_name,
+            purchase_date,
             valid_until,
             file
         )

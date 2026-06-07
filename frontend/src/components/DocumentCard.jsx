@@ -1,17 +1,35 @@
 import "./DocumentCard.css";
 
-function DocumentCard({ document, onDeleteClick }) {
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+function DocumentCard({ document, onDeleteClick, onEdit }) {
 
     const expired =
         document.valid_until &&
         new Date(document.valid_until) < new Date();
+
+    const normalizedFilePath = document.file_path?.replace("\\", "/");
+    const imageUrl = `${API_URL}/${normalizedFilePath}`;
+
+    const isImage =
+        document.file_type === "jpg" ||
+        document.file_type === "jpeg" ||
+        document.file_type === "png";
 
     return (
         <article className="documents-card">
             <div className="documents-card-main">
 
                 <div className="documents-file-preview">
-                    {document.file_type?.toUpperCase() || "DOC"}
+                    {isImage ? (
+                        <img
+                            src={imageUrl}
+                            alt={document.title}
+                            className="documents-preview-image"
+                        />
+                    ) : (
+                        <span>{document.file_type?.toUpperCase() || "DOC"}</span>
+                    )}
                 </div>
 
                 <div className="documents-card-info">
@@ -19,10 +37,18 @@ function DocumentCard({ document, onDeleteClick }) {
                     <h3>{document.title}</h3>
 
                     <div>
-                        <span>Failo tipas</span>
+                        <span>Parduotuvė</span>
 
                         <p>
-                            {document.file_type?.toUpperCase()}
+                            {document.store_name || "Nenurodyta"}
+                        </p>
+                    </div>
+
+                    <div>
+                        <span>Pirkimo data</span>
+
+                        <p>
+                            {document.purchase_date || "Nenurodyta"}
                         </p>
                     </div>
 

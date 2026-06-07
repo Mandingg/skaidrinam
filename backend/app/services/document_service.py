@@ -33,7 +33,7 @@ class DocumentService:
 
     def get_user_documents(self, user_id: int):
         query = """
-        SELECT id, user_id, title, file_path, file_type, valid_until, created_at, updated_at
+        SELECT id, user_id, title, store_name, purchase_date, file_path, file_type, valid_until, created_at, updated_at
         FROM documents
         WHERE user_id = %s
         ORDER BY created_at DESC
@@ -41,7 +41,15 @@ class DocumentService:
 
         return self.db.fetch_all(query, (user_id,))
 
-    def create_document(self, user_id: int, title: str, valid_until, file: UploadFile):
+    def create_document(
+            self,
+            user_id: int,
+            title: str,
+            store_name: str | None,
+            purchase_date,
+            valid_until,
+            file: UploadFile
+    ):
         title = title.strip()
 
         if not title:
@@ -50,8 +58,8 @@ class DocumentService:
         extension = self._validate_file(file)
 
         insert_query = """
-        INSERT INTO documents (user_id, title, file_path, file_type, valid_until)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO documents (user_id, title, store_name, purchase_date, file_path, file_type, valid_until)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
 
         document_id = self.db.insert(
@@ -59,6 +67,8 @@ class DocumentService:
             (
                 user_id,
                 title,
+                store_name,
+                purchase_date,
                 "pending",
                 extension,
                 valid_until
@@ -95,7 +105,7 @@ class DocumentService:
     def update_document(self, document_id: int, user_id: int, document):
         existing_document = self.db.fetch_one(
             """
-            SELECT id, title
+            SELECT id, title, store_name, purchase_date, valid_until
             FROM documents
             WHERE id = %s and user_id = %s
             """,
@@ -114,12 +124,31 @@ class DocumentService:
             if not title:
                 raise ValueError("Dokumento pavadinimas negali būti tuščias.")
 
-            update_fields.append("title = %s")
-            values.append(title)
+            if title != existing_document["title"]:
+                update_fields.append("title = %s")
+                values.append(title)
+
+    
+        if document.store_name is not None:
+            store_name = document.store_name.strip()
+
+            if not store_name:
+
+                raise ValueError("Parduotuvės pavadinimas negali būti tuščias")
+
+            if document.store_name != existing_document["store_name"]:
+                update_fields.append("store_name = %s")
+                values.append(store_name)
+
+        if document.purchase_date is not None:
+            if str(document.purchase_date) != str(existing_document["purchase_date"]):
+                update_fields.append("purchase_date = %s")
+                values.append(document.purchase_date)
 
         if document.valid_until is not None:
-            update_fields.append("valid_until = %s")
-            values.append(document.valid_until)
+            if str(document.valid_until) != str(existing_document["valid_until"]):
+                update_fields.append("valid_until = %s")
+                values.append(document.valid_until)
 
         if not update_fields:
             raise ValueError("Nėra atnaujinamų duomenų.")
@@ -170,3 +199,28 @@ class DocumentService:
         return {
             "message": "Dokumentas sėkmingai ištrintas."
         }
+
+    def get_document(self, document_id: int, user_id: int):
+        document = self.db.fetch_one(
+            """
+            SELECT
+                id,
+                user_id,
+                title,
+                store_name,
+                purchase_date,
+                file_path,
+                file_type,
+                valid_until,
+                created_at,
+                updated_at
+            FROM documents
+            WHERE id = %s AND user_id = %s
+            """,
+            (document_id, user_id)
+        )
+
+        if not document:
+            raise ValueError("Dokumentas nerastas.")
+
+        return document

@@ -9,6 +9,8 @@ function Documents() {
     const [documents, setDocuments] = useState([]);
     const [message, setMessage] = useState("");
     const [documentToDelete, setDocumentToDelete] = useState(null);
+    const [activeFilter, setActiveFilter] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
 
 
     useEffect(() => {
@@ -37,22 +39,72 @@ function Documents() {
         }
     }
 
+    function isExpired(validUntil) {
+        if (!validUntil) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const warrantyDate = new Date(validUntil);
+        warrantyDate.setHours(0, 0, 0, 0);
+
+        return warrantyDate < today;
+    }
+
+    const filteredDocuments = documents.filter((document) => {
+        if (activeFilter === "active") {
+            return !isExpired(document.valid_until);
+        }
+
+        if (activeFilter === "expired") {
+            return isExpired(document.valid_until);
+        }
+
+        return true;
+    });
+
+    function handleEdit(documentId) {
+        navigate(`/garantijos/redaguoti/${documentId}`);
+    }
+
+    const searchResults = filteredDocuments.filter((document) => {
+        return document.title.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
     return (
         <main className="documents-page">
             <div className="documents-content">
                 <header className="documents-topbar">
                     <h1>Garantijos</h1>
 
-                    <button className="documents-date-button" type="button">
+                    {/* <button className="documents-date-button" type="button">
                         2024 m. gegužė ▾
-                    </button>
+                    </button> */}
                 </header>
 
                 <section className="documents-toolbar">
                     <div className="documents-tabs">
-                        <button className="active" type="button">Visos</button>
-                        <button type="button">Galiojančios</button>
-                        <button type="button">Pasibaigusios</button>
+                        <button
+                            className={activeFilter === "all" ? "active" : ""}
+                            type="button"
+                            onClick={() => setActiveFilter("all")}
+                        >
+                            Visos
+                        </button>
+                        <button
+                            className={activeFilter === "active" ? "active" : ""}
+                            type="button"
+                            onClick={() => setActiveFilter("active")}
+                        >
+                            Galiojančios
+                        </button>
+                        <button
+                            className={activeFilter === "expired" ? "active" : ""}
+                            type="button"
+                            onClick={() => setActiveFilter("expired")}
+                        >
+                            Pasibaigusios
+                        </button>
                     </div>
 
                     <button className="documents-add-button" type="button" onClick={() => navigate("/garantijos/nauja")}>
@@ -63,6 +115,8 @@ function Documents() {
                 <section className="documents-search">
                     <input
                         type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Ieškoti pagal pavadinimą, parduotuvę..."
                     />
                 </section>
@@ -70,13 +124,14 @@ function Documents() {
                 {message && <p className="documents-message">{message}</p>}
 
                 <section className="documents-grid">
-                    {documents.length === 0 ? (
-                        <p className="documents-empty">Garantijų nėra.</p>
+                    {searchResults.length === 0 ? (
+                        <p className="documents-empty">Garantijų nerasta.</p>
                     ) : (
-                        documents.map((document) => (
+                        searchResults.map((document) => (
                             <DocumentCard
                                 key={document.id}
                                 document={document}
+                                onEdit={handleEdit}
                                 onDeleteClick={setDocumentToDelete}
                             />
                         ))

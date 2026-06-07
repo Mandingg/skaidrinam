@@ -11,6 +11,7 @@ import ExpenseForm from "../pages/ExpenseForm";
 import EditExpensePage from "../pages/EditExpensePage";
 import Documents from "../pages/Documents/Documents";
 import DocumentForm from "../pages/Documents/DocumentForm";
+import EditDocument from "../pages/Documents/EditDocument";
 
 function AppRoutes() {
   return (
@@ -28,7 +29,7 @@ function AppRoutes() {
       <Route path="/islaidos/nauja" element={<ExpenseForm />} />
       <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
       <Route path="/garantijos/nauja" element={<DocumentForm />} />
-
+      <Route path="/garantijos/redaguoti/:id" element={<EditDocument />} />
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
