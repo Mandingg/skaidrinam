@@ -1,0 +1,133 @@
+/* Core Layout Architecture */
+.analytics-page-container {
+    min-height: 100vh;
+    font-size: 14px;
+    background-color: var(--color-background);
+    font-family: var(--font-family);
+}
+
+.analytics-layout-flex {
+    display: flex;
+    min-height: calc(100vh - 64px);
+}
+
+.analytics-main-content {
+    flex: 1;
+    width: 100%;
+    padding: var(--space-5);
+    max-width: 1200px;
+    margin: 0 auto 0 var(--sidebar-width);
+}
+
+/* Header Section */
+.analytics-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 20px;
+}
+
+.analytics-title {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.analytics-subtitle {
+    color: #7f8c8d;
+    margin: 5px 0 0 0;
+    font-size: 14px;
+}
+
+/* Control Board Grid Panel */
+.analytics-control-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.analytics-field-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.analytics-field-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #34495e;
+}
+
+.analytics-select-input {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    font-size: 14px;
+    color: #333333;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+/* Content Canvas Sheet */
+.analytics-display-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.analytics-table-scroll-wrapper {
+    overflow-x: auto;
+}
+
+.analytics-chart-canvas-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+}
+
+.analytics-pie-canvas-container {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+/* Scoped Overrides for the react-pivottable Elements */
+.analytics-table-scroll-wrapper .pvtTable {
+    font-family: var(--font-family), sans-serif !important;
+    border-collapse: collapse !important;
+    width: 100%;
+    font-size: 14px;
+    color: #334155;
+}
+
+.analytics-table-scroll-wrapper .pvtTable th, 
+.analytics-table-scroll-wrapper .pvtTable td {
+    border: 1px solid #e2e8f0 !important;
+    padding: 10px 14px !important;
+}
+
+.analytics-table-scroll-wrapper .pvtTable th {
+    background-color: #f8fafc !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+.analytics-table-scroll-wrapper .pvtTotal, 
+.analytics-table-scroll-wrapper .pvtGrandTotal {
+    font-weight: 700 !important;
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}

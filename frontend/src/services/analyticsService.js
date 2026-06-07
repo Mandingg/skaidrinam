@@ -1,9 +1,9 @@
 import {getCurrentUserId} from './userService';
 
 export const getUserTransactions = async() =>{
-    const userID = getCurrentUserId();
+    const userID = await getCurrentUserId();
     try{
-        const response = await fetch(`http://://127.0.0.1:8000/transactions?user_id=${userID}`)
+        const response = await fetch(`http://127.0.0.1:8000/transactions?user_id=${userID}`)
         if (!response.ok){
             throw new Error('Serveris grąžino klaidą');
         }

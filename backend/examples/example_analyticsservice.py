@@ -10,7 +10,7 @@ def test_user_service():
     print("=== TransactionService testavimo pradžia ===")
 
     transaction_service = TransactionService()
-    userID=8
+    userID=1
 
     print("Bandoma gauti visas transakcijas...")
     all_transactions = transaction_service.get_unified_transactions(userID)

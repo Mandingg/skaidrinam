@@ -21,8 +21,9 @@ class TransactionService:
                 s.name AS shop_name,
                 NULL AS income_source
             FROM expenses e
+            LEFT JOIN receipts r ON e.receipt_id = r.id
+            LEFT JOIN stores s ON r.store_id = s.id
             LEFT JOIN categories c ON e.category_id = c.id
-            LEFT JOIN shops s ON e.shop_id = s.id
             WHERE e.user_id = %s
             
             UNION ALL

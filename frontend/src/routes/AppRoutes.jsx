@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router";
 
 import MainPage from "../pages/MainPage/MainPage";
-import Analytics from "../pages/Analytics";
+import Analytics from "../pages/Analytics/Analytics";
 import Warranties from "../pages/Warranties";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
