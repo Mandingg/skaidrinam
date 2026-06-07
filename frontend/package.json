@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.3.0",
     "plotly.js": "^3.6.0",
     "plotly.js-basic-dist": "^3.6.0",
+    "plotly.js-basic-dist-min": "^3.6.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-pivottable": "^0.11.1",

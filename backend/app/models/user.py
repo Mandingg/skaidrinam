@@ -25,7 +25,7 @@ class UserCreateModel(BaseModel):
         if not re.search(r"[A-Z]", value):
             raise ValueError(
                 "Slaptažodyje turi būti bent viena didžioji raidė")
-        if not re.search(r"[!@#$%^&*/|(),.?\":{}|<>]", value):
+        if not re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>/?]", value):
             raise ValueError(
                 "Slaptažodyje turi būti bent vienas specialus simbolis")
         return value
@@ -43,7 +43,7 @@ class UserUpdateModel(BaseModel):
         if not re.search(r"[A-Z]", value):
             raise ValueError(
                 "Slaptažodyje turi būti bent viena didžioji raidė")
-        if not re.search(r"[!@#$%^&*/|(),.?\":{}|<>]", value):
+        if not re.search(r"[!@#$%^&*()_+\-=\[\]{};':\"\\|,.<>/?]", value):
             raise ValueError(
                 "Slaptažodyje turi būti bent vienas specialus simbolis")
         return value

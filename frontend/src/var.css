@@ -18,14 +18,19 @@ body {
 
     --color-secondary: #d1e2d3;
 
+    --color-tertiary: #f9fdef;
+
     --color-error: #d64040;
     --color-error-dark: #bf3a3a;
+    --color-error-light: #f8d7d7;
 
     --color-neutral: #2d312e;  
 
     --color-navigation: #f7faf5;
 
     --color-background: #ffffff;
+
+    --color-gray: gray;
 
     /* =========================
     TYPOGRAPHY
@@ -93,6 +98,7 @@ body {
 
     --sidebar-width: 240px;
     --container-max-width: 1440px;
+    --page-width: calc(100% - var(--sidebar-width));
 
     /* =========================
     BREAKPOINTS
