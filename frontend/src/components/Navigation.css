@@ -6,8 +6,48 @@
   flex-direction: column;
   height: 100vh;
   position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
   line-height: var(--line-height-normal);
   letter-spacing: var(--letter-spacing-normal);
+  transition: transform 0.25s ease-in-out;
+}
+
+/* MOBILUS PERJUNGIKLIS (hamburger) – paslėptas dideliuose ekranuose */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 60;
+  width: 44px;
+  height: 44px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  background: var(--color-navigation);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.nav-toggle-bar {
+  width: 22px;
+  height: 2px;
+  background: var(--color-neutral);
+  border-radius: var(--radius-pill);
+}
+
+/* TAMSUS FONO UŽDANGALAS */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 40;
 }
 
 
@@ -120,4 +160,36 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* =========================
+   MAŽI EKRANAI (mobilieji telefonai)
+   Šoninė juosta tampa išstumiamu meniu
+  ========================== */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-md);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar.open ~ .nav-overlay,
+  .nav-overlay {
+    display: block;
+  }
+}
+
+/* Labai siauri ekranai (pvz. 375px) – meniu neviršija ekrano pločio */
+@media (max-width: 375px) {
+  .sidebar {
+    width: 85vw;
+    max-width: var(--sidebar-width);
+  }
 }

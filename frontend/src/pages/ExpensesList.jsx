@@ -123,11 +123,9 @@ function ExpensesPage() {
     >
       <div className="flex min-h-[calc(100vh-64px)]">
         <main
-          className="flex-1 w-full"
+          className="flex-1 w-full mx-auto p-4 pt-16 md:pt-[var(--space-5)] md:p-[var(--space-5)] md:ml-[var(--sidebar-width)]"
           style={{
-            padding: "var(--space-5)",
             maxWidth: "1200px",
-            margin: "0 auto 0 var(--sidebar-width)",
           }}
         >
           <section style={{ marginBottom: "var(--space-5)" }}>

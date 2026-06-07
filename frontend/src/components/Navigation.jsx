@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { useState, useEffect } from "react";
 import "./Navigation.css";
 
@@ -16,6 +16,13 @@ function Navigation() {
   const inactiveClass = "inactive";
 
 const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
+const [isOpen, setIsOpen] = useState(false);
+const location = useLocation();
+
+// Užveriame mobilųjį meniu pakeitus puslapį
+useEffect(() => {
+  setIsOpen(false);
+}, [location.pathname]);
 
 useEffect(() => {
   const token = localStorage.getItem("token");
@@ -42,7 +49,30 @@ useEffect(() => {
 }, []);
 
   return (
-    <aside className="sidebar">
+    <>
+      {/* MOBILUS PERJUNGIKLIS (matomas tik mažuose ekranuose) */}
+      <button
+        type="button"
+        className="nav-toggle"
+        aria-label="Atidaryti meniu"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        <span className="nav-toggle-bar" />
+        <span className="nav-toggle-bar" />
+        <span className="nav-toggle-bar" />
+      </button>
+
+      {/* FONO UŽDANGALAS (matomas tik atidarius mobilų meniu) */}
+      {isOpen && (
+        <div
+          className="nav-overlay"
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
       {/* LOGO */}
       <div className="navigation-logo">
         <img src={LogoIcon} alt="logo" className="logo-icon" />
@@ -119,6 +149,7 @@ useEffect(() => {
         </div>
       </div>
     </aside>
+    </>
   );
 }
 
