@@ -8,7 +8,8 @@ function App() {
 
   const hideNavigation =
     location.pathname === "/prisijungimas" ||
-    location.pathname === "/registracija";
+    location.pathname === "/registracija" ||
+    location.pathname === "/atsijungti";
 
   return (
     <>

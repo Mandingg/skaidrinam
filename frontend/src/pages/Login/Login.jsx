@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import "./Login.css";
 import LogoIcon from "../../assets/LogoIcon.svg?url";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
@@ -8,7 +8,10 @@ import VisibilityOff from "../../assets/VisibilityOff.svg";
 import { Link } from "react-router";
 
 function Login() {
-    useEffect(() => {
+  const location = useLocation();
+  const logoutMessage = location.state?.logoutMessage || "";
+
+  useEffect(() => {
     document.title = "Prisijungimas";
   }, []);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -28,6 +31,12 @@ function Login() {
         </div>
 
         <h2 className="subtitle">Prisijungti</h2>
+
+        {logoutMessage && (
+          <p style={{ color: "#1f7a1f", textAlign: "center", marginBottom: "1rem" }}>
+            {logoutMessage}
+          </p>
+        )}
 
         {/* Form */}
         <form className="form">

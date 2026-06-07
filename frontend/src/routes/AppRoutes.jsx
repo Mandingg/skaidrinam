@@ -7,6 +7,7 @@ import Profile from "../pages/Profile";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import Logout from "../pages/Logout/Logout";
 
 function AppRoutes() {
   return (
@@ -14,6 +15,7 @@ function AppRoutes() {
       {/* AUTH */}
       <Route path="/prisijungimas" element={<Login />} />
       <Route path="/registracija" element={<Register />} />
+      <Route path="/atsijungti" element={<Logout />} />
 
       {/* MAIN APP */}
       <Route path="/" element={<MainPage />} />
