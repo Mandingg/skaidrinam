@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-3);
-  background: var(--color-navigation);
+  background: var(--color-background);
 }
 
 .register-card {
@@ -15,10 +15,10 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   padding: var(--space-5);
-  padding-bottom: var(--space-5);
 }
 
 /* HEADER */
+
 .register-header {
   display: flex;
   justify-content: center;
@@ -53,6 +53,7 @@
 }
 
 /* FORM */
+
 .form {
   display: flex;
   flex-direction: column;
@@ -90,13 +91,14 @@
 }
 
 /* PASSWORD */
+
 .password-wrapper {
   display: flex;
   align-items: stretch;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: white;
+  background: var(--color-background);
 }
 
 .password-wrapper input {
@@ -128,7 +130,8 @@
   display: block;
 }
 
-/* BUTTON */
+/* BUTTONS */
+
 .actions {
   margin-top: var(--space-3);
 }
@@ -139,7 +142,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
-  color: white;
+  color: var(--color-background);
   font-size: var(--text-body);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
@@ -150,6 +153,7 @@
 }
 
 /* MESSAGE */
+
 .message {
   margin-top: var(--space-3);
   text-align: center;
@@ -166,6 +170,7 @@
 }
 
 /* FOOTER */
+
 .footer {
   margin-top: var(--space-4);
   text-align: center;
@@ -198,7 +203,7 @@
   cursor: pointer;
 }
 
-.delete-acount-btn:hover {
+.delete-account-btn:hover {
   opacity: 0.9;
 }
 
@@ -217,7 +222,7 @@
 .modal {
   width: 100%;
   max-width: 420px;
-  background: white;
+  background: var(--color-background);
   border-radius: var(--radius-md);
   padding: var(--space-5);
   text-align: center;
@@ -244,7 +249,7 @@
 .modal p {
   margin-bottom: var(--space-4);
   color: var(--color-neutral);
-  line-height: 1.5;
+  line-height: var(--line-height-normal);
 }
 
 .modal-actions {
@@ -262,6 +267,8 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   border: 1px solid var(--border-color);
+  background: var(--color-background);
+  color: var(--color-neutral);
 }
 
 .confirm-delete-btn {
@@ -269,9 +276,10 @@
   max-width: 240px;
   height: 48px;
   background: var(--color-error);
-  color: white;
+  color: var(--color-background);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
+  border: none;
   border-radius: var(--radius-sm);
 }
 
@@ -321,15 +329,15 @@
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
-  color: white;
+  color: var(--color-background);
   font-size: var(--text-body);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
 }
 
 .subscription-btn:hover {
-  background: var(--color-primary);
-  color: white;
+  background: var(--color-primary-dark);
+  color: var(--color-background);
 }
 
 .subscription-status {
