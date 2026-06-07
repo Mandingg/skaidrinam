@@ -11,6 +11,8 @@ function Documents() {
     const [documentToDelete, setDocumentToDelete] = useState(null);
     const [activeFilter, setActiveFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
 
     useEffect(() => {
@@ -51,6 +53,11 @@ function Documents() {
         return warrantyDate < today;
     }
 
+    const totalCount = documents.length;
+    const activeCount = documents.filter((doc) => !isExpired(doc.valid_until)).length;
+    const expiredCount = totalCount - activeCount;
+
+
     const filteredDocuments = documents.filter((document) => {
         if (activeFilter === "active") {
             return !isExpired(document.valid_until);
@@ -71,6 +78,13 @@ function Documents() {
         return document.title.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
+    const totalPages = Math.ceil(searchResults.length / itemsPerPage);
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    const paginatedDocuments = searchResults.slice(startIndex, endIndex);
+
     return (
         <main className="documents-page">
             <div className="documents-content">
@@ -89,21 +103,21 @@ function Documents() {
                             type="button"
                             onClick={() => setActiveFilter("all")}
                         >
-                            Visos
+                            Visos ({totalCount})
                         </button>
                         <button
                             className={activeFilter === "active" ? "active" : ""}
                             type="button"
                             onClick={() => setActiveFilter("active")}
                         >
-                            Galiojančios
+                            Galiojančios ({activeCount})
                         </button>
                         <button
                             className={activeFilter === "expired" ? "active" : ""}
                             type="button"
                             onClick={() => setActiveFilter("expired")}
                         >
-                            Pasibaigusios
+                            Pasibaigusios ({expiredCount})
                         </button>
                     </div>
 
@@ -122,12 +136,11 @@ function Documents() {
                 </section>
 
                 {message && <p className="documents-message">{message}</p>}
-
                 <section className="documents-grid">
-                    {searchResults.length === 0 ? (
+                    {paginatedDocuments.length === 0 ? (
                         <p className="documents-empty">Garantijų nerasta.</p>
                     ) : (
-                        searchResults.map((document) => (
+                        paginatedDocuments.map((document) => (
                             <DocumentCard
                                 key={document.id}
                                 document={document}
@@ -137,6 +150,39 @@ function Documents() {
                         ))
                     )}
                 </section>
+
+                {totalPages > 1 && (
+                    <div className="documents-pagination">
+                        <button
+                            type="button"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                        >
+                            ‹
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index + 1}
+                                type="button"
+                                className={currentPage === index + 1 ? "active" : ""}
+                                onClick={() => setCurrentPage(index + 1)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+
+                        <button
+                            type="button"
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                        >
+                            ›
+                        </button>
+                    </div>
+                )}
+
+
 
                 {documentToDelete && (
                     <div className="modal-overlay">
