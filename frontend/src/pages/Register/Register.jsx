@@ -46,7 +46,7 @@ function Register() {
     }
 
     try {
-      const formData = await registerUser({
+      const data = await registerUser({
         name: formData.name,
         surname: formData.surname,
         email: formData.email,
@@ -58,7 +58,7 @@ function Register() {
 
       setTimeout(() => {
         navigate("/");
-            }, 2000);
+      }, 2000);
 
 
       setTimeout(() => {
