@@ -80,6 +80,21 @@ CREATE TABLE expenses (
     ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE incomes (
+  id INT NOT NULL AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  source VARCHAR(255) NOT NULL, 
+  description VARCHAR(255),
+  amount DECIMAL(10,2) NOT NULL,
+  income_date DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX fk_incomes_users_idx (user_id),
+  CONSTRAINT fk_incomes_users
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE logs (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NULL,
