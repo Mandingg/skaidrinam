@@ -93,14 +93,17 @@ const Analytics = () => {
     ];
   }
 
- 
+  const handleDataTypeSelection = (e) => {
+      setDataType(e.target.value);
+      setChartType('Table');
+    }
+
   useEffect(() => {
     if (dataType === "") {
       setRowAxis("");
       setColAxis("");
       setAggregator("");
     } else {
-    
       if (!availableFields.some((f) => f.id === rowAxis)) {
         setRowAxis(availableFields[0]?.id || "");
       }
@@ -114,23 +117,19 @@ const Analytics = () => {
   }, [dataType, rowAxis, colAxis]);
 
   useEffect(() => {
-    if (dataType === "išlaidos"){
+    if (dataType === "išlaidos") {
       setFilteredData(
         rawData.filter(
-          (item) =>
-            item["Transakcijos tipas"]?.toLowerCase() === "išlaida",
+          (item) => item["Transakcijos tipas"]?.toLowerCase() === "išlaida",
         ),
       );
-
-    }
-    else if (dataType === "pajamos"){
+    } else if (dataType === "pajamos") {
       setFilteredData(
         rawData.filter(
-          (item) =>
-            item["Transakcijos tipas"]?.toLowerCase() === "įplauka",
+          (item) => item["Transakcijos tipas"]?.toLowerCase() === "įplauka",
         ),
       );
-    } else if (dataType === "išlaidos ir pajamos"){
+    } else if (dataType === "išlaidos ir pajamos") {
       setFilteredData(rawData);
     }
   }, [dataType]);
@@ -153,22 +152,30 @@ const Analytics = () => {
       ...new Set(filteredData.map((item) => item[colAxis])),
     ].sort();
 
-    const backgroundColors = [
-      "rgba(54, 162, 235, 0.7)",
-      "rgba(255, 99, 132, 0.7)",
-      "rgba(75, 192, 192, 0.7)",
-      "rgba(241, 196, 15, 0.7)",
-      "rgba(155, 89, 182, 0.7)",
-      "rgba(230, 126, 34, 0.7)",
+    const baseColors = [
+      "rgba(69, 123, 59, 0.7)",
+      "rgba(44, 122, 123, 0.7)",
+      "rgba(192, 86, 43, 0.7)",
+      "rgba(214, 158, 46, 0.7)",
+      "rgba(112, 79, 130, 0.7)",
+      "rgba(74, 85, 104, 0.7)",
+      "rgba(184, 50, 90, 0.7)",
+      "rgba(47, 133, 90, 0.7)",
+      "rgba(221, 107, 32, 0.7)",
+      "rgba(43, 108, 176, 0.7)",
     ];
-    const borderColors = [
-      "rgba(54, 162, 235, 1)",
-      "rgba(255, 99, 132, 1)",
-      "rgba(75, 192, 192, 1)",
-      "rgba(241, 196, 15, 1)",
-      "rgba(155, 89, 182, 1)",
-      "rgba(230, 126, 34, 1)",
-    ];
+
+    let backgroundColors = [];
+    let borderColors = [];
+
+    for (let i = 0; i < structuralSeries.length; i++) {
+      const bgColor = baseColors[i % baseColors.length];
+      const brdColor = bgColor.replace("0.7", "1.0");
+      backgroundColors.push(bgColor);
+      borderColors.push(brdColor);
+    }
+
+    
 
     if (chartType === "Pie Chart") {
       const pieValues = horizontalLabels.map((labelVal) => {
@@ -221,8 +228,8 @@ const Analytics = () => {
       return {
         label: String(seriesName),
         data: chartValues,
-        backgroundColor: backgroundColors[idx % backgroundColors.length],
-        borderColor: borderColors[idx % borderColors.length],
+        backgroundColor: backgroundColors[idx],
+        borderColor: borderColors[idx],
         borderWidth: 2,
         tension: 0.2,
       };
@@ -256,19 +263,6 @@ const Analytics = () => {
     );
   };
 
-  if (loading)
-    return (
-      <div className="page-container" style={{ padding: "20px" }}>
-        Kraunama analitika...
-      </div>
-    );
-  if (rawData.length === 0)
-    return (
-      <div className="page-container" style={{ padding: "20px" }}>
-        Nėra duomenų analizei.
-      </div>
-    );
-
   return (
     <div className="page-container">
       <div className="wrapper">
@@ -284,7 +278,7 @@ const Analytics = () => {
               <div className="select-wrapper">
                 <select
                   value={dataType}
-                  onChange={(e) => setDataType(e.target.value)}
+                  onChange={handleDataTypeSelection}
                   className="analytics-select-input"
                 >
                   <option value="">---</option>
@@ -392,6 +386,12 @@ const Analytics = () => {
                 style={{ textAlign: "center", padding: "40px", color: "#888" }}
               >
                 Pasirinkite duomenų tipą analizei pradėti.
+              </div>
+            ) : filteredData.length == 0 ? (
+              <div
+                style={{ textAlign: "center", padding: "40px", color: "#888" }}
+              >
+                Neturite įrašų kategorijoje {`${dataType}`}.
               </div>
             ) : chartType === "Table" ? (
               <div className="table-wrapper">
