@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, Link, useNavigate } from "react-router";
 import "./Login.css";
 import LogoIcon from "../../assets/LogoIcon.svg?url";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
 import VisibilityOff from "../../assets/VisibilityOff.svg";
 
-import { Link, useNavigate } from "react-router"; 
-
 function Login() {
   const location = useLocation();
+  const navigate = useNavigate();
   const logoutMessage = location.state?.logoutMessage || "";
 
   useEffect(() => {
