@@ -6,13 +6,21 @@ import AppRoutes from './routes/AppRoutes';
 function App() {
   const location = useLocation();
 
-  const hideNavigation =
-    location.pathname === "/" ||
-    location.pathname === "/registracija";
+  const pathsWithNavigation = [
+    "/pagrindinis",
+    "/analitika",
+    "/garantijos",
+    "/profilis",
+    "/islaidos",
+    "/profilis/redaguoti"
+  ];
 
+  const showNavigation = pathsWithNavigation.some(path => 
+    location.pathname.startsWith(path)
+  );
   return (
     <>
-      {!hideNavigation && <Navigation />}
+      {showNavigation && <Navigation />}
 
       <AppRoutes />
     </>
