@@ -30,7 +30,8 @@ class ExpenseService:
         )
         expense_id = self.db.insert(query, params)
         if expense_id:
-            self._log(expense.user_id, expense_id, expense.description, "CREATE")
+            self._log(expense.user_id, expense_id,
+                      expense.description, "CREATE")
         return expense_id
 
     def get_by_id(self, expense_id: int):
@@ -43,7 +44,8 @@ class ExpenseService:
             SET description = %s, amount = %s, expense_date = %s, category_id = %s
             WHERE id = %s
         """
-        params = (data.description, data.amount, data.expense_date, data.category_id, expense_id)
+        params = (data.description, data.amount,
+                  data.expense_date, data.category_id, expense_id)
         rows = self.db.update(query, params)
         if rows:
             self._log(user_id, expense_id, data.description, "UPDATE")
@@ -85,8 +87,7 @@ class ExpenseService:
         if results is None:
             return []
         expenses = [ExpenseModel(**row) for row in results]
-        return expenses   
-
+        return expenses
 
     def get_expenses_with_details_by_user(self, user_id: int):
         """
@@ -114,7 +115,7 @@ class ExpenseService:
         if results is None:
             return []
         return results
-    
+
     def delete_single_expense(self, expense_id):
         """
         Deletes an expense from the database.`
@@ -123,9 +124,26 @@ class ExpenseService:
         """
         query = "DELETE FROM expenses WHERE id = %s"
         result = self.db.delete(query, (expense_id,))
-        if result==1:
+        if result == 1:
             return True
-        elif result>1:
-            raise Exception(f"Error: More than one expense deleted. Deleted count: {result}")
+        elif result > 1:
+            raise Exception(
+                f"Error: More than one expense deleted. Deleted count: {result}")
         else:
             return False
+
+    def get_category_id_by_name(self, user_id: int, category_name: str):
+        query = """
+            SELECT id
+            FROM categories
+            WHERE LOWER(name) = LOWER(%s)
+            AND (user_id = %s OR user_id IS NULL)
+            LIMIT 1
+        """
+
+        result = self.db.fetch_one(query, (category_name, user_id))
+
+        if result:
+            return result["id"]
+
+        return None
