@@ -296,7 +296,7 @@ const balance = incomeSum - expensesSum;
                 <p>Įveskite išlaidą rankiniu būdu</p>
               </div>
 
-              <div className="action-card upload" onClick={() => navigate("/prideti/automatinis")}>
+              <div className="action-card upload" onClick={() => navigate("/kvito-nuskaitymas")}>
                 <div className="icon-wrapper">
                   <img src={AddNote} alt="Dokumentas" className="action-icon" />
                 </div>

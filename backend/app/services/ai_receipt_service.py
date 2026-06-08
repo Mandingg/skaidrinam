@@ -24,9 +24,6 @@ Grąžink tik validų JSON:
   "confidence": 0.0
 }}
 
-Leistinos kategorijos:
-Maistas, Kuras, Buitis, Transportas, Sveikata, Darbas, Kita
-
 OCR tekstas:
 {ocr_text}
 """
@@ -35,8 +32,13 @@ OCR tekstas:
     return json.loads(response.output_text)
 
 
-def analyze_receipt_image(file_bytes: bytes, content_type: str):
+def analyze_receipt_image(
+    file_bytes: bytes,
+    content_type: str,
+    categories: list[str]
+):
     base64_image = base64.b64encode(file_bytes).decode("utf-8")
+    categories_text = ", ".join(categories)
 
     response = client.responses.create(
         model="gpt-5-mini",
@@ -46,26 +48,34 @@ def analyze_receipt_image(file_bytes: bytes, content_type: str):
                 "content": [
                     {
                         "type": "input_text",
-                        "text": """
+                        "text": f"""
 Tu analizuoji lietuviško pirkimo kvito nuotrauką.
 
 Ištrauk informaciją ir grąžink tik validų JSON:
-{
+{{
   "store_name": null,
   "receipt_date": null,
   "total_amount": null,
   "category": "Kita",
   "confidence": 0.0,
   "items": [
-    {
+    {{
       "description": null,
       "amount": null,
       "category": "Kita"
-    }
+    }}
   ]
-}
+}}
 
-Kategorijų taisyklės:
+Leistinos vartotojo kategorijos:
+{categories_text}
+
+SVARBU:
+- category ir item.category turi būti tik viena iš leistinų vartotojo kategorijų.
+- Jei nė viena kategorija netinka, naudok "Kita".
+- Nenaudok kategorijos, kurios nėra sąraše.
+
+Bendros kategorijų gairės:
 - Maistas: maisto produktai, nealkoholiniai gėrimai
 - Kuras: benzinas, dyzelinas, LPG/CNG automobiliui, degalų papildymas transportui
 - Buitis: namų prekės, higienos prekės, valymo priemonės, popieriniai rankšluosčiai, maišeliai, dujų balionai buičiai
@@ -78,19 +88,28 @@ Items taisyklės:
 - items turi būti visos pirkimo eilutės, kurios sudaro total_amount
 - neįtrauk PVM suvestinių, mokėjimo kortele eilučių, grąžos
 - jeigu kai kurių prekių nepavyksta perskaityti, pridėk:
-  {
+  {{
     "description": "Neatpažinta prekė",
     "amount": trūkstama_suma,
     "category": "Kita"
-  }
+  }}
 - items sumos suma turi kuo labiau sutapti su total_amount
 
 Bendros taisyklės:
-
-- Jeigu prekės kategorijos confidence mažesnis nei 0.75, tą prekės sumą dėk į "Kita".
 - Jeigu dėl nuolaidų ar neatpažintų eilučių yra skirtumas, skirtumą pridėk prie "Kita".
 - receipt_date turi būti tik data YYYY-MM-DD, be laiko.
 - Jei didžiausia kategorija yra "Kita", bet ji sudaro mažiau nei 50% total_amount, rinkis kitą didžiausią ne "Kita" kategoriją.
+
+Store name taisyklės:
+- Lidl -> Lidl
+- Rimi -> Rimi
+- Maxima -> Maxima
+- IKI -> IKI
+- Norfa -> Norfa
+- Jozita -> Jozita
+
+Nenaudok UAB pavadinimų.
+Naudok tik vartotojui suprantamą parduotuvės vardą.
 """
                     },
                     {

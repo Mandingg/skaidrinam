@@ -1,0 +1,212 @@
+.receipt-upload-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  background: var(--color-background);
+}
+
+.receipt-upload-card {
+  width: 100%;
+  max-width: 450px;
+  background: var(--color-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-5);
+}
+
+.receipt-upload-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.receipt-upload-logo-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.receipt-upload-logo {
+  width: 52px;
+  height: 52px;
+}
+
+.receipt-upload-title {
+  font-size: 28px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.receipt-upload-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.receipt-file-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-gray);
+}
+
+.receipt-primary-button {
+  width: 100%;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: white;
+  margin-top: var(--space-4);
+  margin-bottom: 0;
+  padding: 12px;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.receipt-primary-button:hover {
+  background: var(--color-primary-dark);
+}
+
+.receipt-primary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.receipt-result {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-color);
+}
+
+.receipt-section-title {
+  font-size: 20px;
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+
+.receipt-info {
+  font-size: var(--text-body);
+  color: var(--color-text);
+  line-height: 1.7;
+  margin-bottom: var(--space-3);
+}
+
+.receipt-info p {
+  margin: 0;
+}
+
+.receipt-preview-title {
+  font-size: var(--text-body);
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+
+.receipt-expense-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.receipt-expense-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: #f8faf8;
+  font-size: var(--text-body);
+  color: var(--color-text);
+}
+
+.receipt-save-button {
+  margin-top: var(--space-4);
+}
+
+.receipt-message {
+  margin-top: var(--space-3);
+  text-align: center;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-medium);
+}
+
+.receipt-message.success {
+  color: var(--color-primary);
+}
+
+.receipt-message.error {
+  color: #dc2626;
+}
+
+.receipt-expense-edit-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 1fr;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.receipt-edit-input,
+.receipt-edit-amount,
+.receipt-edit-category {
+  min-width: 0;
+}
+
+.receipt-edit-input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.receipt-edit-amount {
+  text-align: right;
+}
+
+.receipt-secondary-button {
+  width: 100%;
+  margin-top: var(--space-2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+  padding: 12px;
+  font-size: var(--text-body);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.receipt-secondary-button:hover {
+  background: #f3f4f6;
+}
+
+.receipt-file-input-hidden {
+  display: none;
+}
+
+.receipt-file-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: white;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.receipt-file-label:hover {
+  background: #f8f8f8;
+}
+
+.receipt-selected-file {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--color-gray);
+}

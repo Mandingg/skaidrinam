@@ -12,7 +12,8 @@ function App() {
     "/garantijos",
     "/profilis",
     "/islaidos",
-    "/profilis/redaguoti"
+    "/profilis/redaguoti",
+    "/kvito-nuskaitymas"
   ];
 
   const showNavigation = pathsWithNavigation.some(path => 

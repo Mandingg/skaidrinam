@@ -147,3 +147,23 @@ class ExpenseService:
             return result["id"]
 
         return None
+    
+    def get_available_categories(self, user_id: int):
+        query = """
+            SELECT name
+            FROM categories
+            WHERE user_id = %s OR user_id IS NULL
+            ORDER BY name
+        """
+
+        results = self.db.fetch_all(query, (user_id,))
+
+        if not results:
+            return ["Kita"]
+
+        category_names = [row["name"] for row in results]
+
+        if "Kita" not in category_names:
+            category_names.append("Kita")
+
+        return category_names

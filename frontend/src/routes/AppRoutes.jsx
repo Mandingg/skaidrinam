@@ -13,6 +13,7 @@ import EditExpensePage from "../pages/EditExpensePage";
 import Documents from "../pages/Documents/Documents";
 import DocumentForm from "../pages/Documents/DocumentForm";
 import EditDocument from "../pages/Documents/EditDocument";
+import ReceiptUpload from "../pages/ReceiptUpload/ReceiptUpload";
 
 function AppRoutes() {
   return (
@@ -32,6 +33,8 @@ function AppRoutes() {
         <Route path="/islaidos" element={<ExpensesList />} />
         <Route path="/pagrindinis/naujas" element={<ExpenseForm />} />
         <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
+        <Route path="/kvito-nuskaitymas" element={<ReceiptUpload />}
+  />
       </Route>
 
       {/* 404 */}

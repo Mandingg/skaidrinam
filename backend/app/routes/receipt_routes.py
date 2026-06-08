@@ -45,13 +45,19 @@ def analyze_text(request: ReceiptAnalyzeRequest):
 
 
 @router.post("/analyze-image", status_code=status.HTTP_200_OK)
-async def analyze_image(file: UploadFile = File(...)):
+async def analyze_image(
+    file: UploadFile = File(...),
+    user_id: int = Depends(get_logged_user_id)
+):
     try:
         file_bytes = await file.read()
 
+        categories = expense_service.get_available_categories(user_id)
+
         return analyze_receipt_image(
             file_bytes=file_bytes,
-            content_type=file.content_type
+            content_type=file.content_type,
+            categories=categories
         )
 
     except Exception as error:
