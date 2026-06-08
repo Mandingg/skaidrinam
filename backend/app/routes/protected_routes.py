@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from app.auth.dependencies import get_current_user
 from app.services.user_service import UserService
 
@@ -7,12 +7,17 @@ user_service = UserService()
 
 
 @router.get("/me")
-def me(payload=Depends(get_current_user)):
-
+def me(
+    period: str = "current_month",
+    payload=Depends(get_current_user)
+):
     user_id = payload.get("sub")
 
     if not user_id:
-        return {"error": "No user id in token"}
+        raise HTTPException(
+            status_code=401,
+            detail="No user id in token"
+        )
 
     user = user_service.get_user_by({"id": int(user_id)})
 

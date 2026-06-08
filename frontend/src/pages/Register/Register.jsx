@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { registerUser } from "../../services/userService";
-import { useNavigate } from "react-router";
 
 import "./Register.css";
 
@@ -14,6 +13,7 @@ function Register() {
     document.title = "Registracija";
   }, []);
 
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
@@ -26,8 +26,6 @@ function Register() {
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
-
-  const navigate =useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -55,13 +53,17 @@ function Register() {
         password: formData.password,
       });
 
-      setMessage(data.message);
+      setMessage("Registracija sėkminga! Nukreipiama į prisijungimą...");
       setIsError(false);
 
       setTimeout(() => {
         navigate("/");
             }, 2000);
 
+
+      setTimeout(() => {
+        navigate("/");
+      }, 600);
     } catch (error) {
       setMessage(error.message);
       setIsError(true);

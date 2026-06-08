@@ -17,31 +17,37 @@ function Navigation() {
 
   const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
-      return;
-    }
+useEffect(() => {
+  const token = localStorage.getItem("token");
 
-    fetch("http://127.0.0.1:8000/users/me", {
-      method: "GET",
-      headers: { "Authorization": `Bearer ${token}` },
+  if (!token) return;
+
+  fetch("http://127.0.0.1:8000/me", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+        return null;
+      }
+      return res.json();
     })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Me Response:", data)
-        setUser({
-          name: data.name,
-          surname: data.surname,
-          email: data.email,
-          subscription: data.subscription_type
-        });
-      })
-      .catch(() => {
-        setUser({ name: "Svečias", surname: "", email: "Neprisijungęs" });
+    .then((data) => {
+      if (!data) return;
+
+      setUser({
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
       });
-  }, []);
+    })
+    .catch(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    });
+}, []);
 
   return (
     <aside className="sidebar">

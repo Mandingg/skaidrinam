@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.routes.user_routes import router as user_router
 from app.routes.category_routes import router as category_router
 from app.routes.expense_routes import router as expense_router
+from app.routes.income_routes import router as income_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.auth_routes import router as auth_routes
 from app.routes.protected_routes import router as protected_routes
@@ -36,3 +37,4 @@ app.include_router(categories_router)
 app.include_router(expense_router)
 app.include_router(document_routes)
 app.include_router(receipt_routes)
+app.include_router(income_router)
