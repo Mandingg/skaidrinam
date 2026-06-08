@@ -52,6 +52,19 @@ VALUES (
   '2026-05-14'
 );
 
+-- INCOMES
+INSERT INTO incomes (
+  user_id,
+  source,
+  description,
+  amount,
+  income_date
+)
+VALUES 
+(1, 'Darbo užmokestis', 'Gegužės atlyginimas', 1500.00, '2026-05-01'),
+(1, 'Freelance', 'Web projektas', 300.00, '2026-05-10'),
+(1, 'Investicijos', 'Dividendai', 120.50, '2026-05-20');
+
 -- DOCUMENTS
 INSERT INTO documents (
   user_id,
