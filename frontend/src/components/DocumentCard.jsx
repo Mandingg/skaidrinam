@@ -4,8 +4,10 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function DocumentCard({ document, onDeleteClick, onEdit }) {
 
+    const hasValidUntil = Boolean(document.valid_until);
+
     const expired =
-        document.valid_until &&
+        hasValidUntil &&
         new Date(document.valid_until) < new Date();
 
     const normalizedFilePath = document.file_path?.replace("\\", "/");
@@ -55,23 +57,31 @@ function DocumentCard({ document, onDeleteClick, onEdit }) {
                     <div>
                         <span>Garantija iki</span>
 
-                        <p className={expired ? "expired-date" : "active-date"}>
-                            {document.valid_until || "Nenurodyta"}
+                        <p
+                            className={
+                                !hasValidUntil
+                                    ? "unknown-date"
+                                    : expired
+                                        ? "expired-date"
+                                        : "active-date"
+                            }
+                        >
+                            {document.valid_until || "Garantija nenurodyta"}
                         </p>
                     </div>
 
                 </div>
             </div>
 
-            <div
-                className={
-                    expired
-                        ? "documents-status expired"
-                        : "documents-status active"
-                }
-            >
-                {expired ? "ⓘ Pasibaigusi" : "✓ Galioja"}
-            </div>
+            {!hasValidUntil ? (
+                <div className="documents-status unknown">
+                    ⓘ Garantija nenurodyta
+                </div>
+            ) : (
+                <div className={expired ? "documents-status expired" : "documents-status active"}>
+                    {expired ? "ⓘ Pasibaigusi" : "✓ Galioja"}
+                </div>
+            )}
             <div className="documents-card-actions">
                 <button
                     type="button"
