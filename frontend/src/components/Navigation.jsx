@@ -1,4 +1,5 @@
 import { NavLink } from "react-router";
+import { useState, useEffect } from "react";
 import "./Navigation.css";
 
 import HomeIcon from "../assets/HomeIcon.svg";
@@ -7,11 +8,46 @@ import ProfileIcon from "../assets/ProfileIcon.svg";
 import LogoutIcon from "../assets/LogoutIcon.svg";
 import LogoIcon from "../assets/LogoIcon.svg";
 import VerifiedIcon from "../assets/VerifiedIcon.svg";
+import ExpensesIcon from "../assets/ExpensesIcon.svg";
 
 function Navigation() {
   const baseClass = "nav-link";
   const activeClass = "active";
   const inactiveClass = "inactive";
+
+const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (!token) return;
+
+  fetch("http://127.0.0.1:8000/me", {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        window.location.href = "/";
+        return null;
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (!data) return;
+
+      setUser({
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+      });
+    })
+    .catch(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    });
+}, []);
 
   return (
     <aside className="sidebar">
@@ -24,7 +60,7 @@ function Navigation() {
       {/* NAV */}
       <nav className="nav">
         <NavLink 
-          to="/"
+          to="/pagrindinis"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
@@ -44,6 +80,16 @@ function Navigation() {
         </NavLink>
 
         <NavLink
+          to="/islaidos"
+          className={({ isActive }) =>
+            `${baseClass} ${isActive ? activeClass : inactiveClass}`
+          }
+        >
+          <img src={ExpensesIcon} alt="expenses" className="icon" />
+          Išlaidų sąrašas
+        </NavLink>
+
+        <NavLink
           to="/garantijos"
           className={({ isActive }) =>
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
@@ -60,7 +106,7 @@ function Navigation() {
           }
         >
           <img src={ProfileIcon} alt="profile" className="icon" />
-          Profilis
+          Vartotojo profilis
         </NavLink>
 
         <NavLink to="/atsijungti" className="nav-link inactive">
@@ -76,8 +122,8 @@ function Navigation() {
         </div>
 
         <div className="user-text">
-          <span className="user-name">Jonas Petrauskas</span>
-          <span className="user-email">jonas@example.com</span>
+          <span className="user-name">{user.name} {user.surname}</span>
+          <span className="user-email">{user.email}</span>
         </div>
       </div>
     </aside>
