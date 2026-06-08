@@ -33,22 +33,19 @@ ChartJS.register(
 );
 
 const Analytics = () => {
-  const [data, setData] = useState([]);
+  const [rawData, setRawData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [chartType, setChartType] = useState("Table");
-  const [rowAxis, setRowAxis] = useState("Mėnuo");
-  const [colAxis, setColAxis] = useState("Transakcijos tipas");
-  const [calcValue, setCalcValue] = useState("Suma");
-  const [aggregator, setAggregator] = useState("Sum");
+  // New state for Data Type selection
+  const [dataType, setDataType] = useState("");
 
-  const availableFields = [
-    { id: "Mėnuo", label: "Mėnuo" },
-    { id: "Transakcijos tipas", label: "Transakcijos tipas" },
-    { id: "Išlaidų kategorija", label: "Išlaidų kategorija" },
-    { id: "Parduotuvė", label: "Parduotuvė" },
-    { id: "Pajamų šaltinis", label: "Pajamų šaltinis" },
-  ];
+  // Defaulted to empty strings for placeholders or preset values
+  const [chartType, setChartType] = useState("");
+  const [rowAxis, setRowAxis] = useState("");
+  const [colAxis, setColAxis] = useState("");
+  const [calcValue, setCalcValue] = useState("Suma");
+  const [aggregator, setAggregator] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
@@ -60,9 +57,10 @@ const Analytics = () => {
           Parduotuvė: item["Parduotuvė"] || "Nenurodyta",
           "Pajamų šaltinis": item["Pajamų šaltinis"] || "Nenurodyta",
           Mėnuo: item["Mėnuo"],
-          Suma: parseFloat(item["Suma"])
+          Metai: item["Metai"],
+          Suma: parseFloat(item["Suma"]),
         }));
-        setData(adjustedData);
+        setRawData(adjustedData);
       } catch (error) {
         console.error("Klaida užkraunant analitikos duomenis:", error);
       } finally {
@@ -72,14 +70,87 @@ const Analytics = () => {
     loadData();
   }, []);
 
+  // 1. Determine available fields based on data type choice
+  let availableFields = [];
+  if (dataType === "išlaidos") {
+    availableFields = [
+      { id: "Metai", label: "Metai" },
+      { id: "Mėnuo", label: "Mėnuo" },
+      { id: "Išlaidų kategorija", label: "Išlaidų kategorija" },
+      { id: "Parduotuvė", label: "Parduotuvė" },
+    ];
+  } else if (dataType === "pajamos") {
+    availableFields = [
+      { id: "Metai", label: "Metai" },
+      { id: "Mėnuo", label: "Mėnuo" },
+      { id: "Pajamų šaltinis", label: "Pajamų šaltinis" },
+    ];
+  } else if (dataType === "išlaidos ir pajamos") {
+    availableFields = [
+      { id: "Metai", label: "Metai" },
+      { id: "Mėnuo", label: "Mėnuo" },
+      { id: "Transakcijos tipas", label: "Transakcijos tipas" },
+    ];
+  }
+
+ 
+  useEffect(() => {
+    if (dataType === "") {
+      setRowAxis("");
+      setColAxis("");
+      setAggregator("");
+    } else {
+    
+      if (!availableFields.some((f) => f.id === rowAxis)) {
+        setRowAxis(availableFields[0]?.id || "");
+      }
+      if (!availableFields.some((f) => f.id === colAxis)) {
+        setColAxis(availableFields[1]?.id || "");
+      }
+      if (!aggregator) {
+        setAggregator("Sum");
+      }
+    }
+  }, [dataType, rowAxis, colAxis]);
+
+  useEffect(() => {
+    if (dataType === "išlaidos"){
+      setFilteredData(
+        rawData.filter(
+          (item) =>
+            item["Transakcijos tipas"]?.toLowerCase() === "išlaida",
+        ),
+      );
+
+    }
+    else if (dataType === "pajamos"){
+      setFilteredData(
+        rawData.filter(
+          (item) =>
+            item["Transakcijos tipas"]?.toLowerCase() === "įplauka",
+        ),
+      );
+    } else if (dataType === "išlaidos ir pajamos"){
+      setFilteredData(rawData);
+    }
+  }, [dataType]);
+
   const renderChartSection = () => {
-    if (data.length === 0) return null;
+    if (
+      !dataType ||
+      filteredData.length === 0 ||
+      !rowAxis ||
+      (!colAxis && chartType !== "Pie Chart") ||
+      !aggregator
+    ) {
+      return null;
+    }
 
     const horizontalLabels = [
-      ...new Set(data.map((item) => item[rowAxis])),
+      ...new Set(filteredData.map((item) => item[rowAxis])),
     ].sort();
     const structuralSeries = [
-      ...new Set(data.map((item) => item[colAxis])),
+      ...new Set(filteredData.map((item) => item[colAxis])),
     ].sort();
 
     const backgroundColors = [
@@ -101,7 +172,7 @@ const Analytics = () => {
 
     if (chartType === "Pie Chart") {
       const pieValues = horizontalLabels.map((labelVal) => {
-        const filteredMatches = data.filter(
+        const filteredMatches = filteredData.filter(
           (item) => item[rowAxis] === labelVal,
         );
         if (aggregator === "Count") return filteredMatches.length;
@@ -140,7 +211,7 @@ const Analytics = () => {
 
     const datasets = structuralSeries.map((seriesName, idx) => {
       const chartValues = horizontalLabels.map((labelVal) => {
-        const filteredMatches = data.filter(
+        const filteredMatches = filteredData.filter(
           (item) => item[rowAxis] === labelVal && item[colAxis] === seriesName,
         );
         if (aggregator === "Count") return filteredMatches.length;
@@ -191,7 +262,7 @@ const Analytics = () => {
         Kraunama analitika...
       </div>
     );
-  if (data.length === 0)
+  if (rawData.length === 0)
     return (
       <div className="page-container" style={{ padding: "20px" }}>
         Nėra duomenų analizei.
@@ -209,13 +280,34 @@ const Analytics = () => {
 
           <div className="choices-panel">
             <div className="analytics-field-group">
+              <label className="choice-label">Duomenų tipas:</label>
+              <div className="select-wrapper">
+                <select
+                  value={dataType}
+                  onChange={(e) => setDataType(e.target.value)}
+                  className="analytics-select-input"
+                >
+                  <option value="">---</option>
+                  <option value="išlaidos">Išlaidos</option>
+                  <option value="pajamos">Pajamos</option>
+                  <option value="išlaidos ir pajamos">
+                    Išlaidos ir pajamos
+                  </option>
+                </select>
+                <span className="select-indicator">▾</span>
+              </div>
+            </div>
+
+            <div className="analytics-field-group">
               <label className="choice-label">Vizualizacija:</label>
               <div className="select-wrapper">
                 <select
                   value={chartType}
                   onChange={(e) => setChartType(e.target.value)}
                   className="analytics-select-input"
+                  disabled={!dataType}
                 >
+                  {!dataType && <option value="">---</option>}
                   <option value="Table">Lentelė</option>
                   <option value="Grouped Column Chart">
                     Stulpelinė diagrama
@@ -241,7 +333,9 @@ const Analytics = () => {
                   value={rowAxis}
                   onChange={(e) => setRowAxis(e.target.value)}
                   className="analytics-select-input"
+                  disabled={!dataType}
                 >
+                  {(!dataType || !rowAxis) && <option value="">---</option>}
                   {availableFields.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.label}
@@ -260,7 +354,9 @@ const Analytics = () => {
                     value={colAxis}
                     onChange={(e) => setColAxis(e.target.value)}
                     className="analytics-select-input"
+                    disabled={!dataType}
                   >
+                    {(!dataType || !colAxis) && <option value="">---</option>}
                     {availableFields.map((f) => (
                       <option key={f.id} value={f.id}>
                         {f.label}
@@ -279,7 +375,9 @@ const Analytics = () => {
                   value={aggregator}
                   onChange={(e) => setAggregator(e.target.value)}
                   className="analytics-select-input"
+                  disabled={!dataType}
                 >
+                  {(!dataType || !aggregator) && <option value="">---</option>}
                   <option value="Sum">Suma</option>
                   <option value="Count">Kiekis</option>
                 </select>
@@ -289,17 +387,35 @@ const Analytics = () => {
           </div>
 
           <div className="analytics-card">
-            {chartType === "Table" ? (
+            {!dataType ? (
+              <div
+                style={{ textAlign: "center", padding: "40px", color: "#888" }}
+              >
+                Pasirinkite duomenų tipą analizei pradėti.
+              </div>
+            ) : chartType === "Table" ? (
               <div className="table-wrapper">
-                <PivotTable
-                  data={data}
-                  rows={[rowAxis]}
-                  cols={[colAxis]}
-                  vals={[calcValue]}
-                  aggregatorName={aggregator}
-                  rendererName="Table"
-                  renderers={TableRenderers}
-                />
+                {rowAxis && colAxis && aggregator ? (
+                  <PivotTable
+                    data={filteredData}
+                    rows={[rowAxis]}
+                    cols={[colAxis]}
+                    vals={[calcValue]}
+                    aggregatorName={aggregator}
+                    rendererName="Table"
+                    renderers={TableRenderers}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "20px",
+                      color: "#888",
+                    }}
+                  >
+                    Pasirinkite eilutes ir grupavimo ašis.
+                  </div>
+                )}
               </div>
             ) : (
               renderChartSection()

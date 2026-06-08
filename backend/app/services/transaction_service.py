@@ -16,7 +16,7 @@ class TransactionService:
             SELECT 
                 e.expense_date AS transaction_date,
                 'Išlaida' AS transaction_type,
-                (e.amount * -1) AS amount,
+                (e.amount) AS amount,
                 c.name AS category_name,
                 s.name AS shop_name,
                 NULL AS income_source
