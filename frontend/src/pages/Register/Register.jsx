@@ -154,12 +154,13 @@ function Register() {
 
               <button
                 type="button"
+                aria-label="Rodyti slaptažodį"
                 className="toggle-btn"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <img
                   src={showPassword ? VisibilityOn : VisibilityOff}
-                  alt="toggle password visibility"
+                  alt=""
                   className="icon"
                 />
               </button>
@@ -185,6 +186,7 @@ function Register() {
 
               <button
                 type="button"
+                aria-label="Rodyti slaptažodį"
                 className="toggle-btn"
                 onClick={() =>
                   setShowRepeatPassword(
@@ -198,7 +200,7 @@ function Register() {
                       ? VisibilityOn
                       : VisibilityOff
                   }
-                  alt="toggle password visibility"
+                  alt=""
                   className="icon"
                 />
               </button>

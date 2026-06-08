@@ -42,7 +42,7 @@ async function fetchData() {
     };
 
     // Vartotojo duomenys
-    const userRes = await fetch("http://127.0.0.1:8000/me", {
+    const userRes = await fetch("http://127.0.0.1:8001/me", {
       method: "GET",
       headers,
     });
@@ -59,7 +59,7 @@ async function fetchData() {
 
     // Išlaidos
     const expensesRes = await fetch(
-      `http://127.0.0.1:8000/expenses/list?user_id=${userId}`,
+      `http://127.0.0.1:8001/expenses/list?user_id=${userId}`,
       {
         method: "GET",
         headers,
@@ -75,7 +75,7 @@ async function fetchData() {
 
     // Pajamos
     const incomeRes = await fetch(
-      `http://127.0.0.1:8000/incomes/list?user_id=${userId}`,
+      `http://127.0.0.1:8001/incomes/list?user_id=${userId}`,
       {
         method: "GET",
         headers,
@@ -290,7 +290,7 @@ const balance = incomeSum - expensesSum;
             <div className="action-grid">
               <div className="action-card" onClick={() => navigate("/pagrindinis/naujas")}>
                 <div className="icon-wrapper">
-                  <img src={EditPen} alt="Rankinis įvedimas" className="action-icon"/>
+                  <img src={EditPen} alt="" className="action-icon"/>
                 </div>
                 <h5>Rankinis įvedimas</h5>
                 <p>Įveskite išlaidą rankiniu būdu</p>
@@ -298,7 +298,7 @@ const balance = incomeSum - expensesSum;
 
               <div className="action-card upload" onClick={() => navigate("/prideti/automatinis")}>
                 <div className="icon-wrapper">
-                  <img src={AddNote} alt="Dokumentas" className="action-icon" />
+                  <img src={AddNote} alt="" className="action-icon" />
                 </div>
                 <h5>Pridėti čekį / dokumentą</h5>
                 <p>Prisekite JPG, PDF arba PNG failą</p>

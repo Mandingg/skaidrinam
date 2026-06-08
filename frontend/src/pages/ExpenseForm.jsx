@@ -4,7 +4,7 @@ import { createIncome } from "../services/incomeApi";
 import { useNavigate } from "react-router"; 
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 function getUserId() {
   const token = localStorage.getItem("token");
@@ -133,6 +133,7 @@ const STORES = [
         <div className="flex w-full mb-4 rounded-lg overflow-hidden border border-gray-200">
           <button
             type="button"
+            aria-label="Pasirinkti įrašo kategoriją"
             onClick={() => setTransactionType("expense")}
             className={`flex-1 py-3 font-medium transition-colors ${
               transactionType === "expense"
@@ -145,6 +146,7 @@ const STORES = [
 
           <button
             type="button"
+            aria-label="Pasirinkti įrašo kategoriją"
             onClick={() => setTransactionType("income")}
             className={`flex-1 py-3 font-medium transition-colors ${
               transactionType === "income"
@@ -269,6 +271,7 @@ const STORES = [
 
           <button
             type="submit"
+            aria-label="Išsaugoti įrašą"
             disabled={loading}
             className="w-full bg-[var(--color-primary)] text-white py-3 rounded-md font-semibold text-base hover:bg-[var(--color-primary-dark)] transition-colors duration-200 disabled:opacity-50"
           >

@@ -72,6 +72,7 @@ function SearchBar({
               className="absolute right-8 text-gray-400 hover:text-gray-600 font-bold text-xs"
               style={{ background: "none", border: "none", cursor: "pointer" }}
               title="Išvalyti datą"
+              aria-label="Išvalyti pasirinktą datą"
             >
               ✕
             </button>

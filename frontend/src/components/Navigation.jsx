@@ -22,7 +22,7 @@ useEffect(() => {
 
   if (!token) return;
 
-  fetch("http://127.0.0.1:8000/me", {
+  fetch("http://127.0.0.1:8001/me", {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   })
@@ -53,7 +53,7 @@ useEffect(() => {
     <aside className="sidebar">
       {/* LOGO */}
       <div className="navigation-logo">
-        <img src={LogoIcon} alt="logo" className="logo-icon" />
+        <img src={LogoIcon} alt="Čekiukai logo" className="logo-icon" />
         <h1 className="logo-text">Čekiukai</h1>
       </div>
 
@@ -65,7 +65,7 @@ useEffect(() => {
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
         >
-          <img src={HomeIcon} alt="home" className="icon" />
+          <img src={HomeIcon} alt="" className="icon" />
           Pradžia
         </NavLink>
 
@@ -75,7 +75,7 @@ useEffect(() => {
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
         >
-          <img src={ChartsIcon} alt="charts" className="icon" />
+          <img src={ChartsIcon} alt="" className="icon" />
           Analitika
         </NavLink>
 
@@ -85,7 +85,7 @@ useEffect(() => {
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
         >
-          <img src={ExpensesIcon} alt="expenses" className="icon" />
+          <img src={ExpensesIcon} alt="" className="icon" />
           Išlaidų sąrašas
         </NavLink>
 
@@ -95,7 +95,7 @@ useEffect(() => {
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
         >
-          <img src={VerifiedIcon} alt="warranties" className="icon" />
+          <img src={VerifiedIcon} alt="" className="icon" />
           Garantijos
         </NavLink>
 
@@ -105,12 +105,12 @@ useEffect(() => {
             `${baseClass} ${isActive ? activeClass : inactiveClass}`
           }
         >
-          <img src={ProfileIcon} alt="profile" className="icon" />
+          <img src={ProfileIcon} alt="" className="icon" />
           Vartotojo profilis
         </NavLink>
 
         <NavLink to="/atsijungti" className="nav-link inactive">
-          <img src={LogoutIcon} alt="logout" className="navigation-icon" />
+          <img src={LogoutIcon} alt="" className="navigation-icon" />
           Atsijungti
         </NavLink>
       </nav>
@@ -118,7 +118,7 @@ useEffect(() => {
       {/* USER INFO */}
       <div className="user">
         <div className="avatar">
-          <img src={ProfileIcon} alt="user" />
+          <img src={ProfileIcon} alt="" />
         </div>
 
         <div className="user-text">

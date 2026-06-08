@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import { getExpense, updateExpense } from "../services/expenseApi";
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
 
 function EditExpensePage() {
   useEffect(() => {
@@ -167,6 +167,7 @@ function EditExpensePage() {
             type="submit"
             disabled={loading}
             className="w-full bg-[#437d38] text-white py-3 rounded-md font-semibold text-base hover:bg-[#386a2f] transition-colors duration-200 disabled:opacity-50"
+            aria-label="Išsaugoti pakeitimus"
           >
             {loading ? "Saugoma..." : "Išsaugoti pakeitimus"}
           </button>

@@ -27,7 +27,7 @@ function Login() {
       formData.append("username", email); 
       formData.append("password", password);
 
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch("http://localhost:8001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -100,12 +100,13 @@ function Login() {
 
               <button
                 type="button"
+                aria-label="Rodyti slaptažodį"
                 className="toggle-btn"
                 onClick={() => setPasswordVisible((v) => !v)}
               >
                 <img
                   src={passwordVisible ? VisibilityOn : VisibilityOff}
-                  alt="toggle password visibility"
+                  alt=""
                   className="icon"
                 />
               </button>
