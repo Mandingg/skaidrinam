@@ -37,7 +37,7 @@
 }
 
 .title {
-  font-size: 40px;
+  font-size: var(--text-title);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
   margin: 0;
@@ -46,7 +46,7 @@
 
 .subtitle {
   font-size: var(--text-h2);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   color: var(--color-neutral);
   text-align: center;
   margin-bottom: var(--space-4);
@@ -65,12 +65,12 @@
   gap: var(--space-1);
 }
 
-label {
+.field label {
   font-size: var(--text-small);
   color: var(--color-neutral);
 }
 
-input {
+.field input {
   height: 56px;
   padding: 15px;
   border-radius: var(--radius-sm);
@@ -79,7 +79,7 @@ input {
   outline: none;
 }
 
-input:focus {
+.field input:focus {
   border-color: var(--color-primary);
 }
 
@@ -116,7 +116,7 @@ input:focus {
   cursor: pointer;
 }
 
-.icon {
+.toggle-btn .icon {
   width: 20px;
   height: 20px;
   display: block;
