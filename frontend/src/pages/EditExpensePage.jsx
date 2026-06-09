@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { getExpense, updateExpense } from "../services/expenseApi";
+import { getExpense, updateExpense, getStoreForExpense } from "../services/expenseApi";
+import { getUserCategories } from "../services/expenseService";
 import cekioLogo from "../assets/LogoIcon.svg";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -16,6 +17,7 @@ function EditExpensePage() {
     description: "",
     amount: "",
     expense_date: "",
+    store_name: "",
     category_id: "",
   });
   const [categories, setCategories] = useState([]);
@@ -25,28 +27,45 @@ function EditExpensePage() {
   const [notFound, setNotFound] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch(`${API_URL}/categories`)
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => setCategories([]));
+useEffect(() => {
+    const loadCategories = async () => {
+      const data = await getUserCategories();
+      const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setCategories(sortedData);
+    };
+    loadCategories();
   }, []);
 
   useEffect(() => {
-    getExpense(id)
-      .then((data) => {
-        setForm({
-          description: data.description || "",
-          amount: data.amount || "",
-          expense_date: data.expense_date || "",
-          category_id: data.category_id || "",
-        });
-      })
-      .catch((err) => {
-        if (err.message === "Įrašas nerastas") setNotFound(true);
-        else { setMessage(err.message); setIsError(true); }
+  getExpense(id)
+    .then((data) => {
+      setForm({
+        description: data.description || "",
+        amount: data.amount || "",
+        expense_date: data.expense_date || "",
+        category_id: data.category_id || "",
+        store_name: "",
       });
-  }, [id]);
+      return getStoreForExpense(id); 
+    })
+    .then((storeData) => {
+      if (storeData && storeData.name) {
+        setForm((prevForm) => ({
+          ...prevForm,
+          store_name: storeData.name,
+        }));
+      }
+    })
+    .catch((err) => {
+      if (err.message === "Įrašas nerastas") setNotFound(true);
+      else { 
+        setMessage(err.message); 
+        setIsError(true); 
+      }
+    });
+}, [id]);
+
+
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -138,6 +157,18 @@ function EditExpensePage() {
               name="expense_date"
               type="date"
               value={form.expense_date}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-gray-700">Parduotuvė</label>
+            <input
+              name="store_name"
+              type="text"
+              value={form.store_name}
               onChange={handleChange}
               required
               className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"

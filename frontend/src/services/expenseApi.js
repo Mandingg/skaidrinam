@@ -7,6 +7,13 @@ export async function getExpense(id) {
   return data;
 }
 
+export async function getStoreForExpense(id) {
+  const response = await fetch(`${API_URL}/expenses/${id}/store`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || "Serverio klaida");
+  return data;
+}
+
 export async function updateExpense(id, expenseData) {
   const response = await fetch(`${API_URL}/expenses/${id}`, {
     method: "PUT",

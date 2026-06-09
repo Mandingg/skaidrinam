@@ -139,6 +139,16 @@ def get_expense(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
     return expense
 
+@router.get("/{expense_id}/store")
+def get_store(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
+    store = expense_service.get_store_for_expense(expense_id)
+    print(store)
+    if not store:
+        raise HTTPException(status_code=404, detail="Įrašas nerastas")
+    return {'id': store.get('id'), 'name': store.get('name')}
+
 
 @router.put("/{expense_id}")
 def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManager = Depends(get_db_manager)):

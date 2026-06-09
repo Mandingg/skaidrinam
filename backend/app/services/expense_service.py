@@ -115,6 +115,25 @@ class ExpenseService:
         if results is None:
             return []
         return results
+    
+    def get_store_for_expense(self, expense_id:int):
+        """
+        Gets shop name related to a certain expense.
+        """
+        query = """
+            SELECT
+            e.id as expense_id,
+            s.id as store_id,
+            s.name
+            FROM expenses e
+            LEFT JOIN receipts r ON e.receipt_id = r.id
+            LEFT JOIN stores s ON r.store_id = s.id
+            WHERE e.id = %s
+        """
+        results = self.db.fetch_one(query, (expense_id,))
+        if results is None:
+            return []
+        return results
 
 
     def delete_single_expense(self, expense_id):
