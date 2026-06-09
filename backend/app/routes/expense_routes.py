@@ -152,6 +152,7 @@ def get_store(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
 @router.put("/{expense_id}")
 def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManager = Depends(get_db_manager)):
     expense_service = ExpenseService()
+    receipt_service = ReceiptService()
     expense_service.db = db
     if data.amount <= 0:
         raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
@@ -160,7 +161,21 @@ def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManage
     if not existing:
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
 
-    success = expense_service.update_expense(expense_id, existing["user_id"], data)
+    receipt_id = existing.get("receipt_id")
+    store_id = data.get('store_id')
+    if store_id is None:
+        
+    if receipt_id:
+        try:
+            receipt_service.update_receipt_store_and_amount(
+                receipt_id=receipt_id,
+                store_id=data.store_id,
+                amount=data.amount
+            )
+        except Exception as e:
+            print(f"Nepavyko atnaujinti čekio: {e}")
+
+    success = expense_service.update_expense(expense_id, existing["user_id"], data.model_dump(exclude={"store_id"}))
     if not success:
         raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
 

@@ -19,6 +19,7 @@ class ExpenseUpdateModel(BaseModel):
     amount: float
     expense_date: date
     category_id: Optional[int] = None
+    store_id: Optional[int] = None
 
 
 class ExpenseDisplay(ExpenseModel):

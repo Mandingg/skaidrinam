@@ -44,11 +44,11 @@ class ExpenseService:
             SET description = %s, amount = %s, expense_date = %s, category_id = %s
             WHERE id = %s
         """
-        params = (data.description, data.amount,
-                  data.expense_date, data.category_id, expense_id)
+        params = (data.get('description'), data.get('amount'),
+                  data.get('expense_date'), data.get('category_id'), expense_id)
         rows = self.db.update(query, params)
-        if rows:
-            self._log(user_id, expense_id, data.description, "UPDATE")
+        # if rows:
+        #     self._log(user_id, expense_id, data.description, "UPDATE")
         return rows is not None and rows > 0
 
     def _log(self, user_id: int, record_id: int, record_name: str, action_type: str):

@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { getExpense, updateExpense, getStoreForExpense, getUserStores} from "../services/expenseApi";
+import {
+  getExpense,
+  updateExpense,
+  getStoreForExpense,
+  getUserStores,
+} from "../services/expenseApi";
 import { getUserCategories } from "../services/expenseService";
 import cekioLogo from "../assets/LogoIcon.svg";
 
@@ -21,14 +26,14 @@ function EditExpensePage() {
     category_id: "",
   });
   const [categories, setCategories] = useState([]);
-  const[stores, setStores] = useState([])
+  const [stores, setStores] = useState([]);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const navigate = useNavigate();
 
-useEffect(() => {
+  useEffect(() => {
     const loadCategories = async () => {
       const data = await getUserCategories();
       const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
@@ -47,35 +52,33 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-  getExpense(id)
-    .then((data) => {
-      setForm({
-        description: data.description || "",
-        amount: data.amount || "",
-        expense_date: data.expense_date || "",
-        category_id: data.category_id || "",
-        store_name: "",
+    getExpense(id)
+      .then((data) => {
+        setForm({
+          description: data.description || "",
+          amount: data.amount || "",
+          expense_date: data.expense_date || "",
+          category_id: data.category_id || "",
+          store_id: "",
+        });
+        return getStoreForExpense(id);
+      })
+      .then((storeData) => {
+        if (storeData && storeData.name) {
+          setForm((prevForm) => ({
+            ...prevForm,
+            store_id: storeData.id,
+          }));
+        }
+      })
+      .catch((err) => {
+        if (err.message === "Įrašas nerastas") setNotFound(true);
+        else {
+          setMessage(err.message);
+          setIsError(true);
+        }
       });
-      return getStoreForExpense(id); 
-    })
-    .then((storeData) => {
-      if (storeData && storeData.name) {
-        setForm((prevForm) => ({
-          ...prevForm,
-          store_name: storeData.name,
-        }));
-      }
-    })
-    .catch((err) => {
-      if (err.message === "Įrašas nerastas") setNotFound(true);
-      else { 
-        setMessage(err.message); 
-        setIsError(true); 
-      }
-    });
-}, [id]);
-
-
+  }, [id]);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -98,6 +101,7 @@ useEffect(() => {
       amount,
       expense_date: form.expense_date,
       category_id: form.category_id ? parseInt(form.category_id) : null,
+      store_id: form.store_id ? parseInt(form.store_id) : null,
     };
 
     setLoading(true);
@@ -105,14 +109,13 @@ useEffect(() => {
       await updateExpense(id, payload);
       setMessage("Įrašas atnaujintas");
       setIsError(false);
-      navigate("/islaidos", {replace: true});
-
+      navigate("/islaidos", { replace: true });
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
     } finally {
       setLoading(false);
-    }    
+    }
   }
 
   if (notFound) {
@@ -131,12 +134,16 @@ useEffect(() => {
             <img src={cekioLogo} alt="Čekiukai logo" className="w-10 h-10" />
             <h1 className="text-3xl font-semibold text-gray-900">Čekiukai</h1>
           </div>
-          <h2 className="text-xl font-semibold text-gray-800">Redaguoti išlaidą</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Redaguoti išlaidą
+          </h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Pavadinimas</label>
+            <label className="text-sm font-medium text-gray-700">
+              Pavadinimas
+            </label>
             <input
               name="description"
               type="text"
@@ -148,7 +155,9 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Suma (€)</label>
+            <label className="text-sm font-medium text-gray-700">
+              Suma (€)
+            </label>
             <input
               name="amount"
               type="number"
@@ -162,7 +171,9 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Išlaidos data</label>
+            <label className="text-sm font-medium text-gray-700">
+              Išlaidos data
+            </label>
             <input
               name="expense_date"
               type="date"
@@ -174,26 +185,31 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Parduotuvė <span className="text-gray-400 font-normal">(nebūtinas)</span></label>
+            <label className="text-sm font-medium text-gray-700">
+              Parduotuvė{" "}
+              <span className="text-gray-400 font-normal">(nebūtinas)</span>
+            </label>
             <select
-              name="store_name"
+              name="store_id"
               type="text"
-              value={form.store_name}
+              value={form.store_id}
               onChange={handleChange}
               required
               className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
             >
-            {stores.map((store) => (
+              {stores.map((store) => (
                 <option key={store.id} value={store.id}>
                   {store.name}
                 </option>
               ))}
+              <option value="None">---</option>
             </select>
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-gray-700">
-              Kategorija <span className="text-gray-400 font-normal">(nebūtinas)</span>
+              Kategorija{" "}
+              <span className="text-gray-400 font-normal">(nebūtinas)</span>
             </label>
             <select
               name="category_id"
@@ -206,6 +222,7 @@ useEffect(() => {
                   {cat.name}
                 </option>
               ))}
+              <option value="None">---</option>
             </select>
           </div>
 
@@ -219,7 +236,9 @@ useEffect(() => {
         </form>
 
         {message && (
-          <p className={`mt-4 text-center text-sm font-medium ${isError ? "text-red-600" : "text-green-700"}`}>
+          <p
+            className={`mt-4 text-center text-sm font-medium ${isError ? "text-red-600" : "text-green-700"}`}
+          >
             {message}
           </p>
         )}
