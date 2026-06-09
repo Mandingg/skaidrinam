@@ -220,18 +220,14 @@ function ExpensesPage() {
                       : "var(--color-primary)",
                 }}
               >
-                {exportMessage? (
-                  "Eksportuojama..."
-                   
-                ) : (
-                  {!user?.subscription_type === "PREMIUM"?
-                    ("Eksportas tik PREMIUM"):(
+                {!exportMessage? (
+                  user?.subscription_type === "PREMIUM"?
+                  (
                   <>
                     <span
                       className={!exportAvailable ? "group-hover:hidden" : ""}
                     >
                       Eksportuoti viską į CSV"
-                  : 
                     </span>
 
                     {!exportAvailable && (
@@ -239,8 +235,7 @@ function ExpensesPage() {
                         Išlaidų sąrašas tuščias
                       </span>
                     )}
-                  </>)
-                })}
+                  </>):("Eksportas tik PREMIUM")):("Ekspotuojama")}
               </button>
 
             </div>
