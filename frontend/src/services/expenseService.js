@@ -1,12 +1,5 @@
 import {getCurrentUserId} from './userService';
 
-const FALLBACK_CATEGORIES = [
-  { id: 1, name: 'MAISTAS' },
-  { id: 2, name: 'BUITIS' },
-  { id: 3, name: 'KURAS' },
-  { id: 4, name: 'SVEIKATA' }
-];
-
 export const getUserCategories = async () => {
   const userId = await getCurrentUserId();
   try {
@@ -17,17 +10,12 @@ export const getUserCategories = async () => {
     }
     
     const data = await response.json();
-    if (data.length === 0) {
-      console.warn('Nerasta kategorijų, naudojamos numatytosios kategorijos');
-      return FALLBACK_CATEGORIES;
-    }
     return data;
     
   } catch (error) {
-    console.warn('API nepasiekiamas, naudojamos numatytosios kategorijos:', error.message);
-    return FALLBACK_CATEGORIES;
-  }
-};
+    console.warn('API nepasiekiamas:', error.message);
+    return []
+}};
 
 export const getUserExpenses = async() => {
     const userId = await getCurrentUserId();

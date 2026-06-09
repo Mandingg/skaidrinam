@@ -8,12 +8,14 @@ from app.services.expense_service import ExpenseService
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
+
 def get_db_manager():
     db = DatabaseManager()
     try:
         yield db
     finally:
         db.close()
+
 
 @router.get("/categories")
 def get_user_categories(user_id: int, db: DatabaseManager = Depends(get_db_manager)):
@@ -22,7 +24,9 @@ def get_user_categories(user_id: int, db: DatabaseManager = Depends(get_db_manag
     try:
         categories = expense_service.get_user_categories(user_id)
         if categories is None:
+            print("Grazinamos bendros kategorijos")
             return expense_service.get_all_categories()
+        print("Gautos varotojo kategorijos")
         return categories
     except Exception as error:
         print("GET CATEGORIES ERROR:", error)
@@ -41,7 +45,7 @@ def get_user_expenses(user_id: int, db: DatabaseManager = Depends(get_db_manager
 
 
 @router.delete("/delete/{expense_id}", status_code=status.HTTP_200_OK)
-def delete_expense(expense_id:int, db: DatabaseManager = Depends(get_db_manager)):
+def delete_expense(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
     expense_service = ExpenseService()
     expense_service.db = db
     try:
@@ -53,7 +57,8 @@ def delete_expense(expense_id:int, db: DatabaseManager = Depends(get_db_manager)
     except Exception as error:
         print("DELETE EXPENSE ERROR:", error)
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida trinant išlaidą")
-    
+
+
 @router.get("/export")
 def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_manager)):
     expense_service = ExpenseService()
@@ -65,25 +70,29 @@ def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_ma
 
         buffer = io.StringIO()
         writer = csv.writer(buffer)
-        writer.writerow(["Expense ID", "Expense Date", "Input Date", "Description",
-                         "Amount", "Shop Name", "Category Name"])
+        writer.writerow(
+            ["Expense ID", "Expense Date", "Input Date", "Description", "Amount", "Shop Name", "Category Name"]
+        )
         for expense in expenses:
-            writer.writerow([
-                expense["id"],
-                expense["expense_date"],
-                expense["created_at"],
-                expense["description"],
-                expense["amount"],
-                expense.get("shop_name", ""),
-                expense.get("category_name", "")
-            ])
+            writer.writerow(
+                [
+                    expense["id"],
+                    expense["expense_date"],
+                    expense["created_at"],
+                    expense["description"],
+                    expense["amount"],
+                    expense.get("shop_name", ""),
+                    expense.get("category_name", ""),
+                ]
+            )
         buffer.seek(0)
-        headers = {'Content-Disposition': 'attachment; filename="expenses.csv"'}
+        headers = {"Content-Disposition": 'attachment; filename="expenses.csv"'}
         return StreamingResponse(buffer, media_type="text/csv", headers=headers)
     except Exception as error:
         print("EXPORT EXPENSES ERROR:", error)
         raise HTTPException(status_code=500, detail="Įvyko serverio klaida eksportuojant išlaidas į CSV")
-    
+
+
 @router.post("/add", status_code=status.HTTP_201_CREATED)
 def create_expense(expense: ExpenseModel, db: DatabaseManager = Depends(get_db_manager)):
     expense_service = ExpenseService()

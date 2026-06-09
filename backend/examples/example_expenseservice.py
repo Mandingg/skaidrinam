@@ -6,6 +6,7 @@ from app.services.expense_service import ExpenseService
 from app.models.expense import ExpenseModel, ExpenseDisplay, ExpenseUpdateModel
 
 
+
 def test_user_service():
     print("=== ExpenseService testavimo pradžia ===")
 
@@ -23,6 +24,7 @@ def test_user_service():
     print(f"Bandoma gauti visas vartotojo {userID} kategorijas...")
     categories = expense_service.get_user_categories(userID)
     print(f"Sėkmė! \nGautos kategorijos: {categories}")
+
 
     """
     Islaidu trynimo testas
