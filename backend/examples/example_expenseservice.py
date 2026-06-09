@@ -4,13 +4,14 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from app.services.expense_service import ExpenseService
 from app.models.expense import ExpenseModel, ExpenseDisplay, ExpenseUpdateModel
+from app.models.expense import ExpenseModel, ExpenseDisplay, ExpenseUpdateModel
 
 
 def test_user_service():
     print("=== ExpenseService testavimo pradžia ===")
 
     expense_service = ExpenseService()
-    userID = 4
+    userID = 8
 
     print("Bandoma gauti visas išlaidas...")
     all_expenses = expense_service.get_expenses_with_details_by_user(userID)
@@ -23,6 +24,7 @@ def test_user_service():
     print(f"Bandoma gauti visas vartotojo {userID} kategorijas...")
     categories = expense_service.get_user_categories(userID)
     print(f"Sėkmė! \nGautos kategorijos: {categories}")
+
 
     """
     Islaidu trynimo testas
@@ -129,6 +131,7 @@ def test_user_service():
     
 
     expense_service.db.close()
+
 
 
 if __name__ == "__main__":

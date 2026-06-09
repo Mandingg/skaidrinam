@@ -24,6 +24,7 @@ function ExpensesPage() {
   const [exportMessage, setExportMessage] = useState(false);
   const [user, setUser] = useState(null);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [exportAvailable, setExportAvailable] = useState(false);
 
   useEffect(() => {
     document.title = "Mano išlaidos";
@@ -33,6 +34,9 @@ function ExpensesPage() {
     const loadExpenses = async () => {
       const data = await getUserExpenses();
       setExpenses(data);
+      if (data.length > 0) {
+        setExportAvailable(true);
+      }
     };
     loadExpenses();
   }, []);
@@ -40,7 +44,8 @@ function ExpensesPage() {
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getUserCategories();
-      setCategories(data);
+      const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setCategories(sortedData);
     };
     loadCategories();
   }, []);
@@ -48,7 +53,7 @@ function ExpensesPage() {
   useEffect(() => {
     const loadUser = async () => {
       const data = await getUser();
-      setUser(data)
+      setUser(data);
     };
     loadUser();
   }, []);
@@ -67,7 +72,7 @@ function ExpensesPage() {
       const matchesCategory =
         selectedCategory === "ALL" ||
         String(expense.category_name || "").toLowerCase() ===
-        String(selectedCategory).toLowerCase();
+          String(selectedCategory).toLowerCase();
 
       const given_date = new Date(selectedDate);
       const expense_date = new Date(expense.expense_date);
@@ -117,14 +122,16 @@ function ExpensesPage() {
       setShowPremiumModal(true);
       return;
     }
-    setExportMessage(true);
-    try {
-      await exportExpensesCSV();
-    } catch (error) {
-      alert("Nepakvyko eskportuoti CSV failo. Pamėginkite vėliau.");
-      console.warn("Klaida ekxportuojant duomenis;", error.message);
-    } finally {
-      setExportMessage(false);
+    if (exportAvailable) {
+      setExportMessage(true);
+      try {
+        await exportExpensesCSV();
+      } catch (error) {
+        alert("Nepakvyko eskportuoti CSV failo. Pamėginkite vėliau.");
+        console.warn("Klaida ekxportuojant duomenis;", error.message);
+      } finally {
+        setExportMessage(false);
+      }
     }
   };
 
@@ -192,7 +199,7 @@ function ExpensesPage() {
             }}
           >
             <div
-              className="border-b flex justify-between items-center"
+              className="border-b flex column"
               style={{
                 padding: "var(--space-3) var(--space-4)",
                 borderColor: "var(--border-color)",
@@ -200,8 +207,8 @@ function ExpensesPage() {
             >
               <button
                 onClick={handleExport}
-                disabled={exportMessage}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer"
+                disabled={!exportAvailable || exportMessage}
+                className="group relative px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed"
                 style={{
                   borderColor: "var(--color-primary)",
                   backgroundColor:
@@ -214,11 +221,27 @@ function ExpensesPage() {
                       : "var(--color-primary)",
                 }}
               >
-                {user?.subscription_type === "PREMIUM"
-                  ? exportMessage
-                    ? "Eksportuojama..."
-                    : "Eksportuoti viską į CSV"
-                  : "Eksportas tik PREMIUM"}
+                {!exportMessage ? (
+                  user?.subscription_type === "PREMIUM" ? (
+                    <>
+                      <span
+                        className={!exportAvailable ? "group-hover:hidden" : ""}
+                      >
+                        Eksportuoti viską į CSV
+                      </span>
+
+                      {!exportAvailable && (
+                        <span className="hidden group-hover:inline">
+                          Išlaidų sąrašas tuščias
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    "Eksportas tik PREMIUM"
+                  )
+                ) : (
+                  "Ekspotuojama"
+                )}
               </button>
             </div>
 
@@ -503,7 +526,8 @@ function ExpensesPage() {
             </h3>
 
             <p className="mb-[var(--space-4)] text-[var(--color-neutral)] leading-6">
-              Norėdami eksportuoti išlaidų duomenis į CSV, atnaujinkite prenumeratos planą profilio puslapyje.
+              Norėdami eksportuoti išlaidų duomenis į CSV, atnaujinkite
+              prenumeratos planą profilio puslapyje.
             </p>
 
             <div className="flex flex-col gap-[var(--space-2)] items-center">

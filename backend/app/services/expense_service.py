@@ -71,7 +71,7 @@ class ExpenseService:
         Gets all categories for a specific user.
         Returns a list of dictionaries with category id and name.
         """
-        query = "SELECT id, name FROM categories WHERE user_id = %s"
+        query = "SELECT id, name FROM categories WHERE user_id = %s OR user_id IS NULL"
         results = self.db.fetch_all(query, (user_id,))
 
         return results
@@ -85,8 +85,7 @@ class ExpenseService:
         if results is None:
             return []
         expenses = [ExpenseModel(**row) for row in results]
-        return expenses   
-
+        return expenses
 
     def get_expenses_with_details_by_user(self, user_id: int):
         """
@@ -114,7 +113,7 @@ class ExpenseService:
         if results is None:
             return []
         return results
-    
+
     def delete_single_expense(self, expense_id):
         """
         Deletes an expense from the database.`
@@ -123,9 +122,9 @@ class ExpenseService:
         """
         query = "DELETE FROM expenses WHERE id = %s"
         result = self.db.delete(query, (expense_id,))
-        if result==1:
+        if result == 1:
             return True
-        elif result>1:
+        elif result > 1:
             raise Exception(f"Error: More than one expense deleted. Deleted count: {result}")
         else:
             return False
