@@ -163,6 +163,10 @@
   text-overflow: ellipsis;
 }
 
+.receipt-edit-input-store {
+ height: 10px;
+}
+
 .receipt-edit-amount {
   text-align: right;
 }
@@ -209,4 +213,14 @@
   margin-top: 8px;
   font-size: 14px;
   color: var(--color-gray);
+}
+
+.receipt-edit-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  /* font-weight: var(--font-weight-semibold); */
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
 }

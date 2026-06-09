@@ -9,6 +9,7 @@ from app.models.receipt import ReceiptCreateModel
 from app.services.receipt_service import ReceiptService
 from app.services.expense_service import ExpenseService
 from app.models.expense import ExpenseModel
+from app.services.category_service import CategoryService
 
 from app.auth.dependencies import get_current_user
 from app.services.user_service import UserService
@@ -19,6 +20,7 @@ router = APIRouter(prefix="/receipts", tags=["receipts"])
 receipt_service = ReceiptService()
 expense_service = ExpenseService()
 user_service = UserService()
+category_service = CategoryService()
 
 
 def get_logged_user_id(payload=Depends(get_current_user)):
@@ -52,7 +54,7 @@ async def analyze_image(
     try:
         file_bytes = await file.read()
 
-        categories = expense_service.get_available_categories(user_id)
+        categories = category_service.get_available_category_names(user_id)
 
         return analyze_receipt_image(
             file_bytes=file_bytes,
@@ -99,7 +101,7 @@ def save_ai_result(
 
         for item in data.expenses:
 
-            category_id = expense_service.get_category_id_by_name(
+            category_id = category_service.get_or_create_user_category(
                 user_id,
                 item.category_name
             )

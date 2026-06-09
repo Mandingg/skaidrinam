@@ -34,7 +34,8 @@ function AppRoutes() {
         <Route path="/pagrindinis/naujas" element={<ExpenseForm />} />
         <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
         <Route path="/kvito-nuskaitymas" element={<ReceiptUpload />}
-  />
+        />
+
       </Route>
 
       {/* 404 */}

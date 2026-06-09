@@ -132,6 +132,10 @@
   transform: translateY(-2px);
 }
 
+.action-card.disabled {
+  opacity: 0.3;
+}
+
 .icon-wrapper {
   display: flex;
   align-items: center;

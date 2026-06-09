@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { analyzeReceiptImage, saveAiReceipt } from "../../services/receiptApi";
 
@@ -10,19 +10,53 @@ function ReceiptUpload() {
     const [file, setFile] = useState(null);
     const [analysis, setAnalysis] = useState(null);
     const [editableExpenses, setEditableExpenses] = useState([]);
+    const [editableReceipt, setEditableReceipt] = useState(null);
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [checkingPremium, setCheckingPremium] = useState(true);
 
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        async function checkPremium() {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/users/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const userData = await response.json();
+
+                if (!response.ok || userData.subscription_type !== "PREMIUM") {
+                    navigate("/pagrindinis");
+                    return;
+                }
+
+                setCheckingPremium(false);
+            } catch {
+                navigate("/login");
+            }
+        }
+
+        checkPremium();
+    }, [navigate]);
 
     function handleFileChange(e) {
         setFile(e.target.files[0]);
         setAnalysis(null);
         setEditableExpenses([]);
+        setEditableReceipt(null);
         setMessage("");
         setIsError(false);
     }
@@ -42,6 +76,7 @@ function ReceiptUpload() {
             const data = await analyzeReceiptImage(file);
             setAnalysis(data);
             setEditableExpenses(data.save_preview.expenses);
+            setEditableReceipt(data.save_preview.receipt);
         } catch (error) {
             setMessage(error.message);
             setIsError(true);
@@ -58,6 +93,13 @@ function ReceiptUpload() {
         );
     }
 
+    function handleReceiptChange(field, value) {
+        setEditableReceipt((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    }
+
     async function handleSave() {
         if (!analysis?.save_preview) return;
 
@@ -68,6 +110,7 @@ function ReceiptUpload() {
         try {
             const payload = {
                 ...analysis.save_preview,
+                receipt: editableReceipt,
                 expenses: editableExpenses.map((item) => ({
                     ...item,
                     amount: Number(item.amount),
@@ -91,6 +134,10 @@ function ReceiptUpload() {
             setSaving(false);
         }
     }
+
+    if (checkingPremium) {
+  return null;
+}
 
     return (
         <div className="receipt-upload-page">
@@ -146,7 +193,7 @@ function ReceiptUpload() {
                         <h2 className="receipt-section-title">Rasta informacija</h2>
 
                         <div className="receipt-info">
-                            <p><strong>Parduotuvė:</strong> {analysis.store_name}</p>
+
                             <p><strong>Data:</strong> {analysis.receipt_date}</p>
                             <p><strong>Suma:</strong> {analysis.total_amount} €</p>
                             <p><strong>Bendra kategorija:</strong> {analysis.category}</p>
@@ -154,40 +201,54 @@ function ReceiptUpload() {
                         </div>
 
                         <h3 className="receipt-preview-title">Galite pataisyti prieš išsaugant:</h3>
-
+                        <label className="receipt-edit-label">
+                            <strong>Parduotuvė:</strong>
+                            <input
+                                type="text"
+                                value={editableReceipt?.store_name || ""}
+                                onChange={(e) =>
+                                    handleReceiptChange("store_name", e.target.value)
+                                }
+                                className="receipt-edit-input-store"
+                            />
+                        </label>
                         <div className="receipt-expense-list">
-                            {editableExpenses.map((item, index) => (
-                                <div key={index} className="receipt-expense-edit-row">
-                                    <input
-                                        type="text"
-                                        value={item.description}
-                                        onChange={(e) =>
-                                            handleExpenseChange(index, "description", e.target.value)
-                                        }
-                                        className="receipt-edit-input"
-                                    />
+                            <label className="receipt-edit-label">
+                                <strong>Kategorijos:</strong>
+                                {editableExpenses.map((item, index) => (
+                                    <div key={index} className="receipt-expense-edit-row">
+                                        <input
+                                            type="text"
+                                            value={item.description}
+                                            onChange={(e) =>
+                                                handleExpenseChange(index, "description", e.target.value)
+                                            }
+                                            className="receipt-edit-input"
+                                        />
 
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        min="0.01"
-                                        value={item.amount}
-                                        onChange={(e) =>
-                                            handleExpenseChange(index, "amount", e.target.value)
-                                        }
-                                        className="receipt-edit-amount"
-                                    />
+                                        <input
+                                            type="number"
+                                            step="0.01"
+                                            min="0.01"
+                                            value={item.amount}
+                                            onChange={(e) =>
+                                                handleExpenseChange(index, "amount", e.target.value)
+                                            }
+                                            className="receipt-edit-amount"
+                                        />
 
-                                    <input
-                                        type="text"
-                                        value={item.category_name}
-                                        onChange={(e) =>
-                                            handleExpenseChange(index, "category_name", e.target.value)
-                                        }
-                                        className="receipt-edit-category"
-                                    />
-                                </div>
-                            ))}
+                                        <input
+                                            type="text"
+                                            value={item.category_name}
+                                            onChange={(e) =>
+                                                handleExpenseChange(index, "category_name", e.target.value)
+                                            }
+                                            className="receipt-edit-category"
+                                        />
+                                    </div>
+
+                                ))}
+                            </label>
                         </div>
 
                         <button
