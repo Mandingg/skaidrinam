@@ -44,7 +44,8 @@ function ExpensesPage() {
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getUserCategories();
-      setCategories(data);
+      const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setCategories(sortedData);
     };
     loadCategories();
   }, []);
@@ -52,7 +53,7 @@ function ExpensesPage() {
   useEffect(() => {
     const loadUser = async () => {
       const data = await getUser();
-      setUser(data)
+      setUser(data);
     };
     loadUser();
   }, []);
@@ -71,7 +72,7 @@ function ExpensesPage() {
       const matchesCategory =
         selectedCategory === "ALL" ||
         String(expense.category_name || "").toLowerCase() ===
-        String(selectedCategory).toLowerCase();
+          String(selectedCategory).toLowerCase();
 
       const given_date = new Date(selectedDate);
       const expense_date = new Date(expense.expense_date);
@@ -220,24 +221,28 @@ function ExpensesPage() {
                       : "var(--color-primary)",
                 }}
               >
-                {!exportMessage? (
-                  user?.subscription_type === "PREMIUM"?
-                  (
-                  <>
-                    <span
-                      className={!exportAvailable ? "group-hover:hidden" : ""}
-                    >
-                      Eksportuoti viską į CSV"
-                    </span>
-
-                    {!exportAvailable && (
-                      <span className="hidden group-hover:inline">
-                        Išlaidų sąrašas tuščias
+                {!exportMessage ? (
+                  user?.subscription_type === "PREMIUM" ? (
+                    <>
+                      <span
+                        className={!exportAvailable ? "group-hover:hidden" : ""}
+                      >
+                        Eksportuoti viską į CSV
                       </span>
-                    )}
-                  </>):("Eksportas tik PREMIUM")):("Ekspotuojama")}
-              </button>
 
+                      {!exportAvailable && (
+                        <span className="hidden group-hover:inline">
+                          Išlaidų sąrašas tuščias
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    "Eksportas tik PREMIUM"
+                  )
+                ) : (
+                  "Ekspotuojama"
+                )}
+              </button>
             </div>
 
             <div className="overflow-x-auto">
@@ -521,7 +526,8 @@ function ExpensesPage() {
             </h3>
 
             <p className="mb-[var(--space-4)] text-[var(--color-neutral)] leading-6">
-              Norėdami eksportuoti išlaidų duomenis į CSV, atnaujinkite prenumeratos planą profilio puslapyje.
+              Norėdami eksportuoti išlaidų duomenis į CSV, atnaujinkite
+              prenumeratos planą profilio puslapyje.
             </p>
 
             <div className="flex flex-col gap-[var(--space-2)] items-center">
