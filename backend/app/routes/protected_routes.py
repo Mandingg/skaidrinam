@@ -6,6 +6,9 @@ router = APIRouter()
 user_service = UserService()
 
 
+# @router.get("/me")
+# def me(payload=Depends(get_current_user)):
+
 @router.get("/me")
 def me(
     period: str = "current_month",
@@ -21,17 +24,18 @@ def me(
 
     user = user_service.get_user_by({"id": int(user_id)})
 
-    if not user:
-        raise HTTPException(
-            status_code=404,
-            detail="User not found"
-        )
+    if user:
+        return {
+            "id": user.id,
+            "name": user.name,
+            "surname": user.surname,
+            "email": user.email,
+            "subscription_type": user.subscription_type
+        }
 
     return {
-        "id": user.id,
-        "name": user.name,
-        "surname": user.surname,
-        "email": user.email,
-        "total_expenses": 0,
-        "recent_transactions": []
+        "name": "Svečias",
+        "surname": "",
+        "email": "Neprisijungęs",
+        "subscription_type": "FREE"
     }
