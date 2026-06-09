@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { getExpense, updateExpense, getStoreForExpense } from "../services/expenseApi";
+import { getExpense, updateExpense, getStoreForExpense, getUserStores} from "../services/expenseApi";
 import { getUserCategories } from "../services/expenseService";
 import cekioLogo from "../assets/LogoIcon.svg";
 
@@ -21,6 +21,7 @@ function EditExpensePage() {
     category_id: "",
   });
   const [categories, setCategories] = useState([]);
+  const[stores, setStores] = useState([])
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,15 @@ useEffect(() => {
       setCategories(sortedData);
     };
     loadCategories();
+  }, []);
+
+  useEffect(() => {
+    const loadStores = async () => {
+      const data = await getUserStores();
+      const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setCategories(sortedData);
+    };
+    loadStores();
   }, []);
 
   useEffect(() => {

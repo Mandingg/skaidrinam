@@ -6,7 +6,6 @@ from app.services.db_connection import DatabaseManager
 from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel
 from app.services.expense_service import ExpenseService
 from app.models.store import StoreModel
-from app.models.receipt import ReceiptCreateModel
 from app.services.receipt_service import ReceiptService
 
 

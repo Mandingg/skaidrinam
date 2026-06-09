@@ -1,4 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import {getCurrentUserId} from './userService';
 
 export async function getExpense(id) {
   const response = await fetch(`${API_URL}/expenses/${id}`);
@@ -39,4 +40,20 @@ export async function createExpense(expenseData) {
   }
 
   return data;
+}
+
+export async function getUserStores(){
+  const userId = await getCurrentUserId();
+  try{
+  const response = await fetch(`${API_URL}/receipts/stores?user_id=${userId}`);
+  if (!response.ok) {
+      throw new Error('Serveris grąžino klaidą');
+    }
+    
+    const data = await response.json();
+    return data;
+    
+  } catch (error) {
+    console.warn('API nepasiekiamas:', error.message);
+    return []}
 }

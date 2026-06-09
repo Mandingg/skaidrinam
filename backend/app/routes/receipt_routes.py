@@ -130,3 +130,15 @@ def save_ai_result(
             status_code=500,
             detail=str(error)
         )
+
+@router.get("/stores")
+def get_user_stores(user_id: int):
+    try:
+        stores = receipt_service.get_all_user_stores(user_id)
+        if not stores:
+            raise HTTPException(status_code=404, detail="Nerastas parduotuvių sąrašas")
+        return stores
+    except Exception as error:
+        print("GET EXPENSES ERROR:", error)
+        raise HTTPException(status_code=500, detail="Įvyko serverio klaida gaunant parduotuves")
+        

@@ -67,3 +67,37 @@ class ReceiptService:
                 total_amount
             )
         )
+    
+    def get_all_user_stores(self, user_id):
+        query = """
+            SELECT
+            s.id,
+            s.name,
+            FROM stores s
+            OUTTER JOIN receipts r ON s.id = r.store_id
+            WHERE r.user_id = %s
+        """
+        default_stores = self.get_some_stores()
+        results= self.db.fetch_all(query, (user_id),)
+        if results is None:
+            return default_stores
+        
+        seen_store_ids = {store['id'] for store in results if store.get('id') is not None}
+    
+        unique_defaults = [
+            store for store in default_stores 
+            if store.get('id') not in seen_store_ids
+        ]
+        return results + unique_defaults
+    
+    def get_some_stores(self):
+        query = """
+                SELECT id, name
+                FROM stores
+                LIMIT 7
+                """
+        results= self.db.fetch_all(query)
+        if results is None:
+            return []
+        return results
+        
