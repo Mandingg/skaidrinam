@@ -22,7 +22,7 @@ useEffect(() => {
 
   if (!token) return;
 
-  fetch("http://127.0.0.1:8000/me", {
+  fetch("http://127.0.0.1:8000/users/me", {
     method: "GET",
     headers: { Authorization: `Bearer ${token}` },
   })
@@ -41,6 +41,7 @@ useEffect(() => {
         name: data.name,
         surname: data.surname,
         email: data.email,
+        subscription: data.subscription_type,
       });
     })
     .catch(() => {
