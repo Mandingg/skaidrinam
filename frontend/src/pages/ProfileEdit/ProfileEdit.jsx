@@ -281,7 +281,7 @@ function ProfileEdit() {
                             type="submit"
                             className="register-btn"
                         >
-                            Redaguoti
+                            Išsaugoti pakeitimus
                         </button>
                     </div>
 

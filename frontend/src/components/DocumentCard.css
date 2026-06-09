@@ -1,0 +1,111 @@
+.documents-card {
+  background-color: var(--white-color, #ffffff);
+  border: 1px solid var(--border-color, #eef2f7);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.documents-card-main {
+  display: flex;
+  gap: 16px;
+}
+
+.documents-file-preview {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background-color: var(--background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.documents-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.documents-card-info h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.documents-card-info div {
+  margin-bottom: 10px;
+}
+
+.documents-card-info span {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--muted-text-color, #94a3b8);
+  font-weight: 700;
+}
+
+.documents-card-info p {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.active-date {
+  color: var(--primary-color, #437d38);
+}
+
+.expired-date {
+  color: var(--error-color, #b91c1c);
+}
+
+.documents-status {
+  margin-top: 20px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.documents-status.active {
+  background-color: rgba(67, 125, 56, 0.1);
+  color: var(--primary-color, #437d38);
+}
+
+.documents-status.expired {
+  background-color: #fef2f2;
+  color: var(--error-color, #b91c1c);
+}
+
+.documents-card-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: var(--space-1);
+  padding-top: var(--space-2);
+}
+
+.documents-delete-button,
+.documents-edit-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: var(--space-1);
+}
+
+.documents-delete-button:hover,
+.documents-edit-button:hover {
+  opacity: 0.7;
+}
+
+.documents-status.unknown {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+.unknown-date {
+  color: #6b7280;
+}

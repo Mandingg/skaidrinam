@@ -5,6 +5,12 @@ from app.services.user_service import UserService
 router = APIRouter()
 user_service = UserService()
 
+<<<<<<< HEAD
+=======
+
+# @router.get("/me")
+# def me(payload=Depends(get_current_user)):
+>>>>>>> main
 
 @router.get("/me")
 def me(
