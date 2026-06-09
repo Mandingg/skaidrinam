@@ -41,7 +41,7 @@ useEffect(() => {
     const loadStores = async () => {
       const data = await getUserStores();
       const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
-      setCategories(sortedData);
+      setStores(sortedData);
     };
     loadStores();
   }, []);
@@ -174,15 +174,21 @@ useEffect(() => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Parduotuvė</label>
-            <input
+            <label className="text-sm font-medium text-gray-700">Parduotuvė <span className="text-gray-400 font-normal">(nebūtinas)</span></label>
+            <select
               name="store_name"
               type="text"
               value={form.store_name}
               onChange={handleChange}
               required
               className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
-            />
+            >
+            {stores.map((store) => (
+                <option key={store.id} value={store.id}>
+                  {store.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -195,7 +201,6 @@ useEffect(() => {
               onChange={handleChange}
               className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all bg-white"
             >
-              <option value="">-- Pasirinkite kategoriją --</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
