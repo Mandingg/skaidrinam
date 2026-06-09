@@ -19,7 +19,6 @@ function AppRoutes() {
       {/* AUTH */}
       <Route path="/" element={<Login />} />
       <Route path="/registracija" element={<Register />} />
-      <Route path="/atsijungti" element={<Logout />} />
 
       {/* MAIN APP */}
       <Route element={<ProtectedRoute />}>
@@ -30,6 +29,7 @@ function AppRoutes() {
         <Route path="/islaidos" element={<ExpensesList />} />
         <Route path="/pagrindinis/naujas" element={<ExpenseForm />} />
         <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
+        <Route path="/atsijungti" element={<Logout />} />
       </Route>
 
       {/* 404 */}
