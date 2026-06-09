@@ -1,4 +1,4 @@
-.register-page {
+/* .register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -16,6 +16,22 @@
   box-shadow: var(--shadow-md);
   padding: var(--space-5);
   padding-bottom: var(--space-5);
+} */
+
+.register-page {
+  min-height: calc(100vh - var(--space-5) * 2);
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  background: var(--color-background);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 560px;
 }
 
 /* HEADER */

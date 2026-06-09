@@ -1,4 +1,4 @@
-.register-page {
+/* .register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -9,13 +9,32 @@
 
 .register-card {
   width: 100%;
-  max-width: 450px;
+  max-width: 800px;
   background: var(--color-background);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   padding: var(--space-5);
   padding-bottom: var(--space-5);
+} */
+
+.register-page {
+  /* min-height: 100vh; */
+  margin-left: var(--sidebar-width);
+  /* width: calc(100vw - var(--sidebar-width)); */
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: var(--space-3);
+  box-sizing: border-box;
+  background: var(--color-background);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 450px;
 }
 
 /* HEADER */
