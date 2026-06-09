@@ -73,7 +73,7 @@ class ExpenseService:
         Gets all categories for a specific user.
         Returns a list of dictionaries with category id and name.
         """
-        query = "SELECT id, name FROM categories WHERE user_id = %s"
+        query = "SELECT id, name FROM categories WHERE user_id = %s OR user_id IS NULL"
         results = self.db.fetch_all(query, (user_id,))
 
         return results

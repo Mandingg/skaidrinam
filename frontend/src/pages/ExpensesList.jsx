@@ -24,6 +24,7 @@ function ExpensesPage() {
   const [exportMessage, setExportMessage] = useState(false);
   const [user, setUser] = useState(null);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [exportAvailable, setExportAvailable] = useState(false);
 
   useEffect(() => {
     document.title = "Mano išlaidos";
@@ -33,6 +34,9 @@ function ExpensesPage() {
     const loadExpenses = async () => {
       const data = await getUserExpenses();
       setExpenses(data);
+      if (data.length > 0) {
+        setExportAvailable(true);
+      }
     };
     loadExpenses();
   }, []);
@@ -117,14 +121,16 @@ function ExpensesPage() {
       setShowPremiumModal(true);
       return;
     }
-    setExportMessage(true);
-    try {
-      await exportExpensesCSV();
-    } catch (error) {
-      alert("Nepakvyko eskportuoti CSV failo. Pamėginkite vėliau.");
-      console.warn("Klaida ekxportuojant duomenis;", error.message);
-    } finally {
-      setExportMessage(false);
+    if (exportAvailable) {
+      setExportMessage(true);
+      try {
+        await exportExpensesCSV();
+      } catch (error) {
+        alert("Nepakvyko eskportuoti CSV failo. Pamėginkite vėliau.");
+        console.warn("Klaida ekxportuojant duomenis;", error.message);
+      } finally {
+        setExportMessage(false);
+      }
     }
   };
 
@@ -192,7 +198,7 @@ function ExpensesPage() {
             }}
           >
             <div
-              className="border-b flex justify-between items-center"
+              className="border-b flex column"
               style={{
                 padding: "var(--space-3) var(--space-4)",
                 borderColor: "var(--border-color)",
@@ -200,8 +206,8 @@ function ExpensesPage() {
             >
               <button
                 onClick={handleExport}
-                disabled={exportMessage}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer"
+                disabled={!exportAvailable || exportMessage}
+                className="group relative px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed"
                 style={{
                   borderColor: "var(--color-primary)",
                   backgroundColor:
@@ -214,12 +220,24 @@ function ExpensesPage() {
                       : "var(--color-primary)",
                 }}
               >
-                {user?.subscription_type === "PREMIUM"
-                  ? exportMessage
-                    ? "Eksportuojama..."
-                    : "Eksportuoti viską į CSV"
-                  : "Eksportas tik PREMIUM"}
+                {!exportMessage? (
+                  user?.subscription_type === "PREMIUM"?
+                  (
+                  <>
+                    <span
+                      className={!exportAvailable ? "group-hover:hidden" : ""}
+                    >
+                      Eksportuoti viską į CSV"
+                    </span>
+
+                    {!exportAvailable && (
+                      <span className="hidden group-hover:inline">
+                        Išlaidų sąrašas tuščias
+                      </span>
+                    )}
+                  </>):("Eksportas tik PREMIUM")):("Ekspotuojama")}
               </button>
+
             </div>
 
             <div className="overflow-x-auto">
