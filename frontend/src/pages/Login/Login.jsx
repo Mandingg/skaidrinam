@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router";
 import "./Login.css";
 import LogoIcon from "../../assets/LogoIcon.svg?url";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
 import VisibilityOff from "../../assets/VisibilityOff.svg";
 
-import { Link, useNavigate } from "react-router"; 
-
 function Login() {
-  const navigate = useNavigate(); 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const logoutMessage = location.state?.logoutMessage || "";
 
   useEffect(() => {
     document.title = "Prisijungimas";
@@ -67,6 +68,12 @@ function Login() {
         </div>
 
         <h2 className="subtitle">Prisijungti</h2>
+
+        {logoutMessage && (
+          <p style={{ color: "#1f7a1f", textAlign: "center", marginBottom: "1rem" }}>
+            {logoutMessage}
+          </p>
+        )}
 
         {/* Form */}
         <form className="form" onSubmit={handleLogin}>
