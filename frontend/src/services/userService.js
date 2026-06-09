@@ -76,7 +76,7 @@ export async function registerUser(formData) {
   return data;
 }
 
-export async function updateUser(userId, formData) {
+export async function updateUser(formData) {
   const input = {};
 
   if (formData.name) input.name = formData.name;
@@ -84,10 +84,11 @@ export async function updateUser(userId, formData) {
   if (formData.email) input.email = formData.email;
   if (formData.password) input.password = formData.password;
 
-  const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+  const response = await fetch(`http://127.0.0.1:8000/users/me`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
     },
     body: JSON.stringify(input),
   });
@@ -101,11 +102,12 @@ export async function updateUser(userId, formData) {
   return data;
 }
 
-export async function getUser(userId) {
-  const response = await fetch(`http://127.0.0.1:8000/users/${userId}`, {
+export async function getUser() {
+  const response = await fetch(`http://127.0.0.1:8000/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
     },
   });
 
@@ -121,6 +123,9 @@ export async function getUser(userId) {
 export async function deleteUser() {
   const response = await fetch("http://127.0.0.1:8000/users/me", {
     method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    },
   });
 
   const data = await response.json();
@@ -137,7 +142,7 @@ export async function getCurrentUserId() {
     const token = localStorage.getItem("token");
 
     // Kreipiamės į veikiantį adresą /me
-    const response = await fetch("http://127.0.0.1:8000/me", {
+    const response = await fetch("http://127.0.0.1:8000/users/me", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -154,4 +159,23 @@ export async function getCurrentUserId() {
   } catch (err) {
     console.warn(`Klaida gaunant vartotojo informaciją: ${err.message}`);
   }
+}
+
+export async function updateSubscription(subscriptionType) {
+  const response = await fetch ('http://127.0.0.1:8000/users/me/subscription', {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ subscription_type: subscriptionType }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Nepavyko gauti vartotojo prenumeratos informacijos");
+  }
+
+  return data;
 }

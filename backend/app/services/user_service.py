@@ -50,7 +50,8 @@ class UserService:
             try:
                 self.db.connection.commit()
                 cursor = self.db.connection.cursor()
-                cursor.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
+                cursor.execute(
+                    "SET TRANSACTION ISOLATION LEVEL READ COMMITTED")
                 cursor.close()
             except Exception:
                 pass
@@ -70,7 +71,7 @@ class UserService:
         """
         if "password_hash" in criteria:
             print("Warning: 'password_hash' should not be used as a search criterion."
-                "It will be ignored.")
+                  "It will be ignored.")
             del criteria["password_hash"]
         field_names = " AND ".join(
             [f"{field} = %s" for field in criteria.keys()])
@@ -111,47 +112,37 @@ class UserService:
         password_hash = self._hash_password(user.password)
 
         query = """
-            INSERT INTO users (name, surname, email, password_hash, role, created_at)
-            VALUES (%s, %s, %s, %s, %s, NOW())
+            INSERT INTO users (name, surname,email, password_hash, role, subscription_type, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
         """
         values = (
             user.name,
             user.surname,
             user.email,
             password_hash,
-            "USER"
+            "USER",
+            "FREE"
         )
-        
 
         user_id = self.db.insert(query, values)
         if user_id is None:
             raise RuntimeError("Nepavyko sukurti vartotojo duomenų bazėje.")
-        
+
         if hasattr(self.db, 'connection') and self.db.connection:
             try:
                 self.db.connection.commit()
             except Exception:
                 pass
-            
+
         return {
             "id": user_id,
             "name": user.name,
             "surname": user.surname,
             "email": user.email,
+            "subscription_type": "FREE",
             "message": "Paskyra sukurta sėkmingai"
         }
 
-    # def update_user(self, user_id: int, updated_fields: dict): #REIKIA PERRASYTI, NES REIKIA TIKRINTI AR NERA TOKIO USERS IR HASHINTI PASSWORDA
-    #     """
-    #     Updates an existing user in the database based on the provided user ID
-    #     and a dictionary of fields and their new values to update.
-    #     Returns the number of affected rows.
-    #     """
-    #     field_names = ", ".join(
-    #         [f"{field} = %s" for field in updated_fields.keys()])
-    #     query = f"UPDATE users SET {field_names} WHERE id = %s"
-    #     params = list(updated_fields.values()) + [user_id]
-    #     return self.db.update(query, params)
 
     def update_user(self, user_id: int, user: UserUpdateModel):
         """
@@ -183,7 +174,7 @@ class UserService:
                 if email_owner and email_owner.id != user_id:
                     raise ValueError(
                         "Toks el.paštas jau naudojamas."
-                )
+                    )
                 update_fields["email"] = user.email
 
         if user.password is not None:
@@ -215,30 +206,39 @@ class UserService:
             "name": updated_user.name,
             "surname": updated_user.surname,
             "email": updated_user.email,
+            "subscription_type": updated_user.subscription_type,
             "message": "Paskyra atnaujinta"
         }
+    
+    def update_subscription(self, user_id: int, subscription):
+        existing_user = self.get_user_by({"id": user_id})
 
-    # ==AJ==
+        if not existing_user:
+            raise ValueError("Tokio vartotojo nėra.")
+
+        if existing_user.subscription_type == subscription.subscription_type:
+            raise ValueError("Prenumeratos planas nebuvo pakeistas.")
+
+        query = """
+            UPDATE users
+            SET subscription_type = %s
+            WHERE id = %s
+        """
+
+        self.db.update(query, (subscription.subscription_type, user_id))
+
+        updated_user = self.get_user_by({"id": user_id})
+
+        return {
+            "id": updated_user.id,
+            "subscription_type": updated_user.subscription_type,
+            "message": f"Prenumerata atnaujinta į {updated_user.subscription_type} prenumeratos planą."
+        }
 
     def delete_user(self, user_id: int):
         """
         Deletes a user from the database based on the provided user ID.
         Returns the number of affected rows.
         """
-        existing_user = self.get_user_by({"id": user_id})
-
-        if not existing_user:
-            raise ValueError("Tokio vartotojo nėra.")
-
-        query = """ 
-            DELETE FROM users
-            WHERE id = %s
-         """
-        
-        affected_rows = self.db.delete(query, (user_id,))
-        if affected_rows == 0 or affected_rows is None:
-            raise ValueError("Nepavyko ištrinti paskyros.")
-
-        return {
-            "message": "Paskyra sėkmingai ištrinta"
-        }
+        query = "DELETE FROM users WHERE id = %s"
+        return self.db.delete(query, (user_id,))
