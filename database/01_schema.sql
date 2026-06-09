@@ -11,6 +11,7 @@ CREATE TABLE users (
   email VARCHAR(255) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('USER','ADMIN') NOT NULL DEFAULT 'USER',
+  subscription_type ENUM('FREE', 'PREMIUM') NOT NULL DEFAULT 'FREE',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY email_UNIQUE (email)
@@ -112,6 +113,8 @@ CREATE TABLE documents (
   id INT NOT NULL AUTO_INCREMENT,
   user_id INT NOT NULL,
   title VARCHAR(255) NOT NULL,
+  store_name VARCHAR(255) NULL,
+  purchase_date DATE NULL,
   file_path VARCHAR(500) NOT NULL,
   file_type VARCHAR(20) NULL,
   valid_until DATE NULL,

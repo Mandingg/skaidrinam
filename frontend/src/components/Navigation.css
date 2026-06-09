@@ -121,3 +121,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.user-subscription {
+  font-size: var(--text-small);
+  color: var(--color-neutral);
+  /* text-transform: lowercase; */
+  opacity: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.premium-badge {
+  width: fit-content;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: white;
+  font-size: var(--text-xsmall);
+  font-weight: var(--font-weight-bold);
+}
