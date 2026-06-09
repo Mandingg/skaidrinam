@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Body
 from fastapi.responses import StreamingResponse
 import csv
 import io
@@ -98,8 +98,8 @@ def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_ma
 
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
-def create_expense_manually(expense: ExpenseModel,
-                            store: StoreModel,
+def create_expense_manually(expense: ExpenseModel=Body(...),
+                            store: StoreModel=Body(...),
                             db: DatabaseManager = Depends(get_db_manager)):
     """
     creates expense from manual entry
@@ -112,9 +112,12 @@ def create_expense_manually(expense: ExpenseModel,
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Kaina negali būti neigiama arba tuščia",
         )
-
-    store_id = receipt_service.get_or_create_store(store.name)
-    print(f'Gautas store ID: {store_id}')
+    try:
+        store_id = receipt_service.get_or_create_store(store.name)
+        print(f'Gautas store ID: {store_id}')
+    except Exception as e:
+        print(f'Parduotuvės ID negautas. Klaida {e}')
+        store_id=None
     expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id,
                                                 expense.expense_date,
                                                 expense.amount)

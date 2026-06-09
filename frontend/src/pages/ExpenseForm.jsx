@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createExpense } from "../services/expenseApi";
 import { createIncome } from "../services/incomeApi";
-import { useNavigate } from "react-router"; 
+import { useNavigate } from "react-router";
 import { getUserCategories } from "../services/expenseService";
 import cekioLogo from "../assets/LogoIcon.svg";
 
@@ -12,14 +12,14 @@ function getUserId() {
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.sub ? parseInt(payload.sub) : null; 
+    return payload.sub ? parseInt(payload.sub) : null;
   } catch {
     return null;
   }
 }
 
 function ExpenseForm() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Nauja išlaida";
@@ -38,35 +38,35 @@ function ExpenseForm() {
   const [transactionType, setTransactionType] = useState("expense");
 
   const INCOME_SOURCES = [
-  "Darbo užmokestis",
-  "Stipendija",
-  "Investicijos",
-  "Dovana",
-  "Kita"
-];
+    "Darbo užmokestis",
+    "Stipendija",
+    "Investicijos",
+    "Dovana",
+    "Kita",
+  ];
 
-const STORES = [
-  "Maxima",
-  "Lidl",
-  "Rimi",
-  "Norfa",
-  "Iki",
-  "Aibė",
-  "Express Market",
-  "Senukai",
-  "Ermitažas",
-  "Pepco",
-  "Kita"
-];
+  const STORES = [
+    "Maxima",
+    "Lidl",
+    "Rimi",
+    "Norfa",
+    "Iki",
+    "Aibė",
+    "Express Market",
+    "Senukai",
+    "Ermitažas",
+    "Pepco",
+    "Kita",
+  ];
 
   useEffect(() => {
-      const loadCategories = async () => {
-        const data = await getUserCategories();
-        const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
-        setCategories(sortedData);
-      };
-      loadCategories();
-    }, []);
+    const loadCategories = async () => {
+      const data = await getUserCategories();
+      const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setCategories(sortedData);
+    };
+    loadCategories();
+  }, []);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -88,12 +88,16 @@ const STORES = [
     try {
       if (transactionType === "expense") {
         await createExpense({
-          user_id: getUserId(),
-          description: form.description,
-          amount,
-          expense_date: form.expense_date,
-          category_id: form.category_id ? parseInt(form.category_id) : null,
-          store_name: form.store_name,
+          expense: {
+            user_id: getUserId(),
+            description: form.description,
+            amount: amount,
+            expense_date: form.expense_date,
+            category_id: form.category_id ? parseInt(form.category_id) : null,
+          },
+          store: {
+            name: form.store_name,
+          },
         });
       } else {
         await createIncome({
@@ -106,9 +110,16 @@ const STORES = [
       }
       setMessage("Įrašas išsaugotas");
       setIsError(false);
-      setForm({description: "", amount: "", expense_date: "", category_id: "", source: "", store_name: ""});
-      
-      navigate("/pagrindinis"); 
+      setForm({
+        description: "",
+        amount: "",
+        expense_date: "",
+        category_id: "",
+        source: "",
+        store_name: "",
+      });
+
+      navigate("/pagrindinis");
     } catch (err) {
       setMessage(err.message);
       setIsError(true);
@@ -119,8 +130,10 @@ const STORES = [
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
-      
-      <div className="absolute inset-0" onClick={() => navigate("/pagrindinis")} />
+      <div
+        className="absolute inset-0"
+        onClick={() => navigate("/pagrindinis")}
+      />
 
       <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-xl p-8 md:p-12 relative z-10">
         <div className="flex flex-col items-center mb-8">
@@ -161,7 +174,9 @@ const STORES = [
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Pavadinimas</label>
+            <label className="text-sm font-medium text-gray-700">
+              Pavadinimas
+            </label>
             <input
               name="description"
               type="text"
@@ -216,13 +231,14 @@ const STORES = [
                     {store}
                   </option>
                 ))}
-
               </select>
             </div>
           )}
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-gray-700">Suma (€)</label>
+            <label className="text-sm font-medium text-gray-700">
+              Suma (€)
+            </label>
             <input
               name="amount"
               type="text"
@@ -252,7 +268,8 @@ const STORES = [
           {transactionType === "expense" && (
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700">
-                Kategorija <span className="text-gray-400 font-normal">(nebūtinas)</span>
+                Kategorija{" "}
+                <span className="text-gray-400 font-normal">(nebūtinas)</span>
               </label>
               <select
                 name="category_id"
@@ -280,7 +297,9 @@ const STORES = [
         </form>
 
         {message && (
-          <p className={`mt-4 text-center text-sm font-medium ${isError ? "text-red-600" : "text-green-700"}`}>
+          <p
+            className={`mt-4 text-center text-sm font-medium ${isError ? "text-red-600" : "text-green-700"}`}
+          >
             {message}
           </p>
         )}
