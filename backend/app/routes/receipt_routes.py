@@ -1,10 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, UploadFile, File, Depends
 
 from app.models.receipt_ai import ReceiptAnalyzeRequest, ReceiptSaveModel
-from app.services.ai_receipt_service import (
-    analyze_receipt_text,
-    analyze_receipt_image,
-)
+# from app.services.ai_receipt_service import (
+#     analyze_receipt_text,
+#     analyze_receipt_image,
+# )
 from app.models.receipt import ReceiptCreateModel
 from app.services.receipt_service import ReceiptService
 from app.services.expense_service import ExpenseService

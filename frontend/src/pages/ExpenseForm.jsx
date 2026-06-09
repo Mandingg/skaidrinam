@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createExpense } from "../services/expenseApi";
 import { createIncome } from "../services/incomeApi";
 import { useNavigate } from "react-router"; 
+import { getUserCategories } from "../services/expenseService";
 import cekioLogo from "../assets/LogoIcon.svg";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -59,11 +60,13 @@ const STORES = [
 ];
 
   useEffect(() => {
-    fetch(`${API_URL}/categories`)
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
-      .catch(() => setCategories([]));
-  }, []);
+      const loadCategories = async () => {
+        const data = await getUserCategories();
+        const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+        setCategories(sortedData);
+      };
+      loadCategories();
+    }, []);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });

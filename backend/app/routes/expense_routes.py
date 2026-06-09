@@ -114,10 +114,12 @@ def create_expense_manually(expense: ExpenseModel,
         )
 
     store_id = receipt_service.get_or_create_store(store.name)
+    print(f'Gautas store ID: {store_id}')
     expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id,
                                                 expense.expense_date,
                                                 expense.amount)
 
+    print(f'Sukurtas čekutis: {expense.receipt_id}')
     expense_id = expense_service.create_expense(expense)
     if expense_id is None:
         raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
