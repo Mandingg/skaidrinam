@@ -60,11 +60,11 @@ function Documents() {
 
     const filteredDocuments = documents.filter((document) => {
         if (activeFilter === "active") {
-            return !isExpired(document.valid_until);
+            return document.valid_until && !isExpired(document.valid_until);
         }
 
         if (activeFilter === "expired") {
-            return isExpired(document.valid_until);
+            return document.valid_until && isExpired(document.valid_until);
         }
 
         return true;

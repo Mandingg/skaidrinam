@@ -17,38 +17,38 @@ function Navigation() {
 
   const [user, setUser] = useState({ name: "Kraunama...", surname: "", email: "" });
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-  if (!token) return;
+    if (!token) return;
 
-  fetch("http://127.0.0.1:8000/users/me", {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => {
-      if (res.status === 401) {
+    fetch("http://127.0.0.1:8000/users/me", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/";
+          return null;
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (!data) return;
+
+        setUser({
+          name: data.name,
+          surname: data.surname,
+          email: data.email,
+          subscription: data.subscription_type,
+        });
+      })
+      .catch(() => {
         localStorage.removeItem("token");
         window.location.href = "/";
-        return null;
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (!data) return;
-
-      setUser({
-        name: data.name,
-        surname: data.surname,
-        email: data.email,
-        subscription: data.subscription_type,
       });
-    })
-    .catch(() => {
-      localStorage.removeItem("token");
-      window.location.href = "/";
-    });
-}, []);
+  }, []);
 
   return (
     <aside className="sidebar">
@@ -125,7 +125,7 @@ useEffect(() => {
         <div className="user-text">
           <span className="user-name">{user.name} {user.surname}</span>
           {/* <span className="user-email">{user.email}</span> */}
-          
+
           {user.subscription?.trim().toUpperCase() === "PREMIUM" && (
             <span className="premium-badge">
               PREMIUM

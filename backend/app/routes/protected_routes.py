@@ -6,6 +6,9 @@ router = APIRouter()
 user_service = UserService()
 
 
+# @router.get("/me")
+# def me(payload=Depends(get_current_user)):
+
 @router.get("/me")
 def me(
     period: str = "current_month",
