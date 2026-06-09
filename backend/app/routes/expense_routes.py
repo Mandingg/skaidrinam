@@ -5,6 +5,10 @@ import io
 from app.services.db_connection import DatabaseManager
 from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel
 from app.services.expense_service import ExpenseService
+from app.models.store import StoreModel
+from app.models.receipt import ReceiptCreateModel
+from app.services.receipt_service import ReceiptService
+
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
@@ -94,8 +98,14 @@ def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_ma
 
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
-def create_expense(expense: ExpenseModel, db: DatabaseManager = Depends(get_db_manager)):
+def create_expense_manually(expense: ExpenseModel,
+                            store: StoreModel,
+                            db: DatabaseManager = Depends(get_db_manager)):
+    """
+    creates expense from manual entry
+    """
     expense_service = ExpenseService()
+    receipt_service = ReceiptService()
     expense_service.db = db
     if expense.amount is None or expense.amount <= 0:
         raise HTTPException(
@@ -103,8 +113,12 @@ def create_expense(expense: ExpenseModel, db: DatabaseManager = Depends(get_db_m
             detail="Kaina negali būti neigiama arba tuščia",
         )
 
-    expense_id = expense_service.create_expense(expense)
+    store_id = receipt_service.get_or_create_store(store.name)
+    expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id,
+                                                expense.expense_date,
+                                                expense.amount)
 
+    expense_id = expense_service.create_expense(expense)
     if expense_id is None:
         raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
 
