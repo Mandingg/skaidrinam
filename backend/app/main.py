@@ -8,6 +8,7 @@ from app.routes.auth_routes import router as auth_routes
 from app.routes.protected_routes import router as protected_routes
 from app.routes.document_routes import router as document_routes
 from fastapi.staticfiles import StaticFiles
+from app.routes.analytics_route import router as analytics_router
 
 
 from app.routes.categories import router as categories_router
@@ -24,7 +25,8 @@ app.add_middleware(
     ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"])
+    allow_headers=["*"],
+    )
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
@@ -36,3 +38,4 @@ app.include_router(categories_router)
 app.include_router(expense_router)
 app.include_router(document_routes)
 app.include_router(income_router)
+app.include_router(analytics_router)
