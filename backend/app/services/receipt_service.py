@@ -63,7 +63,7 @@ class ReceiptService:
             s.id,
             s.name
             FROM stores s
-            LEFT JOIN receipts r ON s.id = r.store_id
+            INNER JOIN receipts r ON s.id = r.store_id
             WHERE r.user_id = %s
         """
         default_stores = self.get_some_stores()
