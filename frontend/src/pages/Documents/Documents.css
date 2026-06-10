@@ -2,7 +2,7 @@
   min-height: 100vh;
   background-color: var(--color-background);
   padding: 40px;
-  padding-left: calc(var(--sidebar-width) + 40px);
+  /* padding-left: calc(var(--sidebar-width) + 40px); */
   color: var(--color-neutral);
 }
 

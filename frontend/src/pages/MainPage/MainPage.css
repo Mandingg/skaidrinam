@@ -1,10 +1,20 @@
-.main-content {
+/* .main-content {
   width: var(--page-width);
   margin-left: var(--sidebar-width);
 
   padding: var(--space-5);
   background: var(--color-background);
   min-height: 100vh;
+} */
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  min-height: 100vh;
+
+  padding: var(--space-5);
+  background: var(--color-background);
+  box-sizing: border-box;
 }
 
 .page-header {
