@@ -4,7 +4,8 @@ echo "BACKEND START"
 
 cd backend || exit
 
-source venv/Scripts/activate
+source venv/bin/activate
+# for Windows: source venv/Scripts/activate
 
 pip install -r requirements.txt
 

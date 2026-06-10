@@ -1,5 +1,5 @@
 from app.services.db_connection import DatabaseManager
-from app.models.income import IncomeDisplay, IncomeModel
+from app.models.income import IncomeModel, IncomeUpdateModel
 
 
 class IncomeService:
@@ -39,7 +39,7 @@ class IncomeService:
         query = "SELECT * FROM incomes WHERE id = %s"
         return self.db.fetch_one(query, (income_id,))
 
-    def update_income(self, income_id: int, user_id: int, data: IncomeUpdate) -> bool:
+    def update_income(self, income_id: int, user_id: int, data: IncomeUpdateModel) -> bool:
         """
         Updates an existing income record. 
         Supports dynamic updates depending on what fields frontend sent.
