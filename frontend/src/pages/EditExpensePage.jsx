@@ -52,33 +52,31 @@ function EditExpensePage() {
   }, []);
 
   useEffect(() => {
-    getExpense(id)
-      .then((data) => {
-        setForm({
-          description: data.description || "",
-          amount: data.amount || "",
-          expense_date: data.expense_date || "",
-          category_id: data.category_id || "",
-          store_id: "",
-        });
-        return getStoreForExpense(id);
-      })
-      .then((storeData) => {
-        if (storeData && storeData.name) {
-          setForm((prevForm) => ({
-            ...prevForm,
-            store_id: storeData.id,
-          }));
-        }
-      })
-      .catch((err) => {
-        if (err.message === "Įrašas nerastas") setNotFound(true);
-        else {
-          setMessage(err.message);
-          setIsError(true);
-        }
+  getExpense(id)
+    .then((expenseData) => {
+      return getStoreForExpense(id).then((storeData) => {
+        return { expenseData, storeData };
       });
-  }, [id]);
+    })
+    .then(({ expenseData, storeData }) => {
+      setForm({
+        description: expenseData.description || "",
+        amount: expenseData.amount || "",
+        expense_date: expenseData.expense_date || "",
+        category_id: expenseData.category_id || "",
+        store_id: storeData ? storeData.id : "",
+      });
+    })
+    .catch((err) => {
+      if (err.message === "Įrašas nerastas") {
+        setNotFound(true);
+      } else {
+        setMessage(err.message);
+        setIsError(true);
+      }
+    });
+}, [id]);
+      
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -194,7 +192,6 @@ function EditExpensePage() {
               type="text"
               value={form.store_id}
               onChange={handleChange}
-              required
               className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
             >
               {stores.map((store) => (
@@ -202,7 +199,7 @@ function EditExpensePage() {
                   {store.name}
                 </option>
               ))}
-              <option value="None">---</option>
+              <option value="">---</option>
             </select>
           </div>
 

@@ -145,7 +145,7 @@ def get_store(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
     print(store)
     if not store:
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
-    return {"id": store.get("id"), "name": store.get("name")}
+    return {"id": store.get("store_id"), "name": store.get("name")}
 
 
 @router.put("/{expense_id}")
