@@ -57,7 +57,7 @@ function Login() {
 
   return (
     <div className="login-page">
-      <main className="login-card">
+      <div className="login-card">
 
         {/* Header */}
         <div className="login-header">
@@ -137,7 +137,7 @@ function Login() {
           </p>
         </div>
 
-      </main>
+      </div>
     </div>
   );
 }

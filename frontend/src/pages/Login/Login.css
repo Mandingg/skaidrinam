@@ -1,9 +1,13 @@
 .login-page {
-  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3);
+
   background: var(--color-navigation);
 }
 
@@ -17,6 +21,7 @@
   padding: var(--space-5);
   padding-bottom: var(--space-5);
 }
+
 /* HEADER */
 .login-header {
   display: flex;
@@ -27,11 +32,11 @@
 .login-logo-title {
   display: flex;
   align-items: center;
-  gap: var(--space-2); 
+  gap: var(--space-2);
 }
 
 .login-logo {
-  width: 52px; 
+  width: 52px;
   height: 52px;
   color: var(--color-neutral);
 }
