@@ -29,14 +29,18 @@ function ExpenseForm() {
     description: "",
     amount: "",
     expense_date: "",
-    category_id: "",
+    category_name: "", // Now handles both existing and custom category names
+    source: "",
+    store_name: "",
   });
+  
   const [categories, setCategories] = useState([]);
   const [stores, setStores] = useState([]);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [transactionType, setTransactionType] = useState("expense");
+  const [isNewCategory, setIsNewCategory] = useState(false); // Flags when to show custom text input
 
   const INCOME_SOURCES = [
     "Darbo užmokestis",
@@ -47,13 +51,13 @@ function ExpenseForm() {
   ];
 
   useEffect(() => {
-      const loadStores = async () => {
-        const data = await getUserStores();
-        const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
-        setStores(sortedData);
-      };
-      loadStores();
-    }, []);
+    const loadStores = async () => {
+      const data = await getUserStores();
+      const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setStores(sortedData);
+    };
+    loadStores();
+  }, []);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -66,6 +70,17 @@ function ExpenseForm() {
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function handleCategoryChange(e) {
+    const value = e.target.value;
+    if (value === "new") {
+      setIsNewCategory(true);
+      setForm({ ...form, category_name: "" }); // Reset to allow raw typing
+    } else {
+      setIsNewCategory(false);
+      setForm({ ...form, category_name: value });
+    }
   }
 
   async function handleSubmit(e) {
@@ -89,7 +104,7 @@ function ExpenseForm() {
             description: form.description,
             amount: amount,
             expense_date: form.expense_date,
-            category_id: form.category_id ? parseInt(form.category_id) : null,
+            category_name: form.category_name || null, // Sent purely as a string name
           },
           store: {
             name: form.store_name,
@@ -106,11 +121,12 @@ function ExpenseForm() {
       }
       setMessage("Įrašas išsaugotas");
       setIsError(false);
+      setIsNewCategory(false);
       setForm({
         description: "",
         amount: "",
         expense_date: "",
-        category_id: "",
+        category_name: "",
         source: "",
         store_name: "",
       });
@@ -265,21 +281,36 @@ function ExpenseForm() {
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700">
                 Kategorija{" "}
-                <span className="text-gray-400 font-normal">(nebūtinas)</span>
+                <span className="text-gray-400 font-normal">(nebūtina)</span>
               </label>
               <select
-                name="category_id"
-                value={form.category_id}
-                onChange={handleChange}
+                name="category_selection"
+                value={isNewCategory ? "new" : form.category_name}
+                onChange={handleCategoryChange}
                 className="w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all bg-white"
               >
                 <option value="">-- Pasirinkite kategoriją --</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
+                  <option key={cat.id} value={cat.name}>
                     {cat.name}
                   </option>
                 ))}
+                <option value="new" className="italic">
+                  Įvesti naują...
+                </option>
               </select>
+
+              {isNewCategory && (
+                <input
+                  name="category_name"
+                  type="text"
+                  value={form.category_name}
+                  onChange={handleChange}
+                  placeholder="Įveskite naujos kategorijos pavadinimą"
+                  required
+                  className="mt-2 w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
+                />
+              )}
             </div>
           )}
 

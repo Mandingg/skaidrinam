@@ -3,10 +3,11 @@ from fastapi.responses import StreamingResponse
 import csv
 import io
 from app.services.db_connection import DatabaseManager
-from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel
+from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel, ExpenseInputModel
 from app.services.expense_service import ExpenseService
 from app.models.store import StoreModel
 from app.services.receipt_service import ReceiptService
+from app.services.category_service import CategoryService
 
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
@@ -98,13 +99,14 @@ def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_ma
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
 def create_expense_manually(
-    expense: ExpenseModel = Body(...), store: StoreModel = Body(...), db: DatabaseManager = Depends(get_db_manager)
+    expense: ExpenseInputModel = Body(...), store: StoreModel = Body(...), db: DatabaseManager = Depends(get_db_manager)
 ):
     """
     creates expense from manual entry
     """
     expense_service = ExpenseService()
     receipt_service = ReceiptService()
+    category_service = CategoryService()
     expense_service.db = db
     if expense.amount is None or expense.amount <= 0:
         raise HTTPException(
@@ -118,9 +120,12 @@ def create_expense_manually(
         print(f"Parduotuvės ID negautas. Klaida {e}")
         store_id = None
     expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id, expense.expense_date, expense.amount)
-
+    category_id = category_service.get_category_id_by_name(expense.user_id, expense.category_name)
+    if category_id is None:
+        category_id = category_service.get_or_create_user_category(expense.user_id, expense.category_name,)
     print(f"Sukurtas čekutis: {expense.receipt_id}")
-    expense_id = expense_service.create_expense(expense)
+    expense_to_create = ExpenseModel(**expense.model_dump(exclude={'category_name'}), category_id=category_id)
+    expense_id = expense_service.create_expense(expense_to_create)
     if expense_id is None:
         raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
 

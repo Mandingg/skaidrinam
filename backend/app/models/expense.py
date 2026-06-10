@@ -13,6 +13,16 @@ class ExpenseModel(BaseModel):
     expense_date: date
     created_at: Optional[datetime] = None
 
+class ExpenseInputModel(BaseModel):
+    id: Optional[int] = None
+    user_id: int
+    receipt_id: Optional[int] = None
+    category_name: Optional[str] = None
+    description: str
+    amount: float
+    expense_date: date
+    created_at: Optional[datetime] = None
+
 
 class ExpenseUpdateModel(BaseModel):
     description: str
