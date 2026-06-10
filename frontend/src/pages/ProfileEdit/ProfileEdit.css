@@ -1,27 +1,7 @@
-/* .register-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-3);
-  background: var(--color-background);
-}
-
-.register-card {
-  width: 100%;
-  max-width: 800px;
-  background: var(--color-background);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-5);
-  padding-bottom: var(--space-5);
-} */
 
 .register-page {
   min-height: 100vh;
   padding: var(--space-3);
-  /* margin-left: var(--sidebar-width); */
   max-width: calc(100vw - var(--sidebar-width));
   box-sizing: border-box;
 

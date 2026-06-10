@@ -1,12 +1,10 @@
 .receipt-upload-page {
-  /* min-height: 100vh; */
-  display: flex;
-  /* align-items: center; */
-  justify-content: center;
   padding: var(--space-3);
-  background: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-left: var(--sidebar-width);
-  width: calc(100vw - var(--sidebar-width));
+  background: var(--color-background);
 }
 
 .receipt-upload-card {
