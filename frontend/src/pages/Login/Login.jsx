@@ -21,7 +21,7 @@ function Login() {
     navigate(location.pathname, { replace: true, state: {} });
 
     // Auto-dismiss the message after 10 seconds.
-    const timer = setTimeout(() => setLogoutMessage(""), 10000);
+    const timer = setTimeout(() => setLogoutMessage(""), 5000);
     return () => clearTimeout(timer);
   }, []);
 
