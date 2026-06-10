@@ -5,6 +5,7 @@ import Analytics from "../pages/Analytics/Analytics";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import Logout from "../pages/Logout/Logout";
 import ExpensesList from "../pages/ExpensesList";
 import ProfileEdit from "../pages/ProfileEdit/ProfileEdit";
 import ExpenseForm from "../pages/ExpenseForm";
@@ -33,9 +34,8 @@ function AppRoutes() {
         <Route path="/islaidos" element={<ExpensesList />} />
         <Route path="/pagrindinis/naujas" element={<ExpenseForm />} />
         <Route path="/islaidos/redaguoti/:id" element={<EditExpensePage />} />
-        <Route path="/kvito-nuskaitymas" element={<ReceiptUpload />}
-        />
-
+        <Route path="/kvito-nuskaitymas" element={<ReceiptUpload />} />
+        <Route path="/atsijungti" element={<Logout />} />
       </Route>
 
       {/* 404 */}
