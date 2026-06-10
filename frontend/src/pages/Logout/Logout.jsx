@@ -14,7 +14,7 @@ function Logout() {
       console.warn("Failed to clear storage during logout", error);
     }
 
-    navigate("/prisijungimas", {
+    navigate("/", {
       replace: true,
       state: { logoutMessage: "Sėkmingai atsijungta" },
     });
