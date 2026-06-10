@@ -53,7 +53,7 @@
 }
 
 .title {
-  font-size: 40px;
+  font-size: var(--text-title);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
   margin: 0;
