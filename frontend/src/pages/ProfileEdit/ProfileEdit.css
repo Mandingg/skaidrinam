@@ -19,16 +19,15 @@
 } */
 
 .register-page {
-  /* min-height: 100vh; */
-  margin-left: var(--sidebar-width);
-  /* width: calc(100vw - var(--sidebar-width)); */
+  min-height: 100vh;
+  padding: var(--space-3);
+  /* margin-left: var(--sidebar-width); */
+  max-width: calc(100vw - var(--sidebar-width));
+  box-sizing: border-box;
 
   display: flex;
   justify-content: center;
   align-items: flex-start;
-
-  padding: var(--space-3);
-  box-sizing: border-box;
   background: var(--color-background);
 }
 
