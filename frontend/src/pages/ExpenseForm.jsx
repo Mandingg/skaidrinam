@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createExpense } from "../services/expenseApi";
+import { createExpense, getUserStores } from "../services/expenseApi";
 import { createIncome } from "../services/incomeApi";
 import { useNavigate } from "react-router";
 import { getUserCategories } from "../services/expenseService";
@@ -32,6 +32,7 @@ function ExpenseForm() {
     category_id: "",
   });
   const [categories, setCategories] = useState([]);
+  const [stores, setStores] = useState([]);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,19 +46,14 @@ function ExpenseForm() {
     "Kita",
   ];
 
-  const STORES = [
-    "Maxima",
-    "Lidl",
-    "Rimi",
-    "Norfa",
-    "Iki",
-    "Aibė",
-    "Express Market",
-    "Senukai",
-    "Ermitažas",
-    "Pepco",
-    "Kita",
-  ];
+  useEffect(() => {
+      const loadStores = async () => {
+        const data = await getUserStores();
+        const sortedData = [...data].sort((a, b) => a.name.localeCompare(b.name));
+        setStores(sortedData);
+      };
+      loadStores();
+    }, []);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -226,9 +222,9 @@ function ExpenseForm() {
               >
                 <option value="">-- Pasirinkite parduotuvę --</option>
 
-                {STORES.map((store) => (
-                  <option key={store} value={store}>
-                    {store}
+                {stores.map((store) => (
+                  <option key={store.id} value={store.name}>
+                    {store.name}
                   </option>
                 ))}
               </select>
