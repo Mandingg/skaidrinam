@@ -56,13 +56,9 @@ function Register() {
       setMessage("Registracija sėkminga! Nukreipiama į prisijungimą...");
       setIsError(false);
 
-      setFormData({
-        name: "",
-        surname: "",
-        email: "",
-        password: "",
-        repeatPassword: "",
-      });
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
 
 
       setTimeout(() => {

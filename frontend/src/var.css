@@ -13,8 +13,9 @@ body {
     COLORS
   ========================== */
 
-  --color-primary: #2f6b2d;
-  --color-primary-dark: #245324;
+    --color-primary: #457b3b;
+    --color-primary-dark: #3d6e35;
+    --color-primary-light: #437d380d;
 
   --color-secondary: #c4d9c7;
 
