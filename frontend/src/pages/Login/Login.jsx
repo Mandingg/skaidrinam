@@ -8,10 +8,21 @@ import VisibilityOff from "../../assets/VisibilityOff.svg";
 function Login() {
   const location = useLocation();
   const navigate = useNavigate();
-  const logoutMessage = location.state?.logoutMessage || "";
+  const [logoutMessage, setLogoutMessage] = useState(location.state?.logoutMessage || "");
 
   useEffect(() => {
     document.title = "Prisijungimas";
+  }, []);
+
+  useEffect(() => {
+    if (!logoutMessage) return;
+
+    // Clear the router state so the message does not reappear on refresh/back.
+    navigate(location.pathname, { replace: true, state: {} });
+
+    // Auto-dismiss the message after 10 seconds.
+    const timer = setTimeout(() => setLogoutMessage(""), 10000);
+    return () => clearTimeout(timer);
   }, []);
 
   const [email, setEmail] = useState("");
