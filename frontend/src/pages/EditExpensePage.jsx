@@ -125,8 +125,8 @@ function EditExpensePage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4">
-      <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-sm p-8 md:p-12">
+    <div className="bg-[var(--color-background)] min-h-screen flex items-center justify-center p-4">
+      <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-[var(--shadow-md)] p-8 md:p-12">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-3 mb-6">
             <img src={cekioLogo} alt="Čekiukai logo" className="w-10 h-10" />
@@ -229,6 +229,13 @@ function EditExpensePage() {
             className="w-full bg-[#437d38] text-white py-3 rounded-md font-semibold text-base hover:bg-[#386a2f] transition-colors duration-200 disabled:opacity-50"
           >
             {loading ? "Saugoma..." : "Išsaugoti pakeitimus"}
+          </button>
+
+          <button
+            className="w-full bg-[var(--color-error)] text-white py-3 rounded-md font-semibold text-base hover:bg-[var(--color-error-dark)] transition-colors duration-200 disabled:opacity-50"
+            onClick={() => navigate("/islaidos")}
+          >
+            Atšaukti
           </button>
         </form>
 

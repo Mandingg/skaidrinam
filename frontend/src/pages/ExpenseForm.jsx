@@ -141,13 +141,15 @@ function ExpenseForm() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
-      <div
-        className="absolute inset-0"
-        onClick={() => navigate("/pagrindinis")}
-      />
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/40 backdrop-blur-md overflow-y-auto">
+    
 
-      <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-xl p-8 md:p-12 relative z-10">
+    <div
+      className="absolute inset-0"
+      onClick={() => navigate("/pagrindinis")}
+    />
+
+    <main className="w-full max-w-[450px] bg-white rounded-lg border border-gray-100 shadow-sm p-8 md:p-12 relative z-10 my-auto">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center gap-3 mb-6">
             <img src={cekioLogo} alt="Čekiukai logo" className="w-10 h-10" />
@@ -320,6 +322,13 @@ function ExpenseForm() {
             className="w-full bg-[var(--color-primary)] text-white py-3 rounded-md font-semibold text-base hover:bg-[var(--color-primary-dark)] transition-colors duration-200 disabled:opacity-50"
           >
             {loading ? "Saugoma..." : "Išsaugoti"}
+          </button>
+
+          <button
+            className="w-full bg-[var(--color-error)] text-white py-3 rounded-md font-semibold text-base hover:bg-[var(--color-error-dark)] transition-colors duration-200 disabled:opacity-50"
+            onClick={() => navigate("/pagrindinis")}
+          >
+            Atšaukti
           </button>
         </form>
 
