@@ -173,8 +173,14 @@ def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManage
         except Exception as e:
             print(f"Nepavyko atnaujinti čekio: {e}")
 
-    success = expense_service.update_expense(expense_id, existing["user_id"], data.model_dump(exclude={"store_id"}))
-    if not success:
-        raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
+    is_identical = (
+    existing.get("description") == data.description and
+    float(existing.get('amount')) == float(data.amount) and
+    existing.get('expense_date') == data.expense_date and
+    existing.get('category_id') == data.category_id)
+    if not is_identical:
+        success = expense_service.update_expense(expense_id, existing["user_id"], data.model_dump(exclude={"store_id"}))
+        if not success:
+            raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
 
     return {"message": "Įrašas atnaujintas"}
