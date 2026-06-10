@@ -1,9 +1,9 @@
-/* .register-page {
+.register-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3);
+  margin-left: var(--sidebar-width);
   background: var(--color-navigation);
 }
 
@@ -16,23 +16,9 @@
   box-shadow: var(--shadow-md);
   padding: var(--space-5);
   padding-bottom: var(--space-5);
-} */
-
-.register-page {
-  min-height: calc(100vh - var(--space-5) * 2);
-  width: 100%;
-
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-
-  background: var(--color-background);
 }
 
-.register-card {
-  width: 100%;
-  max-width: 560px;
-}
+
 
 /* HEADER */
 .register-header {
