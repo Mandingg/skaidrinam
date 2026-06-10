@@ -439,25 +439,6 @@ function ExpensesPage() {
                 Rodoma 1-{filteredAndSortedExpenses.length} iš{" "}
                 {filteredAndSortedExpenses.length} įrašų
               </span>
-              <div className="flex gap-1">
-                <button className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
-                  {"<"}
-                </button>
-                <button
-                  className="w-9 h-9 flex items-center justify-center rounded-lg border font-bold"
-                  style={{
-                    backgroundColor: "var(--color-primary)",
-                    color: "#ffffff",
-                    borderColor: "var(--color-primary)",
-                  }}
-                >
-                  1
-                </button>
-
-                <button className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
-                  {">"}
-                </button>
-              </div>
             </div>
           </div>
         </main>
