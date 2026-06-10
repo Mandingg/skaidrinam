@@ -16,6 +16,7 @@
   box-shadow: var(--shadow-md);
   padding: var(--space-5);
   padding-bottom: var(--space-5);
+  margin: auto;
 }
 /* HEADER */
 .login-header {
