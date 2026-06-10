@@ -29,7 +29,7 @@ function ExpenseForm() {
     description: "",
     amount: "",
     expense_date: "",
-    category_name: "", // Now handles both existing and custom category names
+    category_name: "", 
     source: "",
     store_name: "",
   });
@@ -40,7 +40,8 @@ function ExpenseForm() {
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [transactionType, setTransactionType] = useState("expense");
-  const [isNewCategory, setIsNewCategory] = useState(false); // Flags when to show custom text input
+  const [isNewCategory, setIsNewCategory] = useState(false);
+  const [isNewStore, setIsNewStore] = useState(false);
 
   const INCOME_SOURCES = [
     "Darbo užmokestis",
@@ -76,10 +77,21 @@ function ExpenseForm() {
     const value = e.target.value;
     if (value === "new") {
       setIsNewCategory(true);
-      setForm({ ...form, category_name: "" }); // Reset to allow raw typing
+      setForm({ ...form, category_name: "" }); 
     } else {
       setIsNewCategory(false);
       setForm({ ...form, category_name: value });
+    }
+  }
+
+  function handleStoreChange(e) {
+    const value = e.target.value;
+    if (value === "new") {
+      setIsNewStore(true);
+      setForm({ ...form, store_name: "" }); 
+    } else {
+      setIsNewStore(false);
+      setForm({ ...form, store_name: value });
     }
   }
 
@@ -122,6 +134,7 @@ function ExpenseForm() {
       setMessage("Įrašas išsaugotas");
       setIsError(false);
       setIsNewCategory(false);
+      setIsNewStore(false);
       setForm({
         description: "",
         amount: "",
@@ -233,8 +246,8 @@ function ExpenseForm() {
 
               <select
                 name="store_name"
-                value={form.store_name}
-                onChange={handleChange}
+                value={isNewStore? "new" : form.store_name}
+                onChange={handleStoreChange}
                 required
                 className="w-full px-4 py-2.5 rounded-md border border-gray-200 bg-white text-sm"
               >
@@ -245,8 +258,24 @@ function ExpenseForm() {
                     {store.name}
                   </option>
                 ))}
+                <option value="new" className="italic">
+                  Įvesti naują...
+                </option>
               </select>
-            </div>
+            
+            {isNewStore && (
+                <input
+                  name="store_name"
+                  type="text"
+                  value={form.store_name}
+                  onChange={handleChange}
+                  placeholder="Įveskite naujos parduotuvės pavadinimą"
+                  required
+                  className="mt-2 w-full px-4 py-2.5 rounded-md border border-gray-200 focus:ring-[#437d38] focus:border-[#437d38] text-sm transition-all"
+                />
+              )}
+              </div>
+
           )}
 
           <div className="flex flex-col gap-1.5">
