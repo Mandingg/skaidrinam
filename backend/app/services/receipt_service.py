@@ -57,20 +57,17 @@ class ReceiptService:
 
         return self.db.insert(query, (user_id, store_id, file_path, ocr_text, receipt_date, total_amount))
 
-    def get_all_user_stores(self, user_id):
+    def get_all_user_stores(self, user_id: int):
         query = """
-            SELECT
+            SELECT DISTINCT
             s.id,
-            s.name,
+            s.name
             FROM stores s
-            OUTTER JOIN receipts r ON s.id = r.store_id
+            LEFT JOIN receipts r ON s.id = r.store_id
             WHERE r.user_id = %s
         """
         default_stores = self.get_some_stores()
-        results = self.db.fetch_all(
-            query,
-            (user_id),
-        )
+        results = self.db.fetch_all(query, (user_id,))
         if results is None:
             return default_stores
 
@@ -83,7 +80,7 @@ class ReceiptService:
         query = """
                 SELECT id, name
                 FROM stores
-                LIMIT 7
+                LIMIT 10
                 """
         results = self.db.fetch_all(query)
         if results is None:
@@ -99,7 +96,7 @@ class ReceiptService:
         rows = self.db.update(query, (store_id, amount, receipt_id))
         return rows is not None and rows > 0
 
-    def get_by_id(self, id:int):
+    def get_by_id(self, id: int):
         query = """
                 SELECT 
                 user_id,
@@ -108,5 +105,8 @@ class ReceiptService:
                 FROM receipts
                 WHERE id=%s
                 """
-        result = self.db.fetch_all(query, (id),)
-        
+        result = self.db.fetch_one(query, (id,))
+        if result is None:
+            return None
+
+        return result

@@ -97,9 +97,9 @@ def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_ma
 
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
-def create_expense_manually(expense: ExpenseModel=Body(...),
-                            store: StoreModel=Body(...),
-                            db: DatabaseManager = Depends(get_db_manager)):
+def create_expense_manually(
+    expense: ExpenseModel = Body(...), store: StoreModel = Body(...), db: DatabaseManager = Depends(get_db_manager)
+):
     """
     creates expense from manual entry
     """
@@ -113,15 +113,13 @@ def create_expense_manually(expense: ExpenseModel=Body(...),
         )
     try:
         store_id = receipt_service.get_or_create_store(store.name)
-        print(f'Gautas store ID: {store_id}')
+        print(f"Gautas store ID: {store_id}")
     except Exception as e:
-        print(f'Parduotuvės ID negautas. Klaida {e}')
-        store_id=None
-    expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id,
-                                                expense.expense_date,
-                                                expense.amount)
+        print(f"Parduotuvės ID negautas. Klaida {e}")
+        store_id = None
+    expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id, expense.expense_date, expense.amount)
 
-    print(f'Sukurtas čekutis: {expense.receipt_id}')
+    print(f"Sukurtas čekutis: {expense.receipt_id}")
     expense_id = expense_service.create_expense(expense)
     if expense_id is None:
         raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
@@ -138,6 +136,7 @@ def get_expense(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
     return expense
 
+
 @router.get("/{expense_id}/store")
 def get_store(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
     expense_service = ExpenseService()
@@ -146,7 +145,7 @@ def get_store(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
     print(store)
     if not store:
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
-    return {'id': store.get('id'), 'name': store.get('name')}
+    return {"id": store.get("id"), "name": store.get("name")}
 
 
 @router.put("/{expense_id}")
@@ -161,16 +160,15 @@ def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManage
     if not existing:
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
 
-    receipt_id = existing.get("receipt_id")
-    store_id = data.get('store_id')
-    if store_id is None:
-        
+    receipt_id = existing['receipt_id']
+
     if receipt_id:
+        store_id = data.store_id
+        if store_id is None:
+            data.store_id = receipt_service.get_by_id(receipt_id)['store_id']
         try:
             receipt_service.update_receipt_store_and_amount(
-                receipt_id=receipt_id,
-                store_id=data.store_id,
-                amount=data.amount
+                receipt_id=receipt_id, store_id=data.store_id, amount=data.amount
             )
         except Exception as e:
             print(f"Nepavyko atnaujinti čekio: {e}")
