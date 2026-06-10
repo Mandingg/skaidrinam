@@ -4,7 +4,7 @@ import { createIncome } from "../services/incomeApi";
 import { useNavigate } from "react-router"; 
 import cekioLogo from "../assets/LogoIcon.svg";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function getUserId() {
   const token = localStorage.getItem("token");

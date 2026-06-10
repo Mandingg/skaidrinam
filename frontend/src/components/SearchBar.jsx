@@ -40,9 +40,11 @@ function SearchBar({
       }}
     >
       <div className="flex flex-col">
-        <label style={labelStyle}>Ieškoti išlaidų</label>
+        <label htmlFor="expense-search-shop" style={labelStyle}>Ieškoti išlaidų</label>
         <div className="relative flex items-center">
           <input
+            id="expense-search-shop"
+            aria-label="Įrašykite parduotuvę"
             style={{ ...inputStyle, paddingLeft: "36px", paddingRight: "12px" }}
             placeholder="Pvz. Maxima..."
             type="text"
@@ -53,9 +55,11 @@ function SearchBar({
       </div>
 
       <div className="flex flex-col">
-        <label style={labelStyle}>Data</label>
+        <label htmlFor="expense-search-date" style={labelStyle}>Data</label>
         <div className="relative flex items-center">
           <input
+            id="expense-search-date"
+            aria-label="Pasirinkite pirkimo datą"
             type="date"
             className="w-full px-3 text-sm font-medium cursor-pointer"
             style={{
@@ -81,9 +85,11 @@ function SearchBar({
       </div>
 
       <div className="flex flex-col">
-        <label style={labelStyle}>Kategorija</label>
+        <label htmlFor="expense-search-category" style={labelStyle}>Kategorija</label>
         <div className="relative flex items-center">
           <select
+            id="expense-search-category"
+            aria-label="Pasirinkite filtravimo kategoriją"
             style={{
               ...inputStyle,
               paddingLeft: "36px",
@@ -110,9 +116,11 @@ function SearchBar({
       </div>
 
       <div className="flex flex-col">
-        <label style={labelStyle}>Rūšiuoti pagal</label>
+        <label htmlFor="expense-search-date-model" style={labelStyle}>Rūšiuoti pagal</label>
         <div className="relative flex items-center">
           <select
+            id="expense-search-date-model"
+            aria-label="Pasirinkite datos rūšiavimo modelį"
             style={{
               ...inputStyle,
               paddingLeft: "36px",

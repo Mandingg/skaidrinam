@@ -42,7 +42,7 @@ async function fetchData() {
     };
 
     // Vartotojo duomenys
-    const userRes = await fetch("http://127.0.0.1:8001/me", {
+    const userRes = await fetch("http://127.0.0.1:8000/me", {
       method: "GET",
       headers,
     });
@@ -59,7 +59,7 @@ async function fetchData() {
 
     // Išlaidos
     const expensesRes = await fetch(
-      `http://127.0.0.1:8001/expenses/list?user_id=${userId}`,
+      `http://127.0.0.1:8000/expenses/list?user_id=${userId}`,
       {
         method: "GET",
         headers,
@@ -75,7 +75,7 @@ async function fetchData() {
 
     // Pajamos
     const incomeRes = await fetch(
-      `http://127.0.0.1:8001/incomes/list?user_id=${userId}`,
+      `http://127.0.0.1:8000/incomes/list?user_id=${userId}`,
       {
         method: "GET",
         headers,
@@ -250,7 +250,11 @@ const balance = incomeSum - expensesSum;
           <h2>Sveiki, {user.name} {user.surname}!</h2>
 
           <div className="date-filter">
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <select 
+            value={filter} 
+            onChange={(e) => setFilter(e.target.value)}
+            aria-label="Laikotarpio filtras"
+            >
               <option value="current_month">{currentDateStr}</option>
               <option value="last_30_days">Paskutinės 30 dienų</option>
               <option value="current_year">Einamieji metai</option>

@@ -10,7 +10,7 @@ const FALLBACK_CATEGORIES = [
 export const getUserCategories = async () => {
   const userId = await getCurrentUserId();
   try {
-    const response = await fetch(`http://127.0.0.1:8001/expenses/categories?user_id=${userId}`);
+    const response = await fetch(`http://127.0.0.1:8000/expenses/categories?user_id=${userId}`);
     
     if (!response.ok) {
       throw new Error('Serveris grąžino klaidą');
@@ -32,7 +32,7 @@ export const getUserCategories = async () => {
 export const getUserExpenses = async() => {
     const userId = await getCurrentUserId();
     try {
-        const response = await fetch(`http://127.0.0.1:8001/expenses/list?user_id=${userId}`);
+        const response = await fetch(`http://127.0.0.1:8000/expenses/list?user_id=${userId}`);
     if (!response.ok) {
       throw new Error('Serveris grąžino klaidą');
     }
@@ -47,7 +47,7 @@ export const getUserExpenses = async() => {
 
 export const deleteExpense = async(expenseId) => {
   try{
-    const response = await fetch(`http://localhost:8001/expenses/delete/${expenseId}`, {
+    const response = await fetch(`http://localhost:8000/expenses/delete/${expenseId}`, {
       method: 'DELETE',
     });
     if (!response.ok) {
@@ -64,7 +64,7 @@ export const deleteExpense = async(expenseId) => {
 export const exportExpensesCSV = async() => {
   const userID = await getCurrentUserId();
   try{
-    const response = await fetch(`http://127.0.0.1:8001/expenses/export?user_id=${userID}`);
+    const response = await fetch(`http://127.0.0.1:8000/expenses/export?user_id=${userID}`);
     if (!response.ok) {
       throw new Error(`Serverio klaida: ${response.status}: ${response.statusText}`);
     }
