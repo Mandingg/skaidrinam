@@ -145,11 +145,9 @@ function ExpensesPage() {
     >
       <div className="flex min-h-[calc(100vh-64px)]">
         <main
-          className="flex-1 w-full"
+          className="flex-1 w-full mx-auto p-4 pt-16 md:pt-[var(--space-5)] md:p-[var(--space-5)] md:ml-[var(--sidebar-width)]"
           style={{
-            padding: "var(--space-5)",
             maxWidth: "1200px",
-            margin: "0 auto 0 var(--sidebar-width)",
           }}
         >
           <section style={{ marginBottom: "var(--space-5)" }}>
@@ -443,34 +441,6 @@ function ExpensesPage() {
                 Rodoma 1-{filteredAndSortedExpenses.length} iš{" "}
                 {filteredAndSortedExpenses.length} įrašų
               </span>
-              <div className="flex gap-1">
-                <button 
-                  type="button"
-                  aria-label="Ankstesnis puslapis"
-                  className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
-                  {"<"}
-                </button>
-                <button
-                  type="button"
-                  aria-current="page"
-                  aria-label="Dabartinis puslapis"
-                  className="w-9 h-9 flex items-center justify-center rounded-lg border font-bold"
-                  style={{
-                    backgroundColor: "var(--color-primary)",
-                    color: "#ffffff",
-                    borderColor: "var(--color-primary)",
-                  }}
-                >
-                  1
-                </button>
-
-                <button 
-                  type="button"
-                  aria-label="Kitas puslapis"
-                  className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white opacity-50 cursor-not-allowed">
-                  {">"}
-                </button>
-              </div>
             </div>
           </div>
         </main>

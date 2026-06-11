@@ -105,9 +105,10 @@ function DocumentForm() {
                 <form onSubmit={handleSubmit} className="form">
 
                     <div className="field">
-                        <label>Garantijos pavadinimas</label>
+                        <label htmlFor="title">Garantijos pavadinimas</label>
 
                         <input
+                            id="title"
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
@@ -118,9 +119,10 @@ function DocumentForm() {
                     </div>
 
                     <div className="field">
-                        <label>Parduotuvė</label>
+                        <label htmlFor="shop">Parduotuvė</label>
 
                         <input
+                            id="shop"
                             name="store_name"
                             value={formData.store_name}
                             onChange={handleChange}
@@ -130,9 +132,10 @@ function DocumentForm() {
                     </div>
 
                     <div className="field">
-                        <label>Pirkimo data</label>
+                        <label htmlFor="shop-date">Pirkimo data</label>
 
                         <input
+                            id="shop-date"
                             name="purchase_date"
                             value={formData.purchase_date}
                             onChange={handleChange}
@@ -141,9 +144,10 @@ function DocumentForm() {
                     </div>
 
                     <div className="field">
-                        <label>Garantijos pabaiga</label>
+                        <label htmlFor="warranties">Garantijos pabaiga</label>
 
                         <input
+                            id="warranties"
                             name="valid_until"
                             value={formData.valid_until}
                             onChange={handleChange}
@@ -156,9 +160,10 @@ function DocumentForm() {
                     </div>
 
                     <div className="field">
-                        <label>Dokumento failas</label>
+                        <label htmlFor="documents">Dokumento failas</label>
 
                         <input
+                            id="documents"
                             name="file"
                             onChange={handleChange}
                             type="file"

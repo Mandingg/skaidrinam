@@ -1,16 +1,28 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, Link, useNavigate } from "react-router";
 import "./Login.css";
 import LogoIcon from "../../assets/LogoIcon.svg?url";
 import VisibilityOn from "../../assets/VisibilityOn.svg";
 import VisibilityOff from "../../assets/VisibilityOff.svg";
 
-import { Link, useNavigate } from "react-router"; 
-
 function Login() {
-  const navigate = useNavigate(); 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [logoutMessage, setLogoutMessage] = useState(location.state?.logoutMessage || "");
 
   useEffect(() => {
     document.title = "Prisijungimas";
+  }, []);
+
+  useEffect(() => {
+    if (!logoutMessage) return;
+
+    // Clear the router state so the message does not reappear on refresh/back.
+    navigate(location.pathname, { replace: true, state: {} });
+
+    // Auto-dismiss the message after 10 seconds.
+    const timer = setTimeout(() => setLogoutMessage(""), 5000);
+    return () => clearTimeout(timer);
   }, []);
 
   const [email, setEmail] = useState("");
@@ -56,7 +68,7 @@ function Login() {
 
   return (
     <div className="login-page">
-      <main className="login-card">
+      <div className="login-card">
 
         {/* Header */}
         <div className="login-header">
@@ -67,6 +79,12 @@ function Login() {
         </div>
 
         <h2 className="subtitle">Prisijungti</h2>
+
+        {logoutMessage && (
+          <p style={{ color: "#1f7a1f", textAlign: "center", marginBottom: "1rem" }}>
+            {logoutMessage}
+          </p>
+        )}
 
         {/* Form */}
         <form className="form" onSubmit={handleLogin}>
@@ -131,7 +149,7 @@ function Login() {
           </p>
         </div>
 
-      </main>
+      </div>
     </div>
   );
 }

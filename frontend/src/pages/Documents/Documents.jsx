@@ -86,7 +86,7 @@ function Documents() {
     const paginatedDocuments = searchResults.slice(startIndex, endIndex);
 
     return (
-        <main className="documents-page">
+        <main className="documents-page documents-main">
             <div className="documents-content">
                 <header className="documents-topbar">
                     <h1>Garantijos</h1>
@@ -128,6 +128,7 @@ function Documents() {
 
                 <section className="documents-search">
                     <input
+                        aria-label="ieškoti"
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
