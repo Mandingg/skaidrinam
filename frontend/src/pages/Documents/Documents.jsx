@@ -128,6 +128,7 @@ function Documents() {
 
                 <section className="documents-search">
                     <input
+                        aria-label="ieškoti"
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

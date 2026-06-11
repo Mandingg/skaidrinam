@@ -37,7 +37,7 @@ ChartJS.register(
 const Analytics = () => {
   const [rawData, setRawData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [dataType, setDataType] = useState("");
   const [chartType, setChartType] = useState("");
   const [rowAxis, setRowAxis] = useState("");
@@ -205,7 +205,7 @@ const Analytics = () => {
       };
 
       return (
-        <div className="pie-chart-container">
+        <div className="pie-chart-container" aria-label="Finansų skritulinė diagrama" role="img">
           <Pie
             data={pieData}
             options={{
@@ -249,7 +249,7 @@ const Analytics = () => {
     };
 
     return (
-      <div className="chart-container">
+      <div className="chart-container" aria-label="Finansų diagrama" role="img">
         {chartType === "Line Chart" ? (
           <Line
             data={{ labels: horizontalLabels, datasets }}
@@ -276,9 +276,10 @@ const Analytics = () => {
 
           <div className="choices-panel">
             <div className="analytics-field-group">
-              <label className="choice-label">Duomenų tipas:</label>
+              <label htmlFor="moneyType" className="choice-label">Duomenų tipas:</label>
               <div className="select-wrapper">
                 <select
+                  id="moneyType"
                   value={dataType}
                   onChange={handleDataTypeSelection}
                   className="analytics-select-input"
@@ -290,14 +291,15 @@ const Analytics = () => {
                     Išlaidos ir pajamos
                   </option>
                 </select>
-                <span className="select-indicator">▾</span>
+                <span className="select-indicator" aria-hidden="true">▾</span>
               </div>
             </div>
 
             <div className="analytics-field-group">
-              <label className="choice-label">Vizualizacija:</label>
+              <label htmlFor="dataType" className="choice-label">Vizualizacija:</label>
               <div className="select-wrapper">
                 <select
+                  id="dataType"
                   value={chartType}
                   onChange={(e) => setChartType(e.target.value)}
                   className="analytics-select-input"
@@ -319,13 +321,14 @@ const Analytics = () => {
             </div>
 
             <div className="analytics-field-group">
-              <label className="choice-label">
+              <label htmlFor="rowAxisType" className="choice-label">
                 {chartType === "Pie Chart"
                   ? "Grupavimas (Sektoriai):"
                   : "Eilutės (X ašis):"}
               </label>
               <div className="select-wrapper">
                 <select
+                  id="rowAxisType"
                   value={rowAxis}
                   onChange={(e) => setRowAxis(e.target.value)}
                   className="analytics-select-input"
@@ -344,9 +347,10 @@ const Analytics = () => {
 
             {chartType !== "Pie Chart" && (
               <div className="analytics-field-group">
-                <label className="choice-label">Grupavimas:</label>
+                <label htmlFor="colAxisType" className="choice-label">Grupavimas:</label>
                 <div className="select-wrapper">
                   <select
+                    id="colAxisType"
                     value={colAxis}
                     onChange={(e) => setColAxis(e.target.value)}
                     className="analytics-select-input"
@@ -365,9 +369,10 @@ const Analytics = () => {
             )}
 
             <div className="analytics-field-group">
-              <label className="choice-label">Agregacija:</label>
+              <label htmlFor="equationType" className="choice-label">Agregacija:</label>
               <div className="select-wrapper">
                 <select
+                  id="equationType"
                   value={aggregator}
                   onChange={(e) => setAggregator(e.target.value)}
                   className="analytics-select-input"
@@ -396,7 +401,12 @@ const Analytics = () => {
                 Neturite įrašų kategorijoje {`${dataType}`}.
               </div>
             ) : chartType === "Table" ? (
-              <div className="table-wrapper">
+              
+              <>
+              <h2 id="pivotTableTitle" className="sr-only">
+                Finansų analizės lentelė
+              </h2>
+              <div className="table-wrapper" role="region" aria-labelledby="pivotTableTitle">
                 {rowAxis && colAxis && aggregator ? (
                   <PivotTable
                     data={filteredData}
@@ -419,6 +429,7 @@ const Analytics = () => {
                   </div>
                 )}
               </div>
+              </>
             ) : (
               renderChartSection()
             )}

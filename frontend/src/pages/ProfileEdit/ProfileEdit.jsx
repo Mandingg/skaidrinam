@@ -173,9 +173,10 @@ function ProfileEdit() {
 
                     {/* Name */}
                     <div className="field">
-                        <label>Vardas</label>
+                        <label htmlFor="name">Vardas</label>
 
                         <input
+                            id="name"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
@@ -186,9 +187,10 @@ function ProfileEdit() {
 
                     {/* Surname */}
                     <div className="field">
-                        <label>Pavardė</label>
+                        <label htmlFor="surname">Pavardė</label>
 
                         <input
+                            id="surname"
                             name="surname"
                             value={formData.surname}
                             onChange={handleChange}
@@ -199,9 +201,10 @@ function ProfileEdit() {
 
                     {/* Email */}
                     <div className="field">
-                        <label>El. paštas</label>
+                        <label htmlFor="email">El. paštas</label>
 
                         <input
+                            id="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
@@ -212,10 +215,11 @@ function ProfileEdit() {
 
                     {/* Password */}
                     <div className="field">
-                        <label>Slaptažodis</label>
+                        <label htmlFor="password">Slaptažodis</label>
 
                         <div className="password-wrapper">
                             <input
+                                id="password"
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
@@ -225,12 +229,13 @@ function ProfileEdit() {
 
                             <button
                                 type="button"
+                                aria-label="Rodyti slaptažodį"
                                 className="toggle-btn"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
                                 <img
                                     src={showPassword ? VisibilityOn : VisibilityOff}
-                                    alt="toggle password visibility"
+                                    alt=""
                                     className="icon"
                                 />
                             </button>
@@ -240,10 +245,11 @@ function ProfileEdit() {
 
                     {/* Repeat Password */}
                     <div className="field">
-                        <label>Pakartokite slaptažodį</label>
+                        <label htmlFor="repeat-password">Pakartokite slaptažodį</label>
 
                         <div className="password-wrapper">
                             <input
+                                id="repeat-password"
                                 name="repeatPassword"
                                 value={formData.repeatPassword}
                                 onChange={handleChange}
@@ -255,6 +261,7 @@ function ProfileEdit() {
 
                             <button
                                 type="button"
+                                aria-label="Rodyti slaptažodį"
                                 className="toggle-btn"
                                 onClick={() =>
                                     setShowRepeatPassword(
@@ -268,7 +275,7 @@ function ProfileEdit() {
                                             ? VisibilityOn
                                             : VisibilityOff
                                     }
-                                    alt="toggle password visibility"
+                                    alt=""
                                     className="icon"
                                 />
                             </button>
@@ -337,10 +344,14 @@ function ProfileEdit() {
 
                 {showDeleteModal && (
                     <div className="modal-overlay">
-                        <div className="modal">
+                        <div 
+                        className="modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="Ištrinti-paskyrą">
                             {deleteSuccess ? (
                                 <>
-                                    <h3>Paskyra sėkmingai ištrinta</h3>
+                                    <h3 role="status">Paskyra sėkmingai ištrinta</h3>
 
                                     <p>
                                         Nukreipiama į registracijos puslapį...
@@ -350,11 +361,11 @@ function ProfileEdit() {
                                 <>
                                     <img
                                         src={Warning}
-                                        alt="PERSPĖJIMAS"
+                                        alt=""
                                         className="warning-logo"
                                     />
 
-                                    <h3>Ar tikrai norite ištrinti paskyrą?</h3>
+                                    <h3 id="Ištrinti-paskyrą"> Ar tikrai norite ištrinti paskyrą?</h3>
 
                                     <p>
                                         Ištrynę paskyrą, visi jūsų duomenys,

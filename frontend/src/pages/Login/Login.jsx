@@ -118,12 +118,13 @@ function Login() {
 
               <button
                 type="button"
+                aria-label="Rodyti slaptažodį"
                 className="toggle-btn"
                 onClick={() => setPasswordVisible((v) => !v)}
               >
                 <img
                   src={passwordVisible ? VisibilityOn : VisibilityOff}
-                  alt="toggle password visibility"
+                  alt=""
                   className="icon"
                 />
               </button>

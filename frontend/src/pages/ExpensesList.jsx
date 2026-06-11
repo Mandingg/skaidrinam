@@ -205,6 +205,7 @@ function ExpensesPage() {
             >
               <button
                 onClick={handleExport}
+                aria-label="Pasirinkti ar eksportuoti įrašus į CSV"
                 disabled={!exportAvailable || exportMessage}
                 className="group relative px-3 py-1.5 rounded-lg border hover:opacity-80 transition-opacity cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed"
                 style={{
@@ -380,7 +381,7 @@ function ExpensesPage() {
                           to={`redaguoti/${expense.id}`}
                           className="inline-flex items-center justify-center gap-2 px-2 py-1 no-underline cursor-pointer"
                         >
-                          <img src={EditIcon} alt="edit" className="w-5 h-5" />
+                          <img src={EditIcon} alt="Redaguoti išlaidą" className="w-5 h-5" />
                         </Link>
                       </td>
                       <td
@@ -401,10 +402,11 @@ function ExpensesPage() {
                           }}
                           className="cursor-pointer text-gray-400 font-bold text-lg transition-colors px-2 py-1 "
                           title="Ištrinti šį įrašą"
+                          aria-label="Ištrinti šį įrašą"
                         >
                           <img
                             src={DeleteIcon}
-                            alt="delete"
+                            alt=""
                             className="w-5 h-5"
                           />
                         </button>
@@ -462,7 +464,7 @@ function ExpensesPage() {
           <div className="w-full max-w-[420px] bg-white rounded-[var(--radius-md)] p-[var(--space-5)] text-center shadow-[var(--shadow-md)]">
             <img
               src={Warning}
-              alt="PERSPĖJIMAS"
+              alt=""
               className="w-[60px] h-[60px] block p-[10px] mx-auto mb-[var(--space-3)] bg-[var(--color-error-light)] rounded-full"
             />
 

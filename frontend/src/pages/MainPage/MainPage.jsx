@@ -260,7 +260,11 @@ function MainPage() {
           <h2>Sveiki, {user.name} {user.surname}!</h2>
 
           <div className="date-filter">
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+            <select 
+            value={filter} 
+            onChange={(e) => setFilter(e.target.value)}
+            aria-label="Laikotarpio filtras"
+            >
               <option value="current_month">{currentDateStr}</option>
               <option value="last_30_days">Paskutinės 30 dienų</option>
               <option value="current_year">Einamieji metai</option>
@@ -301,7 +305,7 @@ function MainPage() {
                 onClick={() => navigate("/pagrindinis/naujas")}
               >
                 <div className="icon-wrapper">
-                  <img src={EditPen} alt="Rankinis įvedimas" className="action-icon" />
+                  <img src={EditPen} alt="" className="action-icon"/>
                 </div>
                 <h5>Rankinis įvedimas</h5>
                 <p>Įveskite išlaidą rankiniu būdu</p>
@@ -319,7 +323,7 @@ function MainPage() {
                 }}
               >
                 <div className="icon-wrapper">
-                  <img src={AddNote} alt="Dokumentas" className="action-icon" />
+                  <img src={AddNote} alt="" className="action-icon" />
                 </div>
 
                 <h5>Pridėti čekį / dokumentą</h5>

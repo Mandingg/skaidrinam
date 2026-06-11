@@ -94,9 +94,10 @@ function Register() {
 
           {/* Name */}
           <div className="field">
-            <label>Vardas</label>
+            <label htmlFor="name">Vardas</label>
 
             <input
+              id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -108,9 +109,10 @@ function Register() {
 
           {/* Surname */}
           <div className="field">
-            <label>Pavardė</label>
+            <label htmlFor="surname">Pavardė</label>
 
             <input
+              id="surname"
               name="surname"
               value={formData.surname}
               onChange={handleChange}
@@ -122,9 +124,10 @@ function Register() {
 
           {/* Email */}
           <div className="field">
-            <label>El. paštas</label>
+            <label htmlFor="email">El. paštas</label>
 
             <input
+              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -136,10 +139,11 @@ function Register() {
 
           {/* Password */}
           <div className="field">
-            <label>Slaptažodis</label>
+            <label htmlFor="password">Slaptažodis</label>
 
             <div className="password-wrapper">
               <input
+                id="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
@@ -150,12 +154,13 @@ function Register() {
 
               <button
                 type="button"
+                aria-label="Rodyti slaptažodį"
                 className="toggle-btn"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 <img
                   src={showPassword ? VisibilityOn : VisibilityOff}
-                  alt="toggle password visibility"
+                  alt=""
                   className="icon"
                 />
               </button>
@@ -165,10 +170,11 @@ function Register() {
 
           {/* Repeat Password */}
           <div className="field">
-            <label>Pakartokite slaptažodį</label>
+            <label htmlFor="password-repeat">Pakartokite slaptažodį</label>
 
             <div className="password-wrapper">
               <input
+                id="password-repeat"
                 name="repeatPassword"
                 value={formData.repeatPassword}
                 onChange={handleChange}
@@ -181,6 +187,7 @@ function Register() {
 
               <button
                 type="button"
+                aria-label="Rodyti slaptažodį"
                 className="toggle-btn"
                 onClick={() =>
                   setShowRepeatPassword(
@@ -194,7 +201,7 @@ function Register() {
                       ? VisibilityOn
                       : VisibilityOff
                   }
-                  alt="toggle password visibility"
+                  alt=""
                   className="icon"
                 />
               </button>

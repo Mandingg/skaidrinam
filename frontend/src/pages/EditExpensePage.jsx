@@ -227,6 +227,7 @@ function EditExpensePage() {
             type="submit"
             disabled={loading}
             className="w-full bg-[#437d38] text-white py-3 rounded-md font-semibold text-base hover:bg-[#386a2f] transition-colors duration-200 disabled:opacity-50"
+            aria-label="Išsaugoti pakeitimus"
           >
             {loading ? "Saugoma..." : "Išsaugoti pakeitimus"}
           </button>

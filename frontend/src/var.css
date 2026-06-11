@@ -19,21 +19,22 @@ body {
     --color-primary-dark: #3d6e35;
     --color-primary-light: #437d380d;
 
-    --color-secondary: #d1e2d3;
+  --color-secondary: #c4d9c7;
 
-    --color-tertiary: #f9fdef;
+  --color-tertiary: #f2f7ea;
 
-    --color-error: #d64040;
-    --color-error-dark: #bf3a3a;
-    --color-error-light: #f8d7d7;
+  --color-error: #c62828;
+  --color-error-dark: #a61f1f;
+  --color-error-light: #fde8e8;
 
-    --color-neutral: #2d312e;  
+  --color-neutral: #1f2420;
 
-    --color-navigation: #f7faf5;
+  --color-navigation: #f4f8f1;
 
-    --color-background: #ffffff;
+  --color-background: #ffffff;
 
-    --color-gray: gray;
+  --color-gray: rgba(47, 46, 46, 0.659);
+
 
     /* =========================
     TYPOGRAPHY
