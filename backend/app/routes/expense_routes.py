@@ -1,10 +1,14 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Body
 from fastapi.responses import StreamingResponse
 import csv
 import io
 from app.services.db_connection import DatabaseManager
-from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel
+from app.models.expense import ExpenseDisplay, ExpenseModel, ExpenseUpdateModel, ExpenseInputModel
 from app.services.expense_service import ExpenseService
+from app.models.store import StoreModel
+from app.services.receipt_service import ReceiptService
+from app.services.category_service import CategoryService
+
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])
 
@@ -94,17 +98,34 @@ def export_expenses_to_csv(user_id: int, db: DatabaseManager = Depends(get_db_ma
 
 
 @router.post("/add", status_code=status.HTTP_201_CREATED)
-def create_expense(expense: ExpenseModel, db: DatabaseManager = Depends(get_db_manager)):
+def create_expense_manually(
+    expense: ExpenseInputModel = Body(...), store: StoreModel = Body(...), db: DatabaseManager = Depends(get_db_manager)
+):
+    """
+    creates expense from manual entry
+    """
     expense_service = ExpenseService()
+    receipt_service = ReceiptService()
+    category_service = CategoryService()
     expense_service.db = db
     if expense.amount is None or expense.amount <= 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Kaina negali būti neigiama arba tuščia",
         )
-
-    expense_id = expense_service.create_expense(expense)
-
+    try:
+        store_id = receipt_service.get_or_create_store(store.name)
+        print(f"Gautas store ID: {store_id}")
+    except Exception as e:
+        print(f"Parduotuvės ID negautas. Klaida {e}")
+        store_id = None
+    expense.receipt_id = receipt_service.create_receipt(expense.user_id, store_id, expense.expense_date, expense.amount)
+    category_id = category_service.get_category_id_by_name(expense.user_id, expense.category_name)
+    if category_id is None:
+        category_id = category_service.get_or_create_user_category(expense.user_id, expense.category_name,)
+    print(f"Sukurtas čekutis: {expense.receipt_id}")
+    expense_to_create = ExpenseModel(**expense.model_dump(exclude={'category_name'}), category_id=category_id)
+    expense_id = expense_service.create_expense(expense_to_create)
     if expense_id is None:
         raise HTTPException(status_code=500, detail="Nepavyko išsaugoti įrašo")
 
@@ -121,9 +142,21 @@ def get_expense(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
     return expense
 
 
+@router.get("/{expense_id}/store")
+def get_store(expense_id: int, db: DatabaseManager = Depends(get_db_manager)):
+    expense_service = ExpenseService()
+    expense_service.db = db
+    store = expense_service.get_store_for_expense(expense_id)
+    print(store)
+    if not store:
+        raise HTTPException(status_code=404, detail="Įrašas nerastas")
+    return {"id": store.get("store_id"), "name": store.get("name")}
+
+
 @router.put("/{expense_id}")
 def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManager = Depends(get_db_manager)):
     expense_service = ExpenseService()
+    receipt_service = ReceiptService()
     expense_service.db = db
     if data.amount <= 0:
         raise HTTPException(status_code=400, detail="Kaina negali būti neigiama arba tuščia")
@@ -132,8 +165,27 @@ def update_expense(expense_id: int, data: ExpenseUpdateModel, db: DatabaseManage
     if not existing:
         raise HTTPException(status_code=404, detail="Įrašas nerastas")
 
-    success = expense_service.update_expense(expense_id, existing["user_id"], data)
-    if not success:
-        raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
+    receipt_id = existing['receipt_id']
+
+    if receipt_id:
+        store_id = data.store_id
+        if store_id is None:
+            data.store_id = receipt_service.get_by_id(receipt_id)['store_id']
+        try:
+            receipt_service.update_receipt_store_and_amount(
+                receipt_id=receipt_id, store_id=data.store_id, amount=data.amount
+            )
+        except Exception as e:
+            print(f"Nepavyko atnaujinti čekio: {e}")
+
+    is_identical = (
+    existing.get("description") == data.description and
+    float(existing.get('amount')) == float(data.amount) and
+    existing.get('expense_date') == data.expense_date and
+    existing.get('category_id') == data.category_id)
+    if not is_identical:
+        success = expense_service.update_expense(expense_id, existing["user_id"], data.model_dump(exclude={"store_id"}))
+        if not success:
+            raise HTTPException(status_code=500, detail="Nepavyko atnaujinti įrašo")
 
     return {"message": "Įrašas atnaujintas"}

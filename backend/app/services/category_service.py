@@ -107,3 +107,53 @@ class CategoryService:
 
     def get_all(self):
         return self.db.fetch_all("SELECT id, name FROM categories")
+
+    def get_available_category_names(self, user_id: int):
+        categories = self.get_all_categories(user_id)
+
+        category_names = [category.name for category in categories]
+
+        if "Kita" not in category_names:
+            category_names.append("Kita")
+
+        return category_names
+
+    def get_category_id_by_name(self, user_id: int, category_name: str):
+        query = """
+        SELECT id
+        FROM categories
+        WHERE LOWER(TRIM(name)) = LOWER(TRIM(%s))
+        AND (user_id = %s OR user_id IS NULL)
+        LIMIT 1
+        """
+
+        result = self.db.fetch_one(query, (category_name, user_id))
+
+        if result:
+            return result["id"]
+
+        return None
+    
+    def get_or_create_user_category(self, user_id: int, category_name: str):
+        category_name = category_name.strip()
+
+        if not category_name:
+            category_name = "Kita"
+
+        existing_category = self.get_category_id_by_name(
+            user_id,
+            category_name
+        )
+
+        if existing_category:
+            return existing_category
+
+        insert_query = """
+        INSERT INTO categories (user_id, name)
+        VALUES (%s, %s)
+        """
+
+        return self.db.insert(
+            insert_query,
+            (user_id, category_name)
+        )

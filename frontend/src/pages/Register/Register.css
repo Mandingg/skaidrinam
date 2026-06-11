@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3);
+  /* margin-left: var(--sidebar-width); */
   background: var(--color-navigation);
 }
 
@@ -17,6 +17,8 @@
   padding: var(--space-5);
   padding-bottom: var(--space-5);
 }
+
+
 
 /* HEADER */
 .register-header {
@@ -37,7 +39,7 @@
 }
 
 .title {
-  font-size: 40px;
+  font-size: var(--text-title);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
   margin: 0;

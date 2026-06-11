@@ -30,7 +30,8 @@ class ExpenseService:
         )
         expense_id = self.db.insert(query, params)
         if expense_id:
-            self._log(expense.user_id, expense_id, expense.description, "CREATE")
+            self._log(expense.user_id, expense_id,
+                      expense.description, "CREATE")
         return expense_id
 
     def get_by_id(self, expense_id: int):
@@ -43,10 +44,11 @@ class ExpenseService:
             SET description = %s, amount = %s, expense_date = %s, category_id = %s
             WHERE id = %s
         """
-        params = (data.description, data.amount, data.expense_date, data.category_id, expense_id)
+        params = (data.get('description'), data.get('amount'),
+                  data.get('expense_date'), data.get('category_id'), expense_id)
         rows = self.db.update(query, params)
-        if rows:
-            self._log(user_id, expense_id, data.description, "UPDATE")
+        # if rows:
+        #     self._log(user_id, expense_id, data.description, "UPDATE")
         return rows is not None and rows > 0
 
     def _log(self, user_id: int, record_id: int, record_name: str, action_type: str):
@@ -113,6 +115,26 @@ class ExpenseService:
         if results is None:
             return []
         return results
+    
+    def get_store_for_expense(self, expense_id:int):
+        """
+        Gets shop name related to a certain expense.
+        """
+        query = """
+            SELECT
+            e.id as expense_id,
+            s.id as store_id,
+            s.name
+            FROM expenses e
+            LEFT JOIN receipts r ON e.receipt_id = r.id
+            LEFT JOIN stores s ON r.store_id = s.id
+            WHERE e.id = %s
+        """
+        results = self.db.fetch_one(query, (expense_id,))
+        if results is None:
+            return []
+        return results
+
 
     def delete_single_expense(self, expense_id):
         """
@@ -128,3 +150,39 @@ class ExpenseService:
             raise Exception(f"Error: More than one expense deleted. Deleted count: {result}")
         else:
             return False
+
+    def get_category_id_by_name(self, user_id: int, category_name: str):
+        query = """
+            SELECT id
+            FROM categories
+            WHERE LOWER(name) = LOWER(%s)
+            AND (user_id = %s OR user_id IS NULL)
+            LIMIT 1
+        """
+
+        result = self.db.fetch_one(query, (category_name, user_id))
+
+        if result:
+            return result["id"]
+
+        return None
+    
+    def get_available_categories(self, user_id: int):
+        query = """
+            SELECT name
+            FROM categories
+            WHERE user_id = %s OR user_id IS NULL
+            ORDER BY name
+        """
+
+        results = self.db.fetch_all(query, (user_id,))
+
+        if not results:
+            return ["Kita"]
+
+        category_names = [row["name"] for row in results]
+
+        if "Kita" not in category_names:
+            category_names.append("Kita")
+
+        return category_names

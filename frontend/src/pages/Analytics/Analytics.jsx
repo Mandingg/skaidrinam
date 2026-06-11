@@ -32,20 +32,22 @@ ChartJS.register(
   Legend,
 );
 
+
+
 const Analytics = () => {
   const [rawData, setRawData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // New state for Data Type selection
+  // const [loading, setLoading] = useState(true);
   const [dataType, setDataType] = useState("");
-
-  // Defaulted to empty strings for placeholders or preset values
   const [chartType, setChartType] = useState("");
   const [rowAxis, setRowAxis] = useState("");
   const [colAxis, setColAxis] = useState("");
   const [calcValue, setCalcValue] = useState("Suma");
   const [aggregator, setAggregator] = useState("");
+
+  useEffect(() => {
+  document.title = "Analitika";
+}, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -70,7 +72,7 @@ const Analytics = () => {
     loadData();
   }, []);
 
-  // 1. Determine available fields based on data type choice
+
   let availableFields = [];
   if (dataType === "išlaidos") {
     availableFields = [
@@ -266,7 +268,7 @@ const Analytics = () => {
   return (
     <div className="page-container">
       <div className="wrapper">
-        <main>
+        <main className="analytics-main">
           <div className="analytics-header">
             <h1>Finansų analizė</h1>
             <p className="analytics-subtitle">Jūsų duomenys - jūsų įžvalgos.</p>
